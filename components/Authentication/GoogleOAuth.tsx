@@ -122,7 +122,7 @@ const GoogleOAuth = () => {
           <button
             onClick={handleGoogleLogin}
             disabled={isLoading}
-            className="group flex w-full items-center justify-center gap-3 cursor-pointer rounded-lg bg-zinc-200/50 px-6 py-2 text-base font-semibold text-zinc-800  transition hover:bg-zinc-200/80 focus:outline-none focus:ring-2 focus:ring-[#4756A2] disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-800 dark:hover:bg-zinc-800/80"
+            className="group flex w-full items-center justify-center gap-3 cursor-pointer rounded-lg bg-zinc-200/50 px-6 py-2 text-base font-semibold text-zinc-800  transition hover:bg-zinc-200/80 focus:outline-none focus:ring-2 focus:ring-light dark:focus:ring-dark disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-800 dark:hover:bg-zinc-800/80"
           >
             {isLoading ? (
               <Loader />
