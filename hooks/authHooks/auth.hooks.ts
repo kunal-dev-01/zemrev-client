@@ -31,7 +31,7 @@ export const useAuth = () => {
     try {
       await logoutMutation().unwrap();
       dispatch(logoutAction());
-      router.push('/login');
+      router.push('/');
       router.refresh();
     } catch (error) {
       console.error('❌ Logout error:', error);
@@ -78,10 +78,6 @@ export const useAuth = () => {
     dispatch(clearError());
   }, [dispatch]);
 
-  const hasRole = useCallback((role: string) => {
-    return user?.isActive || false;
-  }, [user]);
-
   const getDisplayName = useCallback(() => {
     if (!user) return 'Guest';
     return user.name || user.email.split('@')[0];
@@ -103,7 +99,6 @@ export const useAuth = () => {
     refreshUser,
     checkAuth,
     clearError: clearAuthError,
-    hasRole,
     getDisplayName,
     getAvatar,
   };

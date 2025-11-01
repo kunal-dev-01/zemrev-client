@@ -6,7 +6,7 @@ import GoogleOAuth from "@/components/Authentication/GoogleOAuth";
 
 const PageLayout = ({ children }: { children: React.ReactNode }) => {
 
-  const { isOpen } = useLoginModal();
+  const { isOpenAuth } = useLoginModal();
 
   return (
     <div className="w-full md:px-[10vw] px-[1vh] relative">
@@ -15,7 +15,7 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
         <Navbar />
       </div>
 
-      {isOpen && <GoogleOAuth />}
+      {isOpenAuth && <GoogleOAuth />}
 
       <div className="w-full">{children}</div>
 

@@ -1,20 +1,17 @@
-import {create} from "zustand";
+import { create } from 'zustand';
 
 interface LoginState {
-    isOpen: boolean;
-    onOpen: () => void;
-    onClose: () => void;
-    isUserInfo: boolean
-    onUserInfoOpen: () => void;
-    onUserInfoClose: () => void;
-
+  isOpenAuth: boolean;
+  setOpenAuth: (v: boolean) => void;
+  isUserInfo: boolean;
+  setUserInfo: (v: boolean) => void;
+  toggleUserInfo: () => void;
 }
 
-export const useLoginModal = create<LoginState>((set) => ({
-    isOpen: false,
-    onOpen: () => set({ isOpen: true }),
-    onClose: () => set({ isOpen: false }),
-    isUserInfo: false,
-    onUserInfoOpen: () => set({ isUserInfo: true }),
-    onUserInfoClose: () => set({ isUserInfo: false }),
-}))
+export const useLoginModal = create<LoginState>(set => ({
+  isOpenAuth: false,
+  setOpenAuth: v => set({ isOpenAuth: v }),
+  isUserInfo: false,
+  setUserInfo: v => set({ isUserInfo: v }),
+  toggleUserInfo: () => set(state => ({ isUserInfo: !state.isUserInfo })),
+}));
