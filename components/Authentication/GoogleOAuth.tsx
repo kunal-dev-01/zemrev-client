@@ -7,17 +7,17 @@ import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 const GoogleOAuth = () => {
   const { loginWithGoogle, isLoading, error } = useAuth();
   const [animateClass, setAnimateClass] = useState("fade-in");
-  const { onClose } = useLoginModal();
+  const { setOpenAuth: onClose, isOpenAuth } = useLoginModal();
 
   const handleGoogleLogin = useCallback(async () => {
     await loginWithGoogle();
-    onClose();
+    onClose(!isOpenAuth);
   }, [loginWithGoogle, onClose]);
 
   const handleCloseWithAnimation = () => {
     setAnimateClass("fade-out");
     setTimeout(() => {
-      onClose();
+      onClose(!isOpenAuth);
     }, 400);
   };
 
