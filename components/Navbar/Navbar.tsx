@@ -82,7 +82,7 @@ const Navbar: FC = memo(() => {
             <div 
               id="user-menu" 
               ref={userInfoRef}
-              className={`w-[90vw] md:w-[15vw] md:p-[0.5vw] p-[1vh] rounded-xl absolute top-[calc(100%+0.5rem)] right-0 bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-100/80 dark:border-zinc-900/50 shadow-lg z-50 transition-all duration-300 ease-in-out origin-top-right ${
+              className={`w-[70vw] md:w-[15vw] md:p-[0.5vw] p-[1vh] rounded-xl absolute top-[calc(100%+0.5rem)] right-0 bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-100/80 dark:border-zinc-900/50 shadow-lg z-50 transition-all duration-300 ease-in-out origin-top-right ${
                 isUserInfo 
                   ? 'opacity-100 scale-100 pointer-events-auto' 
                   : 'opacity-0 scale-95 pointer-events-none'
