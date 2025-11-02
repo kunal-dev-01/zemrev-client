@@ -1,11 +1,12 @@
-"use client"
+'use client';
 
-const Home = () => {
+import dynamic from "next/dynamic";
+const MainHomeManager = dynamic(() => import("@/components/Home/MainHomeManager"), { ssr: false });
 
+export default function Home() {
   return (
-    <div className="w-full ">
-    </div>
-  )
+    <main className="w-full">
+      <MainHomeManager />
+    </main>
+  );
 }
-
-export default Home

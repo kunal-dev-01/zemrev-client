@@ -33,10 +33,9 @@ export const useAuth = () => {
       dispatch(logoutAction());
       router.push('/');
       router.refresh();
-    } catch (error) {
-      console.error('❌ Logout error:', error);
+    } catch {
       dispatch(logoutAction());
-      router.push('/login');
+      router.push('/');
       router.refresh();
     }
   }, [logoutMutation, dispatch, router]);
@@ -45,19 +44,35 @@ export const useAuth = () => {
     try {
       dispatch(clearError());
       await googleLoginMutation().unwrap();
-    } catch (error) {
-      console.error('❌ Google login error:', error);
+    } catch {
       dispatch(setError('Failed to initiate Google login'));
     }
   }, [googleLoginMutation, dispatch]);
+
+  const fetchUserAfterAuth = useCallback(async () => {
+    try {
+      dispatch(clearError());
+      const response = await getMe().unwrap();
+      dispatch(setUser(response.user));
+      return true;
+    } catch (error) {
+      const err = error as { data?: { message?: string }; message?: string };
+      const errorMessage = err?.data?.message || err?.message || 'Authentication failed';
+      dispatch(setError(errorMessage));
+      return false;
+    }
+  }, [getMe, dispatch]);
 
   const refreshUser = useCallback(async () => {
     try {
       const response = await getMe().unwrap();
       dispatch(setUser(response.user));
+      return true;
     } catch (error) {
-      console.error('❌ Failed to refresh user:', error);
-      dispatch(setError('Failed to fetch user data'));
+      const err = error as { data?: { message?: string }; message?: string };
+      const errorMessage = err?.data?.message || 'Failed to fetch user data';
+      dispatch(setError(errorMessage));
+      return false;
     }
   }, [getMe, dispatch]);
 
@@ -84,7 +99,7 @@ export const useAuth = () => {
   }, [user]);
 
   const getAvatar = useCallback(() => {
-    return user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=random`;
+    return user?.avatar || null;
   }, [user]);
 
   return {
@@ -96,6 +111,7 @@ export const useAuth = () => {
     error,
     logout,
     loginWithGoogle,
+    fetchUserAfterAuth,
     refreshUser,
     checkAuth,
     clearError: clearAuthError,

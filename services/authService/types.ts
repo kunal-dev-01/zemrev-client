@@ -2,10 +2,6 @@ export interface User {
   email: string;
   name: string;
   avatar: string | null;
-  isActive: boolean;
-  lastLoginAt: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface AuthState {
