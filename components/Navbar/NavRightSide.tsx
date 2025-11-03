@@ -3,7 +3,7 @@ import { useCallback, useRef } from "react";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { useClickOutside } from "@/hooks/useClickOutside/useClickOutside";
-import SidebarSvg from "../Svg/NavSvg";
+import {SidebarSvg} from "../Svg/NavSvg";
 
 const NavRightSide = () => {
   const { logout, isLoggingOut, user } = useAuth();
@@ -34,7 +34,7 @@ const NavRightSide = () => {
   }, [setOpenSidebar]);
 
   return (
-    <div className="h-full flex items-center gap-3 p-1 rounded-xl border border-zinc-100 dark:border-zinc-900 hover:border-zinc-200 dark:hover:border-zinc-800 cursor-pointer">
+    <div className="h-full flex items-center gap-3 p-1 rounded-xl border border-zinc-200/50 dark:border-zinc-900 hover:border-zinc-200 dark:hover:border-zinc-800 cursor-pointer">
       {user ? (
         <>
           {/* User Avatar Button */}
@@ -65,7 +65,7 @@ const NavRightSide = () => {
           <div
             id="user-menu"
             ref={userInfoRef}
-            className={`w-[70vw] md:w-[15vw] md:p-[0.5vw] p-[1vh] rounded-xl absolute top-[calc(100%+0.5rem)] right-0 bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-100/80 dark:border-zinc-900/50 shadow-lg z-50 transition-all duration-300 ease-in-out origin-top-right ${
+            className={`w-[70vw] md:w-[15vw] md:p-[0.5vw] p-[1vh] rounded-xl absolute top-[calc(100%+0.5rem)] right-0 bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-100/80 dark:border-zinc-900/50 shadow-md z-50 transition-all duration-300 ease-in-out origin-top-right ${
               isUserInfo
                 ? "opacity-100 scale-100 pointer-events-auto"
                 : "opacity-0 scale-95 pointer-events-none"
