@@ -30,8 +30,8 @@ SidebarSvg.displayName = "SidebarSvg";
 export const SidebarSvgTwo = React.memo(() => {
   return (
     <svg
-      width="200"
-      height="200"
+      width="100%"
+      height="100%"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 14 14"
       className="text-zinc-700 dark:text-zinc-300 w-[3.8vh] md:w-[1.7vw]"
