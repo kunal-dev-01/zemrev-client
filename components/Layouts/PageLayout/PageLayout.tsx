@@ -3,6 +3,7 @@ import Footer from '../../Footer/Footer';
 import Navbar from '../../Navbar/Navbar';
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import GoogleOAuth from "@/components/Authentication/GoogleOAuth";
+import SideBar from "@/components/Navbar/SideBar";
 
 const PageLayout = ({ children }: { children: React.ReactNode }) => {
 
@@ -16,6 +17,8 @@ const PageLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
 
       {isOpenAuth && <GoogleOAuth />}
+      
+      <SideBar />
 
       <div className="w-full">{children}</div>
 
