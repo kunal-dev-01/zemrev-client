@@ -7,7 +7,7 @@ import SidebarSvg from "../Svg/NavSvg";
 
 const NavRightSide = () => {
   const { logout, isLoggingOut, user } = useAuth();
-  const { setOpenAuth, isUserInfo, setUserInfo, toggleUserInfo } =
+  const { setOpenAuth, isUserInfo, setUserInfo, toggleUserInfo , setOpenSidebar} =
     useLoginModal();
 
   const avatarButtonRef = useRef<HTMLButtonElement>(null);
@@ -28,6 +28,10 @@ const NavRightSide = () => {
   const handleLoginClick = useCallback(() => {
     setOpenAuth(true);
   }, [setOpenAuth]);
+
+  const handleSidebarClick = useCallback(() => {
+    setOpenSidebar(true);
+  }, [setOpenSidebar]);
 
   return (
     <div className="h-full flex items-center gap-3 p-1 rounded-xl border border-zinc-100 dark:border-zinc-900 hover:border-zinc-200 dark:hover:border-zinc-800 cursor-pointer">
@@ -138,7 +142,7 @@ const NavRightSide = () => {
         </button>
       )}
 
-      <div className="cursor-pointer hover:scale-105 transition-transform duration-300 ease-in-out">
+      <div aria-label="Nav-Sidebar" onClick={handleSidebarClick} className="cursor-pointer hover:scale-105 transition-transform duration-300 ease-in-out">
         <SidebarSvg />
       </div>
     </div>
