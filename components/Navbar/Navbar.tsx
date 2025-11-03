@@ -16,6 +16,7 @@ const Logo: FC = () => (
       alt="logo" 
       width={50} 
       height={50} 
+      loading='eager'
       className="w-full h-full object-cover dark:hidden" 
     />
     <Image 
@@ -23,6 +24,7 @@ const Logo: FC = () => (
       alt="logo" 
       width={50} 
       height={50} 
+      loading='eager'
       className="w-full h-full object-cover hidden dark:block" 
     />
   </Link>
