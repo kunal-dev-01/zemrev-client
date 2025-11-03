@@ -23,11 +23,12 @@ const SideBar = () => {
       />
 
       <div
-        className={`w-full md:w-[17vw] h-screen fixed top-0 right-0 z-50 bg-zinc-50 dark:bg-zinc-900 transition-transform duration-300 ease-in-out p-3 md:rounded-l-xl ${
+        className={`w-full md:w-[17vw] h-screen fixed top-0 right-0 z-50 bg-zinc-50 dark:bg-[#101010] transition-transform duration-300 ease-in-out p-3 md:rounded-l-xl ${
           isOpenSidebar ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center p-1 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50">
+
+        <div className="flex items-center p-1 rounded-xl border border-zinc-200/50 dark:border-zinc-800">
           <button
             onClick={handleSidebarToggle}
             className="rounded-lg transition-colors duration-200 cursor-pointer"
