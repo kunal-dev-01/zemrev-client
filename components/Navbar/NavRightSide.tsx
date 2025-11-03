@@ -45,7 +45,7 @@ const NavRightSide = () => {
             aria-label="Toggle user menu"
             onClick={toggleUserInfo}
             disabled={isLoggingOut}
-            className="h-full hover:scale-105 transition-transform duration-300 ease-in-out rounded-xl overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+            className="h-full hover:scale-105 transition-transform duration-300 ease-in-out rounded-lg overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Image
               src={
@@ -57,7 +57,7 @@ const NavRightSide = () => {
               alt={`${user.name && user.name}'s avatar`}
               width={50}
               height={50}
-              className="w-full h-full object-cover rounded-xl cursor-pointer"
+              className="w-full h-full object-cover rounded-lg cursor-pointer"
             />
           </button>
 
