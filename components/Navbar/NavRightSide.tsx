@@ -65,7 +65,7 @@ const NavRightSide = () => {
           <div
             id="user-menu"
             ref={userInfoRef}
-            className={`w-[70vw] md:w-[15vw] md:p-[0.5vw] p-[1vh] rounded-xl absolute top-[calc(100%+0.5rem)] right-0 bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-100/80 dark:border-zinc-900/50 shadow-md z-50 transition-all duration-300 ease-in-out origin-top-right ${
+            className={`w-[70vw] md:w-[15vw] md:p-[0.5vw] p-[1vh] rounded-xl absolute top-[calc(100%+0.5rem)] right-0 bg-zinc-50 dark:bg-[#0d0d0d] border-2 border-zinc-100/80 dark:border-zinc-900/50 z-50 transition-all duration-300 ease-in-out origin-top-right ${
               isUserInfo
                 ? "opacity-100 scale-100 pointer-events-auto"
                 : "opacity-0 scale-95 pointer-events-none"
@@ -73,7 +73,7 @@ const NavRightSide = () => {
           >
             <div className="flex flex-col gap-3">
               {/* User Info Card */}
-              <div className="flex items-center gap-3 rounded-xl bg-zinc-200/50 dark:bg-zinc-800/50 p-2">
+              <div className="flex items-center gap-3 rounded-xl bg-zinc-100 dark:bg-[#101010] p-2">
                 <div className="md:w-[2.5vw] md:h-[2.5vw] w-[5vh] h-[5vh] rounded-xl overflow-hidden shrink-0">
                   <Image
                     src={user.avatar && user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name && user.name)}&background=random`}
