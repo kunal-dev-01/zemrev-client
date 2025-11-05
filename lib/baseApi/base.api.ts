@@ -50,13 +50,13 @@ const baseQueryWithReauth: BaseQueryFn<
     const errorData = result.error.data;
     
     if (isApiError(errorData)) {
-      console.error('🔴 API Error:', {
+      console.log('🔴 API Error:', {
         message: errorData.message,
         status: errorData.statusCode,
         errors: errorData.errors,
       });
     } else {
-      console.error('🔴 Network Error:', result.error);
+      console.log('🔴 Network Error:', result.error);
     }
   }
 
