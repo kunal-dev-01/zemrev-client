@@ -1,12 +1,23 @@
+// src/services/authService/types.ts
 export interface User {
   email: string;
   name: string;
   avatar: string | null;
 }
 
+export interface CreditStats {
+  remaining: number;
+  used: number;
+  limit: number;
+  totalEarned?: number;
+  totalSpent?: number;
+}
+
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
+  credits: CreditStats | null;
+  creditType: 'user' | 'session' | null;
   isLoading: boolean;
   error: string | null;
 }
@@ -24,7 +35,9 @@ export interface LogoutResponse {
 
 export interface MeResponse {
   success: boolean;
-  user: User;
+  user?: User;
+  type: 'user' | 'session';
+  credits: CreditStats;
 }
 
 export interface ApiError {

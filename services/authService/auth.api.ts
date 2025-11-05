@@ -1,3 +1,4 @@
+// src/services/authService/auth.api.ts
 import { baseApi } from '@/lib/baseApi/base.api';
 import type { LogoutResponse, MeResponse } from './types';
 
@@ -10,7 +11,7 @@ export const authApi = baseApi.injectEndpoints({
         url: '/auth/me',
         method: 'GET',
       }),
-      providesTags: ['User'],
+      providesTags: ['User', 'Auth'],
       transformErrorResponse: (response) => {
         if (response.status === 401) {
           return {
@@ -48,14 +49,18 @@ export const authApi = baseApi.injectEndpoints({
       },
     }),
 
-    checkAuth: builder.query<MeResponse, void>({
+    // For guests - gets session credits only
+    getGuestCredits: builder.query<MeResponse, void>({
       query: () => ({
-        url: '/auth/me',
+        url: '/auth/credits',
         method: 'GET',
       }),
       providesTags: ['Auth'],
-      transformErrorResponse: () => {
-        return { message: 'Not authenticated', statusCode: 401 };
+      transformErrorResponse: (response) => {
+        return response.data || { 
+          message: 'Failed to fetch credits', 
+          statusCode: 500 
+        };
       },
     }),
   }),
@@ -67,6 +72,6 @@ export const {
   useLazyGetMeQuery,
   useGoogleLoginMutation,
   useLogoutMutation,
-  useCheckAuthQuery,
-  useLazyCheckAuthQuery,
+  useGetGuestCreditsQuery,
+  useLazyGetGuestCreditsQuery,
 } = authApi;
