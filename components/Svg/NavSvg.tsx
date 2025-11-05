@@ -107,3 +107,21 @@ export const ImageResizer = React.memo(() => {
 });
 
 ImageResizer.displayName = "ImageResizer";
+
+export const UserSvg = React.memo(() => {
+  return (
+    <svg
+      className="w-6 h-6 text-zinc-600 dark:text-zinc-300"
+      fill="currentColor"
+      viewBox="0 0 20 20"
+    >
+      <path
+        fillRule="evenodd"
+        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+});
+
+UserSvg.displayName = "UserSvg";
