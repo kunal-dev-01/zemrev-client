@@ -1,12 +1,16 @@
+// src/components/Sidebar/SideBar.tsx
+
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { useCallback } from "react";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
-import { User } from "@/services/authService/types";
-import { SidebarSvgTwo , ImageConvert , ImageOptamize , ImageResizer } from "../Svg/NavSvg";
-import Image from "next/image";
+import { ImageConvert, ImageOptamize, ImageResizer } from "../Svg/NavSvg";
 import clsx from "clsx";
-import Spinner from "../Layouts/Loaders/Spinner";
 import Link from "next/link";
+import {
+  Backdrop,
+  Header,
+  UserMenu,
+} from "./SideBar.partials";
 
 const Tools = [
   { 
@@ -18,18 +22,24 @@ const Tools = [
     name: "Image Optimizer", 
     href: "/image-optimizer", 
     icon: <ImageOptamize />
-    
   },
   { 
     name: "Image Resizer", 
     href: "/image-resizer", 
     icon: <ImageResizer />
   },
-]
+];
 
 const SideBar = () => {
   const { isOpenSidebar, setOpenSidebar } = useLoginModal();
-  const { logout, isLoggingOut, user } = useAuth();
+  const { 
+    logout, 
+    isLoggingOut, 
+    user, 
+    credits, 
+    creditType, 
+    isLoading: isLoadingAuth 
+  } = useAuth();
 
   const toggleSidebar = useCallback(
     () => setOpenSidebar(!isOpenSidebar),
@@ -79,7 +89,10 @@ const SideBar = () => {
         </div>
 
         <UserMenu
-          user={user as User}
+          user={user}
+          type={creditType}
+          credits={credits}
+          isLoadingCredits={isLoadingAuth}
           isLoggingOut={isLoggingOut}
           onLogout={handleLogout}
         />
@@ -87,110 +100,5 @@ const SideBar = () => {
     </>
   );
 };
-
-// ---- Sub Components ---- //
-
-const Backdrop = ({
-  isOpen,
-  onClick,
-}: {
-  isOpen: boolean;
-  onClick: () => void;
-}) => (
-  <div
-    onClick={onClick}
-    className={clsx(
-      "fixed inset-0 bg-white/50 dark:bg-black/50 z-40 transition-opacity duration-300 ease-in-out",
-      { "opacity-100 visible": isOpen, "opacity-0 invisible": !isOpen }
-    )}
-  />
-);
-
-const Header = ({ onToggle }: { onToggle: () => void }) => (
-  <div className="flex items-center p-1 rounded-xl border-2 border-zinc-100/80 dark:border-zinc-900/50 bg-zinc-100/10 dark:bg-zinc-900/10">
-    <button
-      onClick={onToggle}
-      className="rounded-lg transition-colors duration-200 cursor-pointer"
-      aria-label="Toggle sidebar"
-    >
-      <SidebarSvgTwo />
-    </button>
-    <h2 className="mx-auto text-zinc-700 dark:text-zinc-300 text-2xl font-semibold">
-      Explore Tools
-    </h2>
-  </div>
-);
-
-const UserMenu = ({
-  user,
-  isLoggingOut,
-  onLogout,
-}: {
-  user: User;
-  isLoggingOut: boolean;
-  onLogout: () => void;
-}) => (
-  <div
-    id="user-menu"
-    className="w-full p-[1vh] md:p-[0.5vw] rounded-xl border-2 border-zinc-100/80 dark:border-zinc-900/50 bg-zinc-100/10 dark:bg-zinc-900/10"
-  >
-    <div className="flex flex-col gap-3">
-      <UserCard user={user} />
-      <LogoutButton isLoading={isLoggingOut} onLogout={onLogout} />
-    </div>
-  </div>
-);
-
-const UserCard = ({ user }: { user: User }) => (
-  <div className="flex items-center gap-3 rounded-xl bg-zinc-100 dark:bg-zinc-900/50 p-2">
-    <div className="w-[5vh] h-[5vh] md:w-[2.5vw] md:h-[2.5vw] rounded-xl overflow-hidden shrink-0">
-      <Image
-        src={
-          user.avatar ||
-          `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            user.name || "User"
-          )}&background=random`
-        }
-        alt={`${user.name || "User"}'s avatar`}
-        width={50}
-        height={50}
-        loading="lazy"
-        className="w-full h-full object-cover"
-      />
-    </div>
-    <div className="flex-1 min-w-0">
-      <p className="font-semibold text-zinc-900 dark:text-zinc-100 truncate text-sm md:text-base">
-        {user.name || "User"}
-      </p>
-      <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 truncate">
-        {user.email || "Email"}
-      </p>
-    </div>
-  </div>
-);
-
-const LogoutButton = ({
-  isLoading,
-  onLogout,
-}: {
-  isLoading: boolean;
-  onLogout: () => void;
-}) => (
-  <button
-    aria-label="Logout"
-    onClick={onLogout}
-    disabled={isLoading}
-    className="w-full py-1.5 px-4 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold text-sm md:text-base transition-colors duration-700 ease-in-out cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-  >
-    {isLoading ? (
-      <>
-        <Spinner color="text-white" size="sm" />
-        <span>Logging out...</span>
-      </>
-    ) : (
-      "Logout"
-    )}
-  </button>
-);
 
 export default SideBar;
