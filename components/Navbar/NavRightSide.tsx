@@ -42,7 +42,7 @@ const NavRightSide = () => {
           <button
             onClick={handleLoginClick}
             aria-label="Login"
-            className="h-full px-6 font-semibold rounded-md bg-light dark:bg-dark text-zinc-100 hover:scale-105 transition-transform duration-300"
+            className="h-full px-6 font-semibold rounded-md bg-light dark:bg-dark text-zinc-100 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer"
           >
             Login
           </button>
@@ -51,7 +51,7 @@ const NavRightSide = () => {
         <button
           aria-label="Nav Sidebar"
           onClick={handleSidebarClick}
-          className="hover:scale-105 transition-transform duration-300"
+          className="hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer"
         >
           <SidebarSvg />
         </button>
