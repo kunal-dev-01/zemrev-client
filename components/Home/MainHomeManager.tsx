@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/authHooks/auth.hooks";
 const MainHomeManager = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { fetchUserAfterAuth, user } = useAuth();
+  const { checkAuth, user } = useAuth();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const MainHomeManager = () => {
     if (authSuccess === "success" && !user && !isAuthenticating) {
       setIsAuthenticating(true);
 
-      fetchUserAfterAuth()
+      checkAuth()
         .then((success) => {
           setIsAuthenticating(false);
           if (success) {
@@ -30,7 +30,7 @@ const MainHomeManager = () => {
           router.replace("/");
         });
     }
-  }, [searchParams, fetchUserAfterAuth, router, user, isAuthenticating]);
+  }, [searchParams, checkAuth, router, user, isAuthenticating]);
 
   if (isAuthenticating) {
     return (
