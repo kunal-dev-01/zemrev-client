@@ -91,7 +91,7 @@ export default function GoogleOAuth() {
       onClick={closeWithAnimation}
     >
       <div
-        className="relative w-full max-w-md rounded-2xl bg-zinc-100/50 backdrop-blur-2xl dark:bg-zinc-900/30 shadow-2xl"
+        className="relative w-full max-w-md rounded-2xl bg-zinc-100 backdrop-blur-2xl dark:bg-zinc-900/30 "
         onClick={stopPropagation}
       >
         {/* Close */}
