@@ -1,4 +1,5 @@
 // src/services/authService/types.ts
+
 export interface User {
   email: string;
   name: string;
@@ -17,7 +18,6 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   credits: CreditStats | null;
-  creditType: 'user' | 'session' | null;
   isLoading: boolean;
   error: string | null;
 }
@@ -35,8 +35,7 @@ export interface LogoutResponse {
 
 export interface MeResponse {
   success: boolean;
-  user?: User;
-  type: 'user' | 'session';
+  user: User;
   credits: CreditStats;
 }
 
