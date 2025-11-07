@@ -1,12 +1,12 @@
 "use client"
 
 import dynamic from "next/dynamic"
-const MainImageConverterPage = dynamic(() => import("@/components/ImageConverter/MainImageConverterPage"), { ssr: false })
+const MainImageToolsPage = dynamic(() => import("@/components/ImageTools/MainImageToolsPage"), { ssr: false })
 
 const page = () => {
   return (
     <div className="w-full">
-      <MainImageConverterPage />
+      <MainImageToolsPage />
     </div>
   )
 }
