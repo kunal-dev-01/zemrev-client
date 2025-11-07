@@ -5,6 +5,7 @@ import type { LogoutResponse, MeResponse } from './types';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const authApi = baseApi.injectEndpoints({
+
   endpoints: (builder) => ({
     getMe: builder.query<MeResponse, void>({
       query: () => ({
@@ -49,20 +50,6 @@ export const authApi = baseApi.injectEndpoints({
       },
     }),
 
-    // For guests - gets session credits only
-    getGuestCredits: builder.query<MeResponse, void>({
-      query: () => ({
-        url: '/auth/credits',
-        method: 'GET',
-      }),
-      providesTags: ['Auth'],
-      transformErrorResponse: (response) => {
-        return response.data || { 
-          message: 'Failed to fetch credits', 
-          statusCode: 500 
-        };
-      },
-    }),
   }),
   overrideExisting: false,
 });
@@ -71,7 +58,5 @@ export const {
   useGetMeQuery,
   useLazyGetMeQuery,
   useGoogleLoginMutation,
-  useLogoutMutation,
-  useGetGuestCreditsQuery,
-  useLazyGetGuestCreditsQuery,
+  useLogoutMutation
 } = authApi;
