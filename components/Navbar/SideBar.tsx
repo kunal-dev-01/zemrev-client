@@ -1,59 +1,29 @@
-// src/components/Sidebar/SideBar.tsx
-
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { useCallback } from "react";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { ImageConvert, ImageOptamize, ImageResizer } from "../Svg/NavSvg";
 import clsx from "clsx";
 import Link from "next/link";
-import {
-  Backdrop,
-  Header,
-  UserMenu,
-} from "./SideBar.partials";
+import { Backdrop, Header, UserMenu } from "./SideBar.partials";
 
 const Tools = [
-  { 
-    name: "Image Converter", 
-    href: "/image-converter", 
-    icon: <ImageConvert />
-  },
-  { 
-    name: "Image Optimizer", 
-    href: "/image-optimizer", 
-    icon: <ImageOptamize />
-  },
-  { 
-    name: "Image Resizer", 
-    href: "/image-resizer", 
-    icon: <ImageResizer />
-  },
+  { name: "Image Converter", href: "/image-converter", icon: <ImageConvert /> },
+  { name: "Image Optimizer", href: "/image-optimizer", icon: <ImageOptamize /> },
+  { name: "Image Resizer", href: "/image-resizer", icon: <ImageResizer /> },
 ];
 
 const SideBar = () => {
   const { isOpenSidebar, setOpenSidebar } = useLoginModal();
-  const { 
-    logout, 
-    isLoggingOut, 
-    user, 
-    credits, 
-    creditType, 
-    isLoading: isLoadingAuth 
-  } = useAuth();
+  const { logout, isLoggingOut, user, credits, isLoading: isLoadingAuth } = useAuth();
 
   const toggleSidebar = useCallback(
     () => setOpenSidebar(!isOpenSidebar),
     [isOpenSidebar, setOpenSidebar]
   );
 
-  const closeSidebar = useCallback(
-    () => setOpenSidebar(false),
-    [setOpenSidebar]
-  );
+  const closeSidebar = useCallback(() => setOpenSidebar(false), [setOpenSidebar]);
 
-  const handleLogout = useCallback(async () => {
-    await logout();
-  }, [logout]);
+  const handleLogout = useCallback(async () => await logout(), [logout]);
 
   return (
     <>
@@ -68,12 +38,11 @@ const SideBar = () => {
         <Header onToggle={toggleSidebar} />
 
         <div className="flex-1 overflow-y-auto scrollbar-hide my-4 p-3 space-y-2 custom-scrollbar w-full border-2 border-zinc-100/80 dark:border-zinc-900/50 rounded-xl bg-zinc-100/10 dark:bg-zinc-900/10">
-          {/* Tools */}
           <div className="space-y-2">
             {Tools.map((tool, i) => (
-              <Link 
-                href={tool.href} 
-                key={i} 
+              <Link
+                href={tool.href}
+                key={i}
                 onClick={closeSidebar}
                 className="flex items-center gap-3 px-3 py-2 rounded-lg border border-zinc-200/50 dark:border-zinc-800/50 bg-white/50 dark:bg-zinc-900/30 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-all duration-200 group"
               >
@@ -88,14 +57,16 @@ const SideBar = () => {
           </div>
         </div>
 
-        <UserMenu
-          user={user}
-          type={creditType}
-          credits={credits}
-          isLoadingCredits={isLoadingAuth}
-          isLoggingOut={isLoggingOut}
-          onLogout={handleLogout}
-        />
+        {/* ONLY user UI remains */}
+        {user && (
+          <UserMenu
+            user={user}
+            credits={credits}
+            isLoadingCredits={isLoadingAuth}
+            isLoggingOut={isLoggingOut}
+            onLogout={handleLogout}
+          />
+        )}
       </aside>
     </>
   );
