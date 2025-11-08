@@ -201,7 +201,7 @@ const MainImageConverterPage = () => {
   return (
     <div aria-label="image-tool-page" className="w-full space-y-2 md:space-y-4">
       {/* Header */}
-      <header className="w-full p-4 rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50">
+      <header className="w-full p-4 rounded-2xl bg-linear-to-l bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-zinc-700 dark:text-zinc-300 select-none text-center">
           Image Toolkit
         </h1>
