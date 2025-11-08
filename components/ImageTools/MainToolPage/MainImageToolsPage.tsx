@@ -114,29 +114,34 @@ const ToolSection = ({
   items, 
   type, 
   themeColor 
-}: ToolSection & { themeColor: string }) => (
-  <div className="border-2 border-zinc-100/80 dark:border-zinc-900/50 rounded-2xl p-2">
-    <div className="p-2 text-zinc-700 dark:text-zinc-300 text-[2vh] md:text-[1.5vw] border-2 border-zinc-100/80 dark:border-zinc-900/50 rounded-xl font-semibold mb-2">
-      {title}
+}: ToolSection & { themeColor: string }) => {
+  const isResizeTool = title === "Resize Tool";
+  
+  return (
+    <div className="border-2 border-zinc-100/80 dark:border-zinc-900/50 rounded-2xl p-2">
+      <div className="p-2 text-zinc-700 dark:text-zinc-300 text-[2vh] md:text-[1.5vw] border-2 border-zinc-100/80 dark:border-zinc-900/50 rounded-xl font-semibold mb-2">
+        {title}
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+        <MainToolCard {...mainTool} />
+        {type === 'converter' 
+          ? (items as ConverterTool[]).map((tool, index) => (
+              <ConverterCard key={`${tool.from}-${tool.to}-${index}`} tool={tool} themeColor={themeColor} />
+            ))
+          : (items as SimpleTool[]).map((tool, index) => (
+              <SimpleToolCard 
+                key={`${tool.text}-${index}`} 
+                tool={tool} 
+                icon={title.includes('Compress') ? <CompressLogoSvg /> : <ResizerLogoSvg />}
+                themeColor={themeColor}
+                isResizeTool={isResizeTool}
+              />
+            ))
+        }
+      </div>
     </div>
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-      <MainToolCard {...mainTool} />
-      {type === 'converter' 
-        ? (items as ConverterTool[]).map((tool, index) => (
-            <ConverterCard key={`${tool.from}-${tool.to}-${index}`} tool={tool} themeColor={themeColor} />
-          ))
-        : (items as SimpleTool[]).map((tool, index) => (
-            <SimpleToolCard 
-              key={`${tool.text}-${index}`} 
-              tool={tool} 
-              icon={title.includes('Compress') ? <CompressLogoSvg /> : <ResizerLogoSvg />}
-              themeColor={themeColor}
-            />
-          ))
-      }
-    </div>
-  </div>
-);
+  );
+};
 
 const MainImageConverterPage = () => {
   const toolSections: (ToolSection & { themeColor: string })[] = [
