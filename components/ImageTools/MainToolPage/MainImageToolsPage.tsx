@@ -79,25 +79,34 @@ const ConverterCard = ({ tool, themeColor }: { tool: ConverterTool; themeColor: 
 const SimpleToolCard = ({ 
   tool, 
   icon, 
-  themeColor 
+  themeColor,
+  isResizeTool = false
 }: { 
   tool: SimpleTool; 
   icon: React.ReactNode; 
   themeColor: string;
-}) => (
-  <div className="p-3 rounded-xl flex flex-col gap-2 items-center justify-center cursor-pointer border-2 border-zinc-100/80 dark:border-zinc-900/50 relative overflow-hidden group min-h-32">
-    <div className="h-6 md:h-8">
-      {icon}
-    </div>
-    <span className="text-base md:text-lg lg:text-xl font-medium">{tool.text}</span>
-    {tool.isTrending && (
-      <div className={`absolute top-2 right-2 p-1 ${themeColor} rounded-md text-white`}>
-        <TrendingSvg />
+  isResizeTool?: boolean;
+}) => {
+  // For resize tool, use violet-700/50 in dark mode instead of violet-900
+  const hoverBgClass = isResizeTool 
+    ? themeColor.replace('-200', '-100').replace('-800', '-700/50')
+    : themeColor.replace('-200', '-100').replace('-800', '-900');
+  
+  return (
+    <div className="p-3 rounded-xl flex flex-col gap-2 items-center justify-center cursor-pointer border-2 border-zinc-100/80 dark:border-zinc-900/50 relative overflow-hidden group min-h-32">
+      <div className="h-6 md:h-8">
+        {icon}
       </div>
-    )}
-    <div className={`absolute inset-0 backdrop-blur-md ${themeColor.replace('-200', '-100').replace('-800', '-900')} opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 ease-in-out -z-10 rounded-xl`} />
-  </div>
-);
+      <span className="text-base md:text-lg lg:text-xl font-medium">{tool.text}</span>
+      {tool.isTrending && (
+        <div className={`absolute top-2 right-2 p-1 ${themeColor} rounded-md text-white`}>
+          <TrendingSvg />
+        </div>
+      )}
+      <div className={`absolute inset-0 backdrop-blur-md ${hoverBgClass} opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 ease-in-out -z-10 rounded-xl`} />
+    </div>
+  );
+};
 
 const ToolSection = ({ 
   title, 
