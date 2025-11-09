@@ -6,9 +6,9 @@ const MainConvertPage = dynamic(() => import("@/components/ImageTools/ImageConve
 
 const page = () => {
   return (
-    <div className="w-full">
+    <main className="w-full">
       <MainConvertPage />
-    </div>
+    </main>
   )
 }
 

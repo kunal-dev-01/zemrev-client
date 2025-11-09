@@ -7,9 +7,9 @@ const MainImageToolsPage = dynamic(() => import("@/components/ImageTools/MainToo
 
 const page = () => {
   return (
-    <div className="w-full">
+    <main className="w-full">
       <MainImageToolsPage />
-    </div>
+    </main>
   )
 }
 
