@@ -9,8 +9,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-inter: var(--font-inter);
-  --color-dark: #3B38A0;
-  --color-light: #6C96FF;
+  --color-dark: #3b38a0;
+  --color-light: #6c96ff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,13 +54,11 @@ body {
   }
 }
 
-.scrollbar-hide {
-  scrollbar-width: none; 
-  -ms-overflow-style: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
+::-webkit-scrollbar {
   display: none;
 }
 
-
+body {
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+}
