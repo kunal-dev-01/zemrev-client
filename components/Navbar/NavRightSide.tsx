@@ -1,5 +1,6 @@
 // src/components/Navbar/NavRightSide.tsx
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
@@ -8,10 +9,13 @@ import CreditDisplay from "../Layouts/Credit/CreditDisplay";
 
 const NavRightSide = () => {
   const { user } = useAuth();
-  const { setOpenAuth, setOpenSidebar } = useLoginModal();
-
-  const handleLoginClick = useCallback(() => setOpenAuth(true), [setOpenAuth]);
+  const router = useRouter();
+  const { setOpenSidebar } = useLoginModal();
   const handleSidebarClick = useCallback(() => setOpenSidebar(true), [setOpenSidebar]);
+
+  const handleLoginClick = () => {
+    router.replace("/auth/login");
+  }
 
   const avatarSrc =
     user?.avatar ||
