@@ -1,7 +1,7 @@
 const Skeleton = ({
   width = "w-full",
   height = "h-4",
-  rounded = "rounded-xl",
+  rounded = "rounded-2xl",
   className = "",
 }) => {
   const defaultColor = "bg-zinc-100 dark:bg-zinc-900/30";
