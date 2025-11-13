@@ -7,6 +7,7 @@ import * as z from "zod";
 import Input from "@/components/Layouts/Input/Input";
 import Spinner from "../Layouts/Loaders/Spinner";
 import GoogleAuthButton from "./GoogleAuthButton";
+import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
 
 // Validation Schema
 const registerSchema = z.object({
@@ -19,7 +20,7 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 const RegisterPage = () => {
-  const { signup, isLoading } = useAuth();
+  const { signup, isLoading, error, clearError } = useAuth();
 
   const {
     register,
@@ -34,9 +35,8 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="w-full md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
+    <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
       <div className="w-full md:w-[40%] md:p-6 p-4 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl">
-        
         {/* HEADER */}
         <div className="text-center mb-6">
           <h1 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 select-none">
@@ -49,7 +49,6 @@ const RegisterPage = () => {
 
         {/* FORM */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          
           <Input
             label="Full Name"
             type="text"
@@ -80,7 +79,6 @@ const RegisterPage = () => {
           </label>
 
           <div className="w-full grid grid-cols-2 gap-2 border border-zinc-300 dark:border-zinc-800 rounded-lg p-2">
-
             {["basic", "pro", "elite", "scale"].map((plan) => {
               const prices: Record<string, string> = {
                 basic: "$4.99",
@@ -185,6 +183,14 @@ const RegisterPage = () => {
           </p>
         </div>
 
+        {error && (
+          <AuthErrorAlert
+            message={error}
+            onClose={() => {
+              clearError;
+            }}
+          />
+        )}
       </div>
     </div>
   );
