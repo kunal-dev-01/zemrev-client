@@ -1,17 +1,41 @@
+// src/hooks/authHooks/auth.hooks.ts
+
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '../reduxHooks/redux.hooks';
+
 import {
   useSignupMutation,
   useLoginMutation,
   useLogoutMutation,
-  useGoogleLoginMutation
+  useGoogleLoginMutation,
 } from '@/services/authService/auth.api';
+
 import {
   logout as logoutAction,
   setError,
   clearError,
 } from '@/services/authService/auth.slice';
+
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import type { SerializedError } from '@reduxjs/toolkit';
+
+
+const getApiErrorMessage = (
+  error: FetchBaseQueryError | SerializedError | unknown
+): string => {
+  if (!error) return 'Something went wrong';
+  if ('status' in (error as FetchBaseQueryError)) {
+    const errData = (error as FetchBaseQueryError).data as { message?: string };
+    return errData?.message || 'Request failed';
+  }
+  if ('message' in (error as SerializedError)) {
+    return (error as SerializedError).message || 'Something went wrong';
+  }
+
+  return 'Unexpected error';
+};
+
 
 export const useAuth = () => {
   const router = useRouter();
@@ -26,41 +50,47 @@ export const useAuth = () => {
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
   const [googleLoginMutation, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
 
-  const isPublicRoute = typeof window !== 'undefined' && 
-    ['/', '/auth/login', '/auth/signup', '/auth/verify-email'].some(
-      (route) => window.location.pathname.startsWith(route)
-    );
 
+  // -----------------------------------------
+  // SIGNUP
+  // -----------------------------------------
   const signup = useCallback(
     async (data: { fullName: string; email: string; password: string; planType: string }) => {
       try {
         dispatch(clearError());
         await signupMutation(data).unwrap();
-        router.push('/dashboard');
         return true;
-      } catch (err: any) {
-        dispatch(setError(err?.data?.message || 'Signup failed'));
+      } catch (err: unknown) {
+        dispatch(setError(getApiErrorMessage(err)));
         return false;
       }
     },
     [signupMutation, dispatch, router]
   );
 
+
+  // -----------------------------------------
+  // LOGIN
+  // -----------------------------------------
   const login = useCallback(
     async (data: { email: string; password: string }) => {
       try {
         dispatch(clearError());
         await loginMutation(data).unwrap();
-        router.push('/dashboard');
+        router.push('/user/dashboard');
         return true;
-      } catch (err: any) {
-        dispatch(setError(err?.data?.message || 'Login failed'));
+      } catch (err: unknown) {
+        dispatch(setError(getApiErrorMessage(err)));
         return false;
       }
     },
     [loginMutation, dispatch, router]
   );
 
+
+  // -----------------------------------------
+  // LOGOUT
+  // -----------------------------------------
   const logout = useCallback(async () => {
     try {
       await logoutMutation().unwrap();
@@ -71,15 +101,23 @@ export const useAuth = () => {
     }
   }, [logoutMutation, dispatch, router]);
 
+
+  // -----------------------------------------
+  // GOOGLE LOGIN
+  // -----------------------------------------
   const loginWithGoogle = useCallback(async () => {
     try {
       dispatch(clearError());
       await googleLoginMutation().unwrap();
-    } catch {
-      dispatch(setError('Failed to initiate Google login'));
+    } catch (err: unknown) {
+      dispatch(setError(getApiErrorMessage(err)));
     }
   }, [googleLoginMutation, dispatch]);
 
+
+  // -----------------------------------------
+  // HELPERS
+  // -----------------------------------------
   const clearAuthError = useCallback(() => dispatch(clearError()), [dispatch]);
 
   const getDisplayName = useCallback(() => {
@@ -102,12 +140,10 @@ export const useAuth = () => {
   );
 
   const combinedIsLoading =
-    isLoading ||
-    isSigningUp ||
-    isLoggingIn ||
-    isLoggingOut ||
-    isGoogleLoading;
+    isLoading || isSigningUp || isLoggingIn || isLoggingOut || isGoogleLoading;
 
+
+  // FINAL RETURN (CLEAN API)
   return {
     user,
     accessToken,
@@ -120,6 +156,7 @@ export const useAuth = () => {
     logout,
     loginWithGoogle,
     clearError: clearAuthError,
+
     getDisplayName,
     getCreditsRemaining,
     hasEnoughCredits,
