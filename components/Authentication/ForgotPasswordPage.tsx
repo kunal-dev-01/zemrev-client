@@ -27,7 +27,7 @@ const ForgotPasswordPage = () => {
   });
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
-    await forgotPassword(data);
+    const result = await forgotPassword(data);
     setEmailSent(true);
   };
 
@@ -97,7 +97,7 @@ const ForgotPasswordPage = () => {
           </div>
         )}
 
-        {error && <AuthErrorAlert message={error} onClose={() => {clearError}} />}
+        {error && <AuthErrorAlert message={error} onClose={clearError} />}
         
       </div>
     </div>

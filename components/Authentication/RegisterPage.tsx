@@ -186,9 +186,7 @@ const RegisterPage = () => {
         {error && (
           <AuthErrorAlert
             message={error}
-            onClose={() => {
-              clearError;
-            }}
+            onClose={clearError}
           />
         )}
       </div>
