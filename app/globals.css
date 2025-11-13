@@ -26,7 +26,7 @@ body {
   font-family: var(--font-inter) sans-serif;
 }
 
-/* ============================== Animations ================================== */
+/* =================== Animations ======================= */
 
 .fade-in {
   animation: fadeIn 0.5s ease-in forwards;
@@ -62,3 +62,4 @@ body {
   -ms-overflow-style: none; 
   scrollbar-width: none;
 }
+
