@@ -7,6 +7,10 @@ import type {
   SignupRequest,
   SignupResponse,
   LogoutResponse,
+  ForgotRequest,
+  ForgotResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse
 } from './types';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -47,6 +51,25 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['User', 'Auth'],
     }),
+
+    forgotPassword: builder.mutation<ForgotResponse, ForgotRequest>({
+      query: (credentials) => ({
+        url: '/auth/forgot-password',
+        method: 'POST',
+        body: credentials,
+      }),
+      invalidatesTags: ['Auth'],
+    }),
+
+    resetPassword: builder.mutation<ResetPasswordResponse, ResetPasswordRequest>({
+      query: (credentials) => ({
+        url: '/auth/reset-password',
+        method: 'POST',
+        body: credentials,
+      }),
+      invalidatesTags: ['Auth'],
+    })
+
   }),
   overrideExisting: false,
 });
@@ -56,4 +79,6 @@ export const {
   useLoginMutation,
   useGoogleLoginMutation,
   useLogoutMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation
 } = authApi;

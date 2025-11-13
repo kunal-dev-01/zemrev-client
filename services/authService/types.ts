@@ -120,6 +120,24 @@ export interface LogoutResponse {
   message: string;
 }
 
+export interface ForgotRequest {
+  email: string;
+}
+
+export interface ForgotResponse {
+  status: string;
+  message: string;
+}
+
+export interface ResetPasswordRequest {
+  resetPasswordToken: string;
+  newPassword: string;
+}
+export interface ResetPasswordResponse {
+  status: string;
+  message: string;
+}
+
 export interface ApiError {
   status: string;
   message: string;

@@ -95,7 +95,35 @@ const authSlice = createSlice({
 
       // Logout
       .addMatcher(authApi.endpoints.logout.matchFulfilled, () => initialState)
-      .addMatcher(authApi.endpoints.logout.matchRejected, () => initialState);
+      .addMatcher(authApi.endpoints.logout.matchRejected, () => initialState)
+
+      // Forgot Password 
+      .addMatcher(authApi.endpoints.forgotPassword.matchPending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addMatcher(authApi.endpoints.forgotPassword.matchFulfilled, (state) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addMatcher(authApi.endpoints.forgotPassword.matchRejected, (state, action) => {
+        state.isLoading = false;
+        state.error = getErrorMessage(action.payload) || 'Password reset failed';
+      })
+
+      // Reset Password
+      .addMatcher(authApi.endpoints.resetPassword.matchPending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addMatcher(authApi.endpoints.resetPassword.matchFulfilled, (state) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addMatcher(authApi.endpoints.resetPassword.matchRejected, (state, action) => {
+        state.isLoading = false;
+        state.error = getErrorMessage(action.payload) || 'Password reset failed';
+      });
   },
 });
 

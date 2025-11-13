@@ -9,6 +9,8 @@ import {
   useLoginMutation,
   useLogoutMutation,
   useGoogleLoginMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation
 } from '@/services/authService/auth.api';
 
 import {
@@ -49,6 +51,8 @@ export const useAuth = () => {
   const [loginMutation, { isLoading: isLoggingIn }] = useLoginMutation();
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
   const [googleLoginMutation, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
+  const [forgotPasswordMutation, { isLoading: isForgotPasswordLoading }] = useForgotPasswordMutation();
+  const [resetPasswordMutation, { isLoading: isResetPasswordLoading }] = useResetPasswordMutation();
 
 
   // -----------------------------------------
@@ -116,6 +120,32 @@ export const useAuth = () => {
 
 
   // -----------------------------------------
+  // FORGOT PASSWORD
+  // -----------------------------------------
+  const forgotPassword = useCallback(async (data: {email: string}) => {
+    try {
+      dispatch(clearError());
+      await forgotPasswordMutation(data).unwrap();
+    } catch (err: unknown) {
+      dispatch(setError(getApiErrorMessage(err)));
+    }
+  }, [forgotPasswordMutation, dispatch]);
+
+
+  // -----------------------------------------
+  // RESET PASSWORD
+  // -----------------------------------------
+  const resetPassword = useCallback(async (data: {resetPasswordToken: string, newPassword: string}) => {
+    try {
+      dispatch(clearError());
+      await resetPasswordMutation(data).unwrap();
+    } catch (err: unknown) {
+      dispatch(setError(getApiErrorMessage(err)));
+    }
+  }, [resetPasswordMutation, dispatch]);
+
+
+  // -----------------------------------------
   // HELPERS
   // -----------------------------------------
   const clearAuthError = useCallback(() => dispatch(clearError()), [dispatch]);
@@ -140,7 +170,7 @@ export const useAuth = () => {
   );
 
   const combinedIsLoading =
-    isLoading || isSigningUp || isLoggingIn || isLoggingOut || isGoogleLoading;
+    isLoading || isSigningUp || isLoggingIn || isLoggingOut || isGoogleLoading || isForgotPasswordLoading || isResetPasswordLoading;
 
 
   // FINAL RETURN (CLEAN API)
@@ -156,6 +186,8 @@ export const useAuth = () => {
     logout,
     loginWithGoogle,
     clearError: clearAuthError,
+    forgotPassword,
+    resetPassword,
 
     getDisplayName,
     getCreditsRemaining,
