@@ -1,15 +1,21 @@
-// src/services/authService/auth.slice.ts
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { AuthState, User, CreditStats } from './types';
+import type { ApiError, AuthState, User } from './types';
 import { authApi } from './auth.api';
 
 const initialState: AuthState = {
   user: null,
+  accessToken: null,
   isAuthenticated: false,
-  credits: null,
   isLoading: false,
   error: null,
+};
+
+export const getErrorMessage = (error: unknown): string => {
+  if (typeof error === "string") return error;
+  if (error && typeof error === "object" && "message" in error) {
+    return (error as ApiError).message;
+  }
+  return "An unexpected error occurred";
 };
 
 const authSlice = createSlice({
@@ -21,13 +27,18 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.error = null;
     },
-    setCredits: (state, action: PayloadAction<CreditStats>) => {
-      state.credits = action.payload;
+    setAccessToken: (state, action: PayloadAction<string>) => {
+      state.accessToken = action.payload;
+      state.isAuthenticated = true;
     },
-    updateCredits: (state, action: PayloadAction<Partial<CreditStats>>) => {
-      if (state.credits) {
-        state.credits = { ...state.credits, ...action.payload };
-      }
+    setCredentials: (
+      state,
+      action: PayloadAction<{ user: User; accessToken: string }>
+    ) => {
+      state.user = action.payload.user;
+      state.accessToken = action.payload.accessToken;
+      state.isAuthenticated = true;
+      state.error = null;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
@@ -40,34 +51,46 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
+      state.accessToken = null;
       state.isAuthenticated = false;
-      state.credits = null;
       state.error = null;
       state.isLoading = false;
     },
-    resetAuth: () => initialState,
   },
   extraReducers: (builder) => {
     builder
-      // getMe
-      .addMatcher(authApi.endpoints.getMe.matchPending, (state) => {
+      .addMatcher(authApi.endpoints.signup.matchPending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addMatcher(authApi.endpoints.getMe.matchFulfilled, (state, action) => {
-        state.user = action.payload.user;
+      .addMatcher(authApi.endpoints.signup.matchFulfilled, (state, action) => {
+        state.user = action.payload.data.user;
+        state.accessToken = action.payload.data.accessToken;
         state.isAuthenticated = true;
-        state.credits = action.payload.credits;
         state.isLoading = false;
         state.error = null;
       })
-      .addMatcher(authApi.endpoints.getMe.matchRejected, (state, action) => {
-        state.user = null;
-        state.isAuthenticated = false;
+      .addMatcher(authApi.endpoints.signup.matchRejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || 'Failed to fetch user';
+        state.error = getErrorMessage(action.payload) || 'Signup failed';
       })
-      // logout
+
+      .addMatcher(authApi.endpoints.login.matchPending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
+        state.user = action.payload.data.user;
+        state.accessToken = action.payload.data.accessToken;
+        state.isAuthenticated = true;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
+        state.isLoading = false;
+        state.error = getErrorMessage(action.payload)|| 'Login failed';
+      })
+
       .addMatcher(authApi.endpoints.logout.matchFulfilled, () => initialState)
       .addMatcher(authApi.endpoints.logout.matchRejected, () => initialState);
   },
@@ -75,13 +98,12 @@ const authSlice = createSlice({
 
 export const {
   setUser,
-  setCredits,
-  updateCredits,
+  setAccessToken,
+  setCredentials,
   setLoading,
   setError,
   clearError,
   logout,
-  resetAuth,
 } = authSlice.actions;
 
 export default authSlice.reducer;

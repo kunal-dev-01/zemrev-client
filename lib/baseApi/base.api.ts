@@ -1,31 +1,31 @@
-import { 
-  createApi, 
-  fetchBaseQuery, 
-  BaseQueryFn, 
-  FetchArgs, 
-  FetchBaseQueryError 
+// lib/baseApi/base.api.ts
+
+import {
+  createApi,
+  fetchBaseQuery,
+  BaseQueryFn,
+  FetchArgs,
+  FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
-import type { ApiError } from '@/services/authService/types';
+import type { RootState } from '@/lib/redux/store';
+import { RefreshTokenResponse } from '@/services/authService/types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-const isApiError = (error: unknown): error is ApiError => {
-  return (
-    typeof error === 'object' &&
-    error !== null &&
-    'success' in error &&
-    'message' in error &&
-    'statusCode' in error
-  );
-};
 
 const baseQueryWithAuth = fetchBaseQuery({
   baseUrl: API_BASE_URL,
   credentials: 'include',
-  prepareHeaders: (headers) => {
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.accessToken;
+
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+
     if (!headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json');
     }
+
     return headers;
   },
 });
@@ -35,29 +35,33 @@ const baseQueryWithReauth: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  const result = await baseQueryWithAuth(args, api, extraOptions);
+  let result = await baseQueryWithAuth(args, api, extraOptions);
 
   if (result.error?.status === 401) {
-    const { logout } = await import('@/services/authService/auth.slice');
-    api.dispatch(logout());
-    
-    if (typeof window !== 'undefined') {
-      window.location.href = '/';
+    const refreshResult = await baseQueryWithAuth(
+      { url: '/auth/refresh-token', method: 'POST' },
+      api,
+      extraOptions
+    );
+
+    if (refreshResult.data) {
+      const { setAccessToken } = await import('@/services/authService/auth.slice');
+      const data = refreshResult.data as RefreshTokenResponse;
+      api.dispatch(setAccessToken(data.data.accessToken));
+
+      result = await baseQueryWithAuth(args, api, extraOptions);
+    } else {
+      const { logout } = await import('@/services/authService/auth.slice');
+      api.dispatch(logout());
+
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth/login';
+      }
     }
   }
 
   if (result.error && process.env.NODE_ENV === 'development') {
-    const errorData = result.error.data;
-    
-    if (isApiError(errorData)) {
-      console.log('🔴 API Error:', {
-        message: errorData.message,
-        status: errorData.statusCode,
-        errors: errorData.errors,
-      });
-    } else {
-      console.log('🔴 Network Error:', result.error);
-    }
+    console.error('🔴 API Error:', result.error);
   }
 
   return result;

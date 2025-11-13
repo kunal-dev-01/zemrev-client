@@ -1,27 +1,39 @@
-// src/services/authService/auth.api.ts
 import { baseApi } from '@/lib/baseApi/base.api';
-import type { LogoutResponse, MeResponse } from './types';
+import type {
+  LoginRequest,
+  LoginResponse,
+  SignupRequest,
+  SignupResponse,
+  LogoutResponse,
+} from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const authApi = baseApi.injectEndpoints({
+const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/verify-email'];
 
+const isPublicRoute = () => {
+  if (typeof window === 'undefined') return false;
+  return publicRoutes.some((route) => window.location.pathname.startsWith(route));
+};
+
+export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getMe: builder.query<MeResponse, void>({
-      query: () => ({
-        url: '/auth/me',
-        method: 'GET',
+    signup: builder.mutation<SignupResponse, SignupRequest>({
+      query: (credentials) => ({
+        url: '/auth/signup',
+        method: 'POST',
+        body: credentials,
       }),
-      providesTags: ['User', 'Auth'],
-      transformErrorResponse: (response) => {
-        if (response.status === 401) {
-          return {
-            message: 'Please login to continue',
-            statusCode: 401,
-          };
-        }
-        return response.data || { message: 'Failed to fetch user', statusCode: 500 };
-      },
+      invalidatesTags: ['Auth'],
+    }),
+
+    login: builder.mutation<LoginResponse, LoginRequest>({
+      query: (credentials) => ({
+        url: '/auth/login',
+        method: 'POST',
+        body: credentials,
+      }),
+      invalidatesTags: ['Auth'],
     }),
 
     googleLogin: builder.mutation<void, void>({
@@ -39,24 +51,14 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
       }),
       invalidatesTags: ['User', 'Auth'],
-      transformResponse: (response: LogoutResponse) => {
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('persist:root');
-        }
-        return response;
-      },
-      transformErrorResponse: (response) => {
-        return response.data || { message: 'Logout failed', statusCode: 500 };
-      },
     }),
-
   }),
   overrideExisting: false,
 });
 
 export const {
-  useGetMeQuery,
-  useLazyGetMeQuery,
+  useSignupMutation,
+  useLoginMutation,
   useGoogleLoginMutation,
-  useLogoutMutation
+  useLogoutMutation,
 } = authApi;
