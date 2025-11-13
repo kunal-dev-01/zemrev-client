@@ -25,7 +25,6 @@ export enum SubscriptionStatus {
 
 export type PlanPriority = "normal" | "high" | "highest" | "dedicated";
 
-
 export interface PlanDetails {
   type: PlanType;
   dailyCredits: number;
@@ -59,7 +58,6 @@ export interface User {
   passwordChangedAt?: Date;
   twoFactorSecret?: string;
   twoFactorEnabled: boolean;
-  superKey?: string;
   isActive: boolean;
   isBlocked: boolean;
   blockedReason?: string;
@@ -77,6 +75,7 @@ export interface AuthState {
   accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isGoogleLoading: boolean;
   error: string | null;
 }
 

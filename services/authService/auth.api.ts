@@ -1,3 +1,5 @@
+// src/services/authService/auth.api.ts
+
 import { baseApi } from '@/lib/baseApi/base.api';
 import type {
   LoginRequest,
@@ -6,18 +8,11 @@ import type {
   SignupResponse,
   LogoutResponse,
 } from './types';
-
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-const publicRoutes = ['/', '/auth/login', '/auth/signup', '/auth/verify-email'];
-
-const isPublicRoute = () => {
-  if (typeof window === 'undefined') return false;
-  return publicRoutes.some((route) => window.location.pathname.startsWith(route));
-};
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+
     signup: builder.mutation<SignupResponse, SignupRequest>({
       query: (credentials) => ({
         url: '/auth/signup',

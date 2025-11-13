@@ -6,6 +6,7 @@ const initialState: AuthState = {
   user: null,
   accessToken: null,
   isAuthenticated: false,
+  isGoogleLoading: false,
   isLoading: false,
   error: null,
 };
@@ -59,6 +60,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    // Signup
       .addMatcher(authApi.endpoints.signup.matchPending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -75,6 +77,7 @@ const authSlice = createSlice({
         state.error = getErrorMessage(action.payload) || 'Signup failed';
       })
 
+      // Login
       .addMatcher(authApi.endpoints.login.matchPending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -91,6 +94,7 @@ const authSlice = createSlice({
         state.error = getErrorMessage(action.payload)|| 'Login failed';
       })
 
+      // Logout
       .addMatcher(authApi.endpoints.logout.matchFulfilled, () => initialState)
       .addMatcher(authApi.endpoints.logout.matchRejected, () => initialState);
   },
