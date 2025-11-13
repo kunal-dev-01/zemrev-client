@@ -6,7 +6,6 @@ const initialState: AuthState = {
   user: null,
   accessToken: null,
   isAuthenticated: false,
-  isGoogleLoading: false,
   isLoading: false,
   error: null,
 };

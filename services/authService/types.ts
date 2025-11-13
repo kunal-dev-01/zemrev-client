@@ -75,7 +75,6 @@ export interface AuthState {
   accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  isGoogleLoading: boolean;
   error: string | null;
 }
 
