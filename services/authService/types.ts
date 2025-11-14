@@ -43,6 +43,7 @@ export interface Address {
 }
 
 export interface User {
+  _id?: string;
   googleId?: string;
   authProvider: AuthProvider;
   fullName: string;
@@ -78,10 +79,7 @@ export interface AuthState {
   error: string | null;
 }
 
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
+// ==================== REQUEST TYPES ====================
 
 export interface SignupRequest {
   fullName: string;
@@ -90,7 +88,33 @@ export interface SignupRequest {
   planType: string;
 }
 
-export interface LoginResponse {
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface Verify2FARequest {
+  tempToken: string;
+  totpCode: string;
+  superKey?: string;
+}
+
+export interface Enable2FARequest {
+  totpCode: string;
+}
+
+export interface ForgotRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  resetPasswordToken: string;
+  newPassword: string;
+}
+
+// ==================== RESPONSE TYPES ====================
+
+export interface SignupResponse {
   status: string;
   message: string;
   data: {
@@ -99,7 +123,23 @@ export interface LoginResponse {
   };
 }
 
-export interface SignupResponse {
+export interface VerifyEmailResponse {
+  status: string;
+  message: string;
+}
+
+export interface LoginResponse {
+  status: string;
+  message: string;
+  data: {
+    user?: User;
+    accessToken?: string;
+    requires2FA?: boolean;
+    tempToken?: string;
+  };
+}
+
+export interface Verify2FAResponse {
   status: string;
   message: string;
   data: {
@@ -120,8 +160,18 @@ export interface LogoutResponse {
   message: string;
 }
 
-export interface ForgotRequest {
-  email: string;
+export interface Setup2FAResponse {
+  status: string;
+  message: string;
+  data: {
+    secret: string;
+    qrCode: string;
+  };
+}
+
+export interface Enable2FAResponse {
+  status: string;
+  message: string;
 }
 
 export interface ForgotResponse {
@@ -129,18 +179,16 @@ export interface ForgotResponse {
   message: string;
 }
 
-export interface ResetPasswordRequest {
-  resetPasswordToken: string;
-  newPassword: string;
-}
 export interface ResetPasswordResponse {
   status: string;
   message: string;
 }
 
+// ==================== ERROR TYPES ====================
+
 export interface ApiError {
   status: string;
   message: string;
+  error?: string;
   statusCode?: number;
 }
-
