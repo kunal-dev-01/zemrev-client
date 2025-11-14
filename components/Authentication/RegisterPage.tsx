@@ -25,7 +25,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 const PLANS = [
   { value: "basic", name: "Basic", price: "$4.99", popular: false },
   { value: "pro", name: "Pro", price: "$9.99", popular: true },
-  { value: "elite", name: "Elite", price: "$14.99", popular: false },
+  { value: "elite", name: "Elite", price: "$19.99", popular: false },
   { value: "scale", name: "Scale", price: "Pay as you go", popular: false },
 ];
 
