@@ -10,23 +10,6 @@ export const ImageConverterTool = React.memo(() => {
 
 ImageConverterTool.displayName = "ImageConverterTool"
 
-export const ConvertLogoSvg = React.memo(() => {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><path fill="currentColor" d="M19 20.5q-.898 0-1.587-.563q-.688-.562-.853-1.437H11q-1.458 0-2.479-1.021T7.5 15q0-1.458 1.021-2.479T11 11.5h2q1.031 0 1.766-.735t.734-1.769q0-1.033-.734-1.764Q14.03 6.5 13 6.5H7.44q-.17.875-.856 1.438T5 8.5q-1.042 0-1.77-.729q-.73-.728-.73-1.769q0-1.04.73-1.771Q3.957 3.5 5 3.5q.898 0 1.584.563q.685.562.856 1.437H13q1.458 0 2.479 1.021T16.5 9q0 1.458-1.021 2.479T13 12.5h-2q-1.031 0-1.766.735T8.5 15.004q0 1.033.734 1.764q.735.732 1.766.732h5.56q.17-.875.856-1.438T19 15.5q1.042 0 1.77.729q.73.728.73 1.769q0 1.04-.73 1.771q-.728.731-1.77.731ZM5 7.5q.617 0 1.059-.441Q6.5 6.617 6.5 6t-.441-1.059Q5.617 4.5 5 4.5t-1.059.441Q3.5 5.383 3.5 6t.441 1.059Q4.383 7.5 5 7.5Z"/></svg>
-    )
-})
-
-ConvertLogoSvg.displayName = "ConvertLogoSvg"
-
-export const TrendingSvg = React.memo(() => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
-    <polyline points="16 7 22 7 22 13" />
-  </svg>
-));
-
-TrendingSvg.displayName = "TrendingSvg"
-
 // Image Resizer
 
 export const ImageResizerTool = React.memo(() => {
@@ -37,12 +20,6 @@ export const ImageResizerTool = React.memo(() => {
 
 ImageResizerTool.displayName = "ImageResizerTool"
 
-export const ResizerLogoSvg = React.memo(() => {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 32 32"><path fill="currentColor" d="M13 3H7.5A4.5 4.5 0 0 0 3 7.5V9a1 1 0 0 0 2 0V7.5A2.5 2.5 0 0 1 7.5 5H13a1 1 0 1 0 0-2M5 24.5v-8A2.5 2.5 0 0 1 7.5 14h8a2.5 2.5 0 0 1 2.5 2.5v8a2.5 2.5 0 0 1-2.5 2.5h-8A2.5 2.5 0 0 1 5 24.5M15.5 29a4.5 4.5 0 0 0 4.5-4.5v-8a4.5 4.5 0 0 0-4.5-4.5h-8A4.5 4.5 0 0 0 3 16.5v8A4.5 4.5 0 0 0 7.5 29zm6.5-1a1 1 0 0 1 1-1h1.5a2.5 2.5 0 0 0 2.5-2.5V19a1 1 0 1 1 2 0v5.5a4.5 4.5 0 0 1-4.5 4.5H23a1 1 0 0 1-1-1m7-15V7.5A4.5 4.5 0 0 0 24.5 3H19a1 1 0 1 0 0 2h5.5A2.5 2.5 0 0 1 27 7.5V13a1 1 0 1 0 2 0"/></svg>
-  )
-})
-
 // Image Compressor
 
 export const ImageCompressorTool = React.memo(() => {
@@ -52,10 +29,3 @@ export const ImageCompressorTool = React.memo(() => {
 })
 
 ImageCompressorTool.displayName = "ImageCompressorTool"
-
-export const CompressLogoSvg = React.memo(() => {
-  return (
-  <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><path fill="currentColor" d="M4 9h16v2H4zm12-5h-3V1h-2v3H8l4 4zM8 19h3v3h2v-3h3l-4-4zm-4-7h16v2H4z"/></svg>
-)})
-
-CompressLogoSvg.displayName = "CompressLogoSvg"
