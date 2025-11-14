@@ -56,6 +56,46 @@ export const RightIconSvg = React.memo(() => {
 
 RightIconSvg.displayName = "RightIconSvg";
 
+export const ErrorSvg = React.memo(() => {
+  return (
+    <svg
+      className="w-20 h-20 mx-auto text-red-500"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+  );
+});
+
+ErrorSvg.displayName = "ErrorSvg";
+
+export const EmailSvg = React.memo(() => {
+  return (
+    <svg
+      className="w-20 h-20 mx-auto text-light dark:text-dark"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+      />
+    </svg>
+  );
+});
+
+EmailSvg.displayName = "EmailSvg";
+
 export const ErrorIconsSvg = React.memo(() => {
   return (
     <svg
