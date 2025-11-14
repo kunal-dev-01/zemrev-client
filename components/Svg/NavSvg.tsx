@@ -111,7 +111,7 @@ ImageResizer.displayName = "ImageResizer";
 export const UserSvg = React.memo(() => {
   return (
     <svg
-      className="w-6 h-6 text-zinc-600 dark:text-zinc-300"
+      className="text-zinc-600 dark:text-zinc-300"
       fill="currentColor"
       viewBox="0 0 20 20"
     >
