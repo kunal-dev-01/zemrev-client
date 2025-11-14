@@ -1,6 +1,5 @@
 import { CreditStats, User } from "@/services/authService/types";
-import { SidebarSvgTwo } from "../Svg/NavSvg";
-import Image from "next/image";
+import { SidebarSvgTwo, UserSvg } from "../Svg/NavSvg";
 import clsx from "clsx";
 import Spinner from "../Layouts/Loaders/Spinner";
 
@@ -137,17 +136,10 @@ export const CreditCard = ({ credits, isLoading }: { credits: any; isLoading: bo
 export const UserCard = ({ user }: { user: User }) => (
   <div className="flex items-center gap-3 rounded-xl bg-zinc-100 dark:bg-zinc-900/50 p-2">
     <div className="w-[5vh] h-[5vh] md:w-[2.5vw] md:h-[2.5vw] rounded-xl overflow-hidden shrink-0">
-      <Image
-        src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || "User")}&background=random`}
-        alt={`${user.name || "User"}'s avatar`}
-        width={50}
-        height={50}
-        loading="lazy"
-        className="w-full h-full object-cover"
-      />
+      <UserSvg />
     </div>
     <div className="flex-1 min-w-0">
-      <p className="font-semibold text-zinc-900 dark:text-zinc-100 truncate text-sm md:text-base">{user.name || "User"}</p>
+      <p className="font-semibold text-zinc-900 dark:text-zinc-100 truncate text-sm md:text-base">{user.fullName || "User"}</p>
       <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 truncate">{user.email || "Email"}</p>
     </div>
   </div>
