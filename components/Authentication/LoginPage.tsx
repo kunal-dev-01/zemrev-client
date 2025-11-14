@@ -24,7 +24,7 @@ const LoginPage = () => {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log(data); // Replace with login logic later
+    console.log(data); 
   };
 
   return (
