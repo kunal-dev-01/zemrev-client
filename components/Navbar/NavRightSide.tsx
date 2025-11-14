@@ -1,10 +1,9 @@
 // src/components/Navbar/NavRightSide.tsx
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
-import { SidebarSvg } from "../Svg/NavSvg";
+import { SidebarSvg, UserSvg } from "../Svg/NavSvg";
 import CreditDisplay from "../Layouts/Credit/CreditDisplay";
 
 const NavRightSide = () => {
@@ -17,10 +16,6 @@ const NavRightSide = () => {
     router.replace("/auth/login");
   }
 
-  const avatarSrc =
-    user?.avatar ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "User")}&background=random`;
-
   return (
     <div className="h-full flex items-center gap-2">
       {/* Credit Display */}
@@ -31,16 +26,9 @@ const NavRightSide = () => {
         {user ? (
           <button
             aria-label="User Avatar"
-            className="h-full rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className=" w-8 h-full rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-zinc-900 bg-zinc-100 cursor-pointer p-0.5"
           >
-            <Image
-              src={avatarSrc}
-              alt={`${user.name}'s avatar`}
-              width={50}
-              height={50}
-              loading="eager"
-              className="w-full h-full object-cover rounded-lg"
-            />
+            <UserSvg />
           </button>
         ) : (
           <button
