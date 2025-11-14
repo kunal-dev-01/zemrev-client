@@ -1,68 +1,89 @@
 import { useForm } from "react-hook-form";
+import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import Input from "@/components/Layouts/Input/Input"; 
+import Input from "@/components/Layouts/Input/Input";
 import Spinner from "../Layouts/Loaders/Spinner";
+import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
+import { ErrorSvg, RightIconSvg } from "../Svg/AuthSvg";
 
-const resetPasswordSchema = z.object({
-  newPassword: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+// ==================== VALIDATION SCHEMA ====================
+const resetPasswordSchema = z
+  .object({
+    newPassword: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
+// ==================== COMPONENT ====================
 const ResetPasswordPage = () => {
   const searchParams = useSearchParams();
-  const [token, setToken] = useState<string | null>(null);
+  const { resetPassword, isLoading, error, clearError } = useAuth();
+
+  // Local state
+  const [resetPasswordToken, setResetPasswordToken] = useState<string | null>(null);
+  const [isTokenValid, setIsTokenValid] = useState(true);
   const [passwordReset, setPasswordReset] = useState(false);
-  const [tokenError, setTokenError] = useState(false);
 
-  useEffect(() => {
-    const tokenFromUrl = searchParams.get("token");
-    if (!tokenFromUrl) {
-      setTokenError(true);
-    } else {
-      setToken(tokenFromUrl);
-    }
-  }, [searchParams]);
-
+  // Form handling
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
   });
 
+  // ==================== EFFECTS ====================
+  useEffect(() => {
+    const token = searchParams.get("token");
+    if (!token) {
+      setIsTokenValid(false);
+    } else {
+      setResetPasswordToken(token);
+    }
+  }, [searchParams]);
+
+  // ==================== HANDLERS ====================
   const onSubmit = async (data: ResetPasswordFormData) => {
-    console.log({ token, newPassword: data.newPassword });
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setPasswordReset(true);
+    if (!resetPasswordToken) return;
+
+    const success = await resetPassword({
+      resetPasswordToken,
+      newPassword: data.newPassword,
+    });
+
+    if (success) {
+      setPasswordReset(true);
+    }
   };
 
-  if (tokenError) {
+  // ==================== INVALID TOKEN VIEW ====================
+  if (!isTokenValid) {
     return (
-      <div className="w-full md:h-[45vw] h-[80vh] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
+      <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center">
         <div className="w-full md:w-[40%] p-6 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl text-center">
+          {/* Error Icon */}
           <div className="mb-4">
-            <svg className="w-16 h-16 mx-auto text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+            <ErrorSvg />
           </div>
+
           <h2 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
             Invalid Reset Link
           </h2>
           <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base mb-6">
             The password reset link is invalid or has expired. Please request a new one.
           </p>
-          
-          <a  href="/auth/forgot-password"
+
+          <a
+            href="/auth/forgot-password"
             className="inline-block bg-light hover:bg-light/80 dark:hover:bg-dark/80 dark:bg-dark text-white font-medium py-2 px-6 rounded-lg transition-colors duration-300 ease-in-out"
           >
             Request New Link
@@ -72,76 +93,94 @@ const ResetPasswordPage = () => {
     );
   }
 
+  // ==================== SUCCESS VIEW ====================
+  if (passwordReset) {
+    return (
+      <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center">
+        <div className="w-full md:w-[40%] p-6 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl text-center">
+          {/* Success Icon */}
+          <div className="mb-4">
+           <RightIconSvg/>
+          </div>
+
+          <h2 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+            Password Reset Successfully
+          </h2>
+          <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base mb-6">
+            Your password has been reset. You can now log in with your new password.
+          </p>
+
+          <a
+            href="/auth/login"
+            className="inline-block bg-light hover:bg-light/80 dark:hover:bg-dark/80 dark:bg-dark text-white font-medium py-2 px-6 rounded-lg transition-colors duration-300 ease-in-out"
+          >
+            Go to Login
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // ==================== RESET PASSWORD FORM ====================
   return (
-    <div className="w-full md:h-[45vw] h-[80vh] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
+    <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center">
       <div className="w-full md:w-[40%] p-6 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl">
-        {!passwordReset ? (
-          <>
-            <div className="text-center mb-6">
-              <h1 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 select-none">
-                Reset Password
-              </h1>
-              <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base">
-                Enter your new password below.
-              </p>
-            </div>
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h1 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 select-none">
+            Reset Password
+          </h1>
+          <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base">
+            Enter your new password below.
+          </p>
+        </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <Input
-                label="New Password"
-                type="password"
-                placeholder="••••••••"
-                register={register("newPassword")}
-                error={errors.newPassword}
-              />
-              <Input
-                label="Confirm Password"
-                type="password"
-                placeholder="••••••••"
-                register={register("confirmPassword")}
-                error={errors.confirmPassword}
-              />
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <Input
+            label="New Password"
+            type="password"
+            placeholder="••••••••"
+            register={register("newPassword")}
+            error={errors.newPassword}
+          />
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-light hover:bg-light/80 dark:hover:bg-dark/80 dark:bg-dark text-white font-medium py-2 rounded-lg transition-colors duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <Spinner color="text-white" size="sm" /> Resetting...
-                  </div>
-                ) : "Reset Password"}
-              </button>
-            </form>
+          <Input
+            label="Confirm Password"
+            type="password"
+            placeholder="••••••••"
+            register={register("confirmPassword")}
+            error={errors.confirmPassword}
+          />
 
-            <div className="text-center mt-4 text-sm">
-              <a href="/auth/login" className="text-indigo-500 hover:underline">
-                Back to Login
-              </a>
-            </div>
-          </>
-        ) : (
-          <div className="text-center">
-            <div className="mb-4">
-              <svg className="w-16 h-16 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h2 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
-              Password Reset Successfully
-            </h2>
-            <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base mb-6">
-              Your password has been reset. You can now log in with your new password.
-            </p>
-            
-            <a  href="/auth/login"
-              className="inline-block bg-light hover:bg-light/80 dark:hover:bg-dark/80 dark:bg-dark text-white font-medium py-2 px-6 rounded-lg transition-colors duration-300 ease-in-out"
-            >
-              Go to Login
-            </a>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-light hover:bg-light/80 dark:hover:bg-dark/80 dark:bg-dark text-white font-medium py-2 rounded-lg transition-colors duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <Spinner color="text-white" size="sm" /> Resetting...
+              </div>
+            ) : (
+              "Reset Password"
+            )}
+          </button>
+        </form>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="mt-4">
+            <AuthErrorAlert message={error} onClose={clearError} />
           </div>
         )}
+
+        {/* Back to Login */}
+        <div className="text-center text-sm py-2 border border-zinc-300 dark:border-zinc-800 mt-4 rounded-lg">
+          <a href="/auth/login" className="text-indigo-500 hover:underline">
+            Back to Login
+          </a>
+        </div>
       </div>
     </div>
   );
