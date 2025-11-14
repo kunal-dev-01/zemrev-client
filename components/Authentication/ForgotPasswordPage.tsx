@@ -27,8 +27,10 @@ const ForgotPasswordPage = () => {
   });
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
-    const result = await forgotPassword(data);
-    setEmailSent(true);
+    const success = await forgotPassword(data);
+    if (success) {
+      setEmailSent(true);
+    }
   };
 
   return (
@@ -70,6 +72,9 @@ const ForgotPasswordPage = () => {
               </button>
             </form>
 
+            {/* ✅ Show error alert only when there's an error */}
+            {error && <AuthErrorAlert message={error} onClose={clearError} />}
+
             <div className="text-center text-sm py-2 border border-zinc-300 dark:border-zinc-800 mt-4 rounded-lg">
               <a href="/auth/login" className="text-indigo-500 hover:underline">
                 Back to Login
@@ -96,9 +101,6 @@ const ForgotPasswordPage = () => {
             </a>
           </div>
         )}
-
-        {error && <AuthErrorAlert message={error} onClose={clearError} />}
-        
       </div>
     </div>
   );
