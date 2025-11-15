@@ -17,6 +17,12 @@ import type {
   Setup2FAResponse,
   Enable2FARequest,
   Enable2FAResponse,
+  Disable2FARequest,
+  Disable2FAResponse,
+  Get2FAStatusResponse,
+  RegenerateBackupCodesRequest,
+  RegenerateBackupCodesResponse,
+  CreditStatusResponse,
 } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -30,7 +36,7 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         body: credentials,
       }),
-      invalidatesTags: ['Auth'],
+      invalidatesTags: ['Auth', 'Credits'],
     }),
 
     // ==================== VERIFY EMAIL ====================
@@ -42,14 +48,13 @@ export const authApi = baseApi.injectEndpoints({
       invalidatesTags: ['Auth'],
     }),
 
-    // ==================== LOGOUT ====================
-    resendVerifyEmail : builder.mutation<ForgotResponse, ForgotRequest>({
-      query : (credentials) => ({
-        url : '/auth/resend-verification-email',
-        method : 'POST',
-        body : credentials
+    // ==================== RESEND VERIFY EMAIL ====================
+    resendVerifyEmail: builder.mutation<ForgotResponse, ForgotRequest>({
+      query: (credentials) => ({
+        url: '/auth/resend-verification-email',
+        method: 'POST',
+        body: credentials,
       }),
-      invalidatesTags : ['Auth']
     }),
 
     // ==================== LOGIN ====================
@@ -59,7 +64,7 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         body: credentials,
       }),
-      invalidatesTags: ['Auth'],
+      invalidatesTags: ['Auth', 'Credits'],
     }),
 
     // ==================== VERIFY 2FA ====================
@@ -69,7 +74,7 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['Auth'],
+      invalidatesTags: ['Auth', 'Credits'],
     }),
 
     // ==================== GOOGLE LOGIN ====================
@@ -88,7 +93,7 @@ export const authApi = baseApi.injectEndpoints({
         url: '/auth/logout',
         method: 'POST',
       }),
-      invalidatesTags: ['User', 'Auth'],
+      invalidatesTags: ['User', 'Auth', 'Credits'],
     }),
 
     // ==================== LOGOUT ALL DEVICES ====================
@@ -97,13 +102,13 @@ export const authApi = baseApi.injectEndpoints({
         url: '/auth/logout-all',
         method: 'POST',
       }),
-      invalidatesTags: ['User', 'Auth'],
+      invalidatesTags: ['User', 'Auth', 'Credits'],
     }),
 
-    // ==================== SETUP 2FA ====================
+     // ==================== SETUP 2FA ====================
     setup2FA: builder.mutation<Setup2FAResponse, void>({
       query: () => ({
-        url: '/auth/setup-2fa',
+        url: '/auth/2fa/setup',
         method: 'POST',
       }),
     }),
@@ -111,11 +116,39 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== ENABLE 2FA ====================
     enable2FA: builder.mutation<Enable2FAResponse, Enable2FARequest>({
       query: (data) => ({
-        url: '/auth/enable-2fa',
+        url: '/auth/2fa/enable',
         method: 'POST',
         body: data,
       }),
       invalidatesTags: ['User'],
+    }),
+
+    // ==================== DISABLE 2FA ====================
+    disable2FA: builder.mutation<Disable2FAResponse, Disable2FARequest>({
+      query: (data) => ({
+        url: '/auth/2fa/disable',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['User'],
+    }),
+
+    // ==================== GET 2FA STATUS ====================
+    get2FAStatus: builder.query<Get2FAStatusResponse, void>({
+      query: () => '/auth/2fa/status',
+      providesTags: ['User'],
+    }),
+
+    // ==================== REGENERATE BACKUP CODES ====================
+    regenerateBackupCodes: builder.mutation<
+      RegenerateBackupCodesResponse,
+      RegenerateBackupCodesRequest
+    >({
+      query: (data) => ({
+        url: '/auth/2fa/regenerate-backup-codes',
+        method: 'POST',
+        body: data,
+      }),
     }),
 
     // ==================== FORGOT PASSWORD ====================
@@ -135,6 +168,12 @@ export const authApi = baseApi.injectEndpoints({
         body: credentials,
       }),
     }),
+
+    // ==================== GET CREDIT STATUS ====================
+    getCreditStatus: builder.query<CreditStatusResponse, void>({
+      query: () => '/credits/status',
+      providesTags: ['Credits'],
+    }),
   }),
   overrideExisting: false,
 });
@@ -148,8 +187,14 @@ export const {
   useGoogleLoginMutation,
   useLogoutMutation,
   useLogoutAllMutation,
-  useSetup2FAMutation,
-  useEnable2FAMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useGetCreditStatusQuery,
+  useLazyGetCreditStatusQuery,
+  useSetup2FAMutation,
+  useEnable2FAMutation,
+  useDisable2FAMutation,
+  useGet2FAStatusQuery,
+  useLazyGet2FAStatusQuery,
+  useRegenerateBackupCodesMutation
 } = authApi;
