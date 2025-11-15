@@ -24,6 +24,7 @@ export enum SubscriptionStatus {
 }
 
 export type PlanPriority = "normal" | "high" | "highest" | "dedicated";
+export type UserType = "guest" | "registered" | "anonymous";
 
 export interface PlanDetails {
   type: PlanType;
@@ -42,13 +43,14 @@ export interface Address {
   zipCode?: string;
 }
 
-export interface User {
-  _id?: string;
+// ==================== USER TYPES ====================
+
+export interface RegisteredUser {
+  _id: string;
   googleId?: string;
   authProvider: AuthProvider;
   fullName: string;
   email: string;
-  password?: string;
   phoneNumber?: string;
   address?: Address;
   role: UserRole;
@@ -56,8 +58,6 @@ export interface User {
   creditsUsed: number;
   lastCreditReset: Date;
   isEmailVerified: boolean;
-  passwordChangedAt?: Date;
-  twoFactorSecret?: string;
   twoFactorEnabled: boolean;
   isActive: boolean;
   isBlocked: boolean;
@@ -71,9 +71,38 @@ export interface User {
   updatedAt: Date;
 }
 
+export interface GuestUser {
+  _id: string;
+  fingerprint: string;
+  ipAddress: string;
+  creditsUsed: number;
+  lastResetDate: Date;
+}
+
+export interface CreditInfo {
+  total: number | string;
+  used: number;
+  remaining: number | string;
+  resetDate?: Date;
+  isUnlimited?: boolean;
+}
+
+// ==================== AUTH STATE ====================
+
 export interface AuthState {
-  user: User | null;
+  // User info
+  userType: UserType;
+  registeredUser: RegisteredUser | null;
+  guestUser: GuestUser | null;
+  
+  // Auth tokens
   accessToken: string | null;
+  fingerprint: string | null;
+  
+  // Credit info
+  credits: CreditInfo | null;
+  
+  // Status
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -97,10 +126,20 @@ export interface Verify2FARequest {
   tempToken: string;
   totpCode: string;
   superKey?: string;
+  isBackupCode?: boolean;
 }
 
 export interface Enable2FARequest {
   totpCode: string;
+}
+
+export interface Disable2FARequest {
+  password: string;
+  totpCode?: string;
+}
+
+export interface RegenerateBackupCodesRequest {
+  password: string;
 }
 
 export interface ForgotRequest {
@@ -118,7 +157,7 @@ export interface SignupResponse {
   status: string;
   message: string;
   data: {
-    user: User;
+    user: RegisteredUser;
     accessToken: string;
   };
 }
@@ -132,7 +171,7 @@ export interface LoginResponse {
   status: string;
   message: string;
   data: {
-    user?: User;
+    user?: RegisteredUser;
     accessToken?: string;
     requires2FA?: boolean;
     tempToken?: string;
@@ -143,7 +182,7 @@ export interface Verify2FAResponse {
   status: string;
   message: string;
   data: {
-    user: User;
+    user: RegisteredUser;
     accessToken: string;
   };
 }
@@ -166,12 +205,35 @@ export interface Setup2FAResponse {
   data: {
     secret: string;
     qrCode: string;
+    manualEntryKey: string;
+    backupCodes: string[];
   };
 }
 
 export interface Enable2FAResponse {
   status: string;
   message: string;
+}
+
+export interface Disable2FAResponse {
+  status: string;
+  message: string;
+}
+
+export interface Get2FAStatusResponse {
+  status: string;
+  data: {
+    enabled: boolean;
+    backupCodesRemaining: number;
+  };
+}
+
+export interface RegenerateBackupCodesResponse {
+  status: string;
+  message: string;
+  data: {
+    backupCodes: string[];
+  };
 }
 
 export interface ForgotResponse {
@@ -182,6 +244,17 @@ export interface ForgotResponse {
 export interface ResetPasswordResponse {
   status: string;
   message: string;
+}
+
+export interface CreditStatusResponse {
+  status: string;
+  data: {
+    userType: UserType;
+    plan?: PlanType;
+    user?: RegisteredUser;
+    guest?: GuestUser;
+    credits: CreditInfo;
+  };
 }
 
 // ==================== ERROR TYPES ====================
