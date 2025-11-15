@@ -1,11 +1,15 @@
 // components/Authentication/LoginPage.tsx
 
 import { useForm } from "react-hook-form";
+import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useState } from "react";
 import Input from "@/components/Layouts/Input/Input";
 import Spinner from "../Layouts/Loaders/Spinner";
 import GoogleAuthButton from "./GoogleAuthButton";
+import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
+import TwoFactorVerifyModal from "./TwoFactorVerifyModal";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address").min(1, "Email is required"),
@@ -15,102 +19,150 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 const LoginPage = () => {
+  const { login, error, isLoading, clearError } = useAuth();
+  
+  // State for 2FA
+  const [show2FAModal, setShow2FAModal] = useState(false);
+  const [tempToken, setTempToken] = useState<string>("");
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log(data); 
+    try {
+      const result = await login({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (result.success) {
+        // Check if 2FA is required
+        if (result.requires2FA && result.tempToken) {
+          setTempToken(result.tempToken);
+          setShow2FAModal(true);
+        }
+        // If no 2FA, user is already redirected by the hook
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+    }
+  };
+
+  const handle2FASuccess = () => {
+    setShow2FAModal(false);
+    setTempToken("");
+    // User will be redirected by verify2FA hook
+  };
+
+  const handle2FACancel = () => {
+    setShow2FAModal(false);
+    setTempToken("");
+    clearError();
   };
 
   return (
-    <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
+    <>
+      <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
+        <div className="w-full md:w-[40%] p-6 md:bg-zinc-100/50 dark:md:bg-zinc-900/50 md:rounded-2xl">
+          
+          {/* HEADER */}
+          <div className="text-center mb-6">
+            <h1 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 select-none">
+              Welcome Back
+            </h1>
+            <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base">
+              Glad to see you again! Log in to access your dashboard.
+            </p>
+          </div>
 
-      <div className="w-full md:w-[40%] p-6 md:bg-zinc-100/50 dark:md:bg-zinc-900/50 md:rounded-2xl">
-        
-        {/* HEADER */}
-        <div className="text-center mb-6">
-          <h1 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 select-none">
-            Welcome Back
-          </h1>
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base">
-            Glad to see you again! Log in to access your dashboard.
-          </p>
-        </div>
+          {/* FORM */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <Input
+              label="Email"
+              type="email"
+              placeholder="you@example.com"
+              register={register("email")}
+              error={errors.email}
+            />
 
-        {/* FORM */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <Input
+              label="Password"
+              type="password"
+              placeholder="••••••••"
+              register={register("password")}
+              error={errors.password}
+            />
 
-          <Input
-            label="Email"
-            type="email"
-            placeholder="you@example.com"
-            register={register("email")}
-            error={errors.email}
-          />
-
-          <Input
-            label="Password"
-            type="password"
-            placeholder="••••••••"
-            register={register("password")}
-            error={errors.password}
-          />
-
-          {/* Forgot Password */}
-          <p
-            onClick={() => (window.location.href = "/auth/forgot-password")}
-            className="mb-3 text-light dark:text-dark text-sm md:text-base cursor-pointer hover:underline"
-          >
-            Forgot Password?
-          </p>
-
-          {/* SUBMIT BUTTON */}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-light hover:bg-light/80 dark:bg-dark dark:hover:bg-dark/80 text-white font-medium py-2 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          >
-            {isSubmitting ? (
-              <div className="flex items-center justify-center gap-2">
-                <Spinner color="text-white" size="sm" /> Logging in...
-              </div>
-            ) : (
-              "Login"
-            )}
-          </button>
-        </form>
-
-        {/* OR DIVIDER */}
-        <div className="w-full flex items-center my-6 select-none">
-          <div className="grow border-t border-zinc-300 dark:border-zinc-800"></div>
-          <span className="px-4 text-sm text-gray-500 dark:text-gray-400">or</span>
-          <div className="grow border-t border-zinc-300 dark:border-zinc-800"></div>
-        </div>
-
-        {/* GOOGLE LOGIN */}
-        <GoogleAuthButton />
-
-        {/* FOOTER */}
-        <div className="py-2 border border-zinc-300 dark:border-zinc-800 mt-4 rounded-lg">
-          <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base text-center">
-            Don't have an account?{" "}
-            <a
-              href="/auth/register"
-              className="text-light dark:text-dark hover:opacity-80 font-medium"
+            {/* Forgot Password */}
+            <p
+              onClick={() => (window.location.href = "/auth/forgot-password")}
+              className="mb-3 text-light dark:text-dark text-sm md:text-base cursor-pointer hover:underline"
             >
-              Register
-            </a>
-          </p>
-        </div>
-        
+              Forgot Password?
+            </p>
 
+            {/* SUBMIT BUTTON */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-light hover:bg-light/80 dark:bg-dark dark:hover:bg-dark/80 text-white font-medium py-2 rounded-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Spinner color="text-white" size="sm" /> Logging in...
+                </div>
+              ) : (
+                "Login"
+              )}
+            </button>
+          </form>
+
+          {/* Error Alert */}
+          {error && (
+            <div className="mt-4">
+              <AuthErrorAlert message={error} onClose={clearError} />
+            </div>
+          )}
+
+          {/* OR DIVIDER */}
+          <div className="w-full flex items-center my-6 select-none">
+            <div className="grow border-t border-zinc-300 dark:border-zinc-800"></div>
+            <span className="px-4 text-sm text-gray-500 dark:text-gray-400">or</span>
+            <div className="grow border-t border-zinc-300 dark:border-zinc-800"></div>
+          </div>
+
+          {/* GOOGLE LOGIN */}
+          <GoogleAuthButton />
+
+          {/* FOOTER */}
+          <div className="py-2 border border-zinc-300 dark:border-zinc-800 mt-4 rounded-lg">
+            <p className="text-zinc-500 dark:text-zinc-400 text-sm md:text-base text-center">
+              Don't have an account?{" "}
+              <a
+                href="/auth/register"
+                className="text-light dark:text-dark hover:opacity-80 font-medium"
+              >
+                Register
+              </a>
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
+
+      {/* 2FA Verification Modal */}
+      {show2FAModal && (
+        <TwoFactorVerifyModal
+          tempToken={tempToken}
+          onSuccess={handle2FASuccess}
+          onCancel={handle2FACancel}
+        />
+      )}
+    </>
   );
 };
 
