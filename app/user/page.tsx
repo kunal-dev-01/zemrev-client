@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic"
 import Skeleton from "@/components/Layouts/Loaders/Skeleton"
 
-const MainUserPageManager = dynamic(() => import('@/components/User/MainUserPageManager'), {
+const MainUserPageManager = dynamic(() => import('@/components/User/MainUserManager/MainUserPageManager'), {
   loading: () => <Skeleton height="md:h-[47vw] h-[90vh]" />,
   ssr: false,
 })
