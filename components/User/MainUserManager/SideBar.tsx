@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
-import {DasBoardSvg,PaymentSvg,UserProfileSvg,SecuritySvg,NotificationSvg,MembershipSvg} from "../Svg/UserPageSvg";
+import {DasBoardSvg,PaymentSvg,UserProfileSvg,SecuritySvg,NotificationSvg,MembershipSvg} from "../../Svg/UserPageSvg";
 
 const SideBar = () => {
   const searchParams = useSearchParams();
@@ -37,7 +37,7 @@ const SideBar = () => {
               }
             `}
           >
-            <div className="w-5 h-5 md:w-6 md:h-6 text-zinc-700 dark:text-zinc-300">{item.icon}</div>
+            <div className={`w-5 h-5 md:w-6 md:h-6 ${isActive ? "text-white" : "text-zinc-700 dark:text-zinc-300"} `}>{item.icon}</div>
 
             {item.name}
           </Link>

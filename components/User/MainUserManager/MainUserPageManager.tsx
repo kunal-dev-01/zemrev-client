@@ -1,11 +1,18 @@
 import SideBar from "./SideBar";
-import { UserMenuSvg } from "../Svg/UserPageSvg";
+import dynamic from "next/dynamic";
+import { useSearchParams } from "next/navigation";
+import Skeleton from "@/components/Layouts/Loaders/Skeleton";
+import { UserMenuSvg } from "../../Svg/UserPageSvg";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
+
+const ProfilePage = dynamic(() => import("../ProfilePage/ProfilePage"), { ssr: false, loading: () => <Skeleton className="w-full h-full rounded-2xl" /> });
 
 const MainUserPageManager = () => {
   const { isOpenUserMenu, setOpenUserMenu } = useLoginModal();
   const { registeredUser } = useAuth();
+  const searchParams = useSearchParams();
+  const currentPage = searchParams.get("page");
 
   const toggleUserMenu = () => setOpenUserMenu(true);
   const closeUserMenu = () => setOpenUserMenu(false);
@@ -53,7 +60,9 @@ const MainUserPageManager = () => {
           <p className="px-3 py-1 truncate bg-zinc-100 dark:bg-zinc-900/90 rounded-md">{registeredUser?.fullName || registeredUser?.email.split("@")[0]}</p>
         </div>
 
-        <div className="w-full md:h-full h-[calc(100%-4vh)]"></div>
+        <div className="w-full md:h-full h-[calc(100%-4vh)]">
+          {currentPage === "profile" && <ProfilePage />}
+        </div>
       </div>
     </div>
   );
