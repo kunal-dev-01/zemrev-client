@@ -40,7 +40,7 @@ const SideBar = () => {
 
   const handleProfileClick = () => {
     if(userType === 'registered') {
-      router.replace("/user?page=profile");
+      router.replace("/user?page=dashboard");
     }
   }
 

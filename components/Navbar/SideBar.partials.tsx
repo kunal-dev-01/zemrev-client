@@ -256,7 +256,7 @@ export const UserCard = ({
       : "No Email";
 
   return (
-    <div id="user-card" onClick={dashBoardLink} className="flex items-center gap-3 rounded-xl bg-zinc-100 dark:bg-zinc-900/50 p-2">
+    <div id="user-card" onClick={dashBoardLink} className="flex items-center gap-3 rounded-xl bg-zinc-100 dark:bg-zinc-900/50 p-2 cursor-pointer">
       <div className="w-[5vh] h-[5vh] md:w-[2.5vw] md:h-[2.5vw] rounded-xl overflow-hidden">
         <UserSvg />
       </div>
