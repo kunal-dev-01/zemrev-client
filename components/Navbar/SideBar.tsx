@@ -14,7 +14,15 @@ const Tools = [
 
 const SideBar = () => {
   const { isOpenSidebar, setOpenSidebar } = useLoginModal();
-  const { logout, isLoggingOut, user, credits, isLoading: isLoadingAuth } = useAuth();
+
+  const {
+    logout,
+    isLoading,
+    registeredUser,
+    guestUser,
+    userType,
+    credits,
+  } = useAuth();
 
   const toggleSidebar = useCallback(
     () => setOpenSidebar(!isOpenSidebar),
@@ -24,6 +32,9 @@ const SideBar = () => {
   const closeSidebar = useCallback(() => setOpenSidebar(false), [setOpenSidebar]);
 
   const handleLogout = useCallback(async () => await logout(), [logout]);
+
+  // If user is anonymous (not yet guest or registered), hide user menu
+  const shouldShowUserMenu = userType !== "anonymous";
 
   return (
     <>
@@ -37,6 +48,7 @@ const SideBar = () => {
       >
         <Header onToggle={toggleSidebar} />
 
+        {/* TOOL LINKS */}
         <div className="flex-1 overflow-y-auto scrollbar-hide my-4 p-3 space-y-2 custom-scrollbar w-full border-2 border-zinc-100/80 dark:border-zinc-900/50 rounded-xl bg-zinc-100/10 dark:bg-zinc-900/10">
           <div className="space-y-2">
             {Tools.map((tool, i) => (
@@ -57,13 +69,15 @@ const SideBar = () => {
           </div>
         </div>
 
-        {/* ONLY user UI remains */}
-        {user && (
+        {/* USER INFO + CREDIT CARD */}
+        {shouldShowUserMenu && (
           <UserMenu
-            user={user}
+            userType={userType}
+            registeredUser={registeredUser}
+            guestUser={guestUser}
             credits={credits}
-            isLoadingCredits={isLoadingAuth}
-            isLoggingOut={isLoggingOut}
+            isLoadingCredits={isLoading}
+            isLoggingOut={isLoading}
             onLogout={handleLogout}
           />
         )}

@@ -7,7 +7,7 @@ import { SidebarSvg, UserSvg } from "../Svg/NavSvg";
 import CreditDisplay from "../Layouts/Credit/CreditDisplay";
 
 const NavRightSide = () => {
-  const { user } = useAuth();
+  const { userType } = useAuth();
   const router = useRouter();
   const { setOpenSidebar } = useLoginModal();
   const handleSidebarClick = useCallback(() => setOpenSidebar(true), [setOpenSidebar]);
@@ -23,7 +23,7 @@ const NavRightSide = () => {
 
       {/* User / Login and Sidebar */}
       <div className="h-full flex items-center gap-3 p-1 rounded-xl border border-zinc-200/50 dark:border-zinc-900 hover:border-zinc-200 dark:hover:border-zinc-800 cursor-pointer">
-        {user ? (
+        {userType === 'registered' || userType === 'guest' ? (
           <button
             aria-label="User Avatar"
             className=" w-8 h-full rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-zinc-900 bg-zinc-100 cursor-pointer p-0.5"
