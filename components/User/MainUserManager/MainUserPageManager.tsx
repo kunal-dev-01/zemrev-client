@@ -5,8 +5,12 @@ import Skeleton from "@/components/Layouts/Loaders/Skeleton";
 import { UserMenuSvg } from "../../Svg/UserPageSvg";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
+import Link from "next/link";
 
-const ProfilePage = dynamic(() => import("../ProfilePage/ProfilePage"), { ssr: false, loading: () => <Skeleton className="w-full h-full rounded-2xl" /> });
+const ProfilePage = dynamic(() => import("../ProfilePage/ProfilePage"), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-full rounded-2xl" />,
+});
 
 const MainUserPageManager = () => {
   const { isOpenUserMenu, setOpenUserMenu } = useLoginModal();
@@ -17,9 +21,25 @@ const MainUserPageManager = () => {
   const toggleUserMenu = () => setOpenUserMenu(true);
   const closeUserMenu = () => setOpenUserMenu(false);
 
+  const VerifyEmailAlert = () => {
+    return (
+      <div className="w-full p-3 rounded-md bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
+        <p className="text-sm md:text-base text-zinc-700 dark:text-zinc-300 font-medium">
+          Your email is not verified. Please verify to access all features.
+        </p>
+
+        <Link
+          href="/auth/verify-email-request"
+          className="px-3 py-1 text-sm font-semibold rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+        >
+          Resend Email
+        </Link>
+      </div>
+    );
+  };
+
   return (
     <div className="w-full md:h-[calc(100vh-5vw)] h-[calc(100vh-8vh)] md:flex md:flex-row md:justify-between items-center">
-
       {/* PC Sidebar */}
       <div className="w-full h-full md:w-[15vw] dark:bg-zinc-900/10 bg-zinc-100/20 md:block hidden rounded-2xl p-2 md:border-2 border-zinc-100/80 dark:border-zinc-900/50 overflow-y-scroll">
         <SideBar />
@@ -47,7 +67,6 @@ const MainUserPageManager = () => {
 
       {/* RIGHT CONTENT */}
       <div className="w-full h-full md:w-[calc(100%-16vw)] dark:bg-zinc-900/10 bg-zinc-100/20 rounded-2xl border-2 border-zinc-100/80 dark:border-zinc-900/50 overflow-y-scroll p-2">
-
         {/* Mobile Menu Button */}
         <div className="md:hidden w-full h-[4vh] flex flex-row justify-between items-center">
           <div
@@ -57,10 +76,13 @@ const MainUserPageManager = () => {
             <UserMenuSvg />
           </div>
 
-          <p className="px-3 py-1 truncate bg-zinc-100 dark:bg-zinc-900/90 rounded-md">{registeredUser?.fullName || registeredUser?.email.split("@")[0]}</p>
+          <p className="px-3 py-1 truncate bg-zinc-100 dark:bg-zinc-900/90 rounded-md">
+            {registeredUser?.fullName || registeredUser?.email.split("@")[0]}
+          </p>
         </div>
 
         <div className="w-full md:h-full h-[calc(100%-4vh)]">
+          {!registeredUser?.isEmailVerified && <VerifyEmailAlert />}
           {currentPage === "profile" && <ProfilePage />}
         </div>
       </div>
