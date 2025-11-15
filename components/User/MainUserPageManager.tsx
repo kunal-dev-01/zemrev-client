@@ -1,8 +1,9 @@
-import React from 'react'
 
 const MainUserPageManager = () => {
   return (
-    <div>MainUserPageManager</div>
+    <div className='w-full'>
+
+    </div>
   )
 }
 
