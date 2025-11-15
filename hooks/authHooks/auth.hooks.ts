@@ -1,9 +1,8 @@
 // src/hooks/authHooks/auth.hooks.ts
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '../reduxHooks/redux.hooks';
-
 import {
   useSignupMutation,
   useLoginMutation,
@@ -15,16 +14,16 @@ import {
   useVerifyEmailMutation,
   useResendVerifyEmailMutation,
   useVerify2FAMutation,
-  useSetup2FAMutation,
-  useEnable2FAMutation
+  useGetCreditStatusQuery,
+  useLazyGetCreditStatusQuery,
 } from '@/services/authService/auth.api';
-
 import {
   logout as logoutAction,
   setError,
   clearError,
+  setFingerprint
 } from '@/services/authService/auth.slice';
-
+import { getFingerprint } from '@/utils/fingerprint.util';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import type { SerializedError } from '@reduxjs/toolkit';
 
@@ -42,19 +41,25 @@ const extractApiErrorMessage = (error: FetchBaseQueryError | SerializedError | u
   if ('message' in (error as SerializedError)) {
     return (error as SerializedError).message || 'Something went wrong';
   }
-
   return 'Unexpected error occurred';
 };
 
-// Auth hook
 export const useAuth = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
   // Redux state
-  const { user, accessToken, isAuthenticated, isLoading, error } = useAppSelector(
-    (state) => state.auth
-  );
+  const {
+    userType,
+    registeredUser,
+    guestUser,
+    accessToken,
+    fingerprint: storedFingerprint,
+    credits,
+    isAuthenticated,
+    isLoading,
+    error,
+  } = useAppSelector((state) => state.auth);
 
   // RTK Query mutations
   const [signupMutation, { isLoading: isSigningUp }] = useSignupMutation();
@@ -62,27 +67,105 @@ export const useAuth = () => {
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
   const [logoutAllMutation, { isLoading: isLoggingOutAll }] = useLogoutAllMutation();
   const [googleLoginMutation, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
-  const [forgotPasswordMutation, { isLoading: isForgotPasswordLoading }] = useForgotPasswordMutation();
+  const [forgotPasswordMutation, { isLoading: isForgotPasswordLoading }] =
+    useForgotPasswordMutation();
   const [resetPasswordMutation, { isLoading: isResetPasswordLoading }] = useResetPasswordMutation();
   const [verifyEmailMutation, { isLoading: isVerifyingEmail }] = useVerifyEmailMutation();
   const [verify2FAMutation, { isLoading: isVerifying2FA }] = useVerify2FAMutation();
-  const [setup2FAMutation, { isLoading: isSettingUp2FA }] = useSetup2FAMutation();
-  const [enable2FAMutation, { isLoading: isEnabling2FA }] = useEnable2FAMutation();
-  const [resendVerifyEmailMutation, { isLoading: isResendingVerifyEmail }] = useResendVerifyEmailMutation();
+  const [resendVerifyEmailMutation, { isLoading: isResendingVerifyEmail }] =
+    useResendVerifyEmailMutation();
+
+  // Credit status query
+  const { refetch: refetchCredits } = useGetCreditStatusQuery();
+  const [triggerGetCredits] = useLazyGetCreditStatusQuery();
+
+  // ==================== INITIALIZE GUEST USER ====================
+  useEffect(() => {
+    const initializeGuest = async () => {
+      // Only initialize if anonymous
+      if (userType === 'anonymous' && !storedFingerprint) {
+        try {
+          const fp = await getFingerprint();
+          dispatch(setFingerprint(fp));
+
+          // Fetch credit status to initialize guest
+          await triggerGetCredits().unwrap();
+        } catch (error) {
+          console.error('Failed to initialize guest user:', error);
+        }
+      }
+    };
+
+    initializeGuest();
+  }, [userType, storedFingerprint, dispatch, triggerGetCredits]);
 
   // ==================== SIGNUP ====================
   const signup = useCallback(
-    async (data: { fullName: string; email: string; password: string; planType: string }): Promise<boolean> => {
+    async (data: {
+      fullName: string;
+      email: string;
+      password: string;
+      planType: string;
+    }): Promise<boolean> => {
       try {
         dispatch(clearError());
         await signupMutation(data).unwrap();
+        router.push('/user/dashboard');
         return true;
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
         return false;
       }
     },
-    [signupMutation, dispatch]
+    [signupMutation, dispatch, router]
+  );
+
+  // ==================== LOGIN ====================
+  const login = useCallback(
+    async (data: {
+      email: string;
+      password: string;
+    }): Promise<{ success: boolean; requires2FA?: boolean; tempToken?: string }> => {
+      try {
+        dispatch(clearError());
+        const result = await loginMutation(data).unwrap();
+        if (result.data.requires2FA && result.data.tempToken) {
+          return {
+            success: true,
+            requires2FA: true,
+            tempToken: result.data.tempToken,
+          };
+        }
+
+        router.push('/user/dashboard');
+        return { success: true };
+      } catch (err: unknown) {
+        dispatch(setError(extractApiErrorMessage(err)));
+        return { success: false };
+      }
+    },
+    [loginMutation, dispatch, router]
+  );
+
+  // ==================== VERIFY 2FA ====================
+  const verify2FA = useCallback(
+    async (data: {
+      tempToken: string;
+      totpCode: string;
+      superKey?: string;
+      isBackupCode?: boolean;
+    }): Promise<boolean> => {
+      try {
+        dispatch(clearError());
+        await verify2FAMutation(data).unwrap();
+        router.push('/user/dashboard');
+        return true;
+      } catch (err: unknown) {
+        dispatch(setError(extractApiErrorMessage(err)));
+        return false;
+      }
+    },
+    [verify2FAMutation, dispatch, router]
   );
 
   // ==================== VERIFY EMAIL ====================
@@ -100,9 +183,9 @@ export const useAuth = () => {
     [verifyEmailMutation, dispatch]
   );
 
-  // ================= Resend Verify Email =================
+  // ==================== RESEND VERIFY EMAIL ====================
   const resendVerifyEmail = useCallback(
-    async (data:{email: string}): Promise<boolean> => {
+    async (data: { email: string }): Promise<boolean> => {
       try {
         dispatch(clearError());
         await resendVerifyEmailMutation(data).unwrap();
@@ -115,82 +198,12 @@ export const useAuth = () => {
     [resendVerifyEmailMutation, dispatch]
   );
 
-  // ==================== LOGIN ====================
-  const login = useCallback(
-    async (data: { email: string; password: string }): Promise<{ success: boolean; requires2FA?: boolean; tempToken?: string }> => {
-      try {
-        dispatch(clearError());
-        const result = await loginMutation(data).unwrap();
-        
-        // Check if 2FA is required
-        if (result.data.requires2FA && result.data.tempToken) {
-          return { 
-            success: true, 
-            requires2FA: true, 
-            tempToken: result.data.tempToken 
-          };
-        }
-        
-        router.push('/user/dashboard');
-        return { success: true };
-      } catch (err: unknown) {
-        dispatch(setError(extractApiErrorMessage(err)));
-        return { success: false };
-      }
-    },
-    [loginMutation, dispatch, router]
-  );
-
-  // ==================== VERIFY 2FA ====================
-  const verify2FA = useCallback(
-    async (data: { tempToken: string; totpCode: string; superKey?: string }): Promise<boolean> => {
-      try {
-        dispatch(clearError());
-        await verify2FAMutation(data).unwrap();
-        router.push('/user/dashboard');
-        return true;
-      } catch (err: unknown) {
-        dispatch(setError(extractApiErrorMessage(err)));
-        return false;
-      }
-    },
-    [verify2FAMutation, dispatch, router]
-  );
-
-  // ==================== SETUP 2FA ====================
-  const setup2FA = useCallback(
-    async (): Promise<{ secret: string; qrCode: string } | null> => {
-      try {
-        dispatch(clearError());
-        const result = await setup2FAMutation().unwrap();
-        return result.data;
-      } catch (err: unknown) {
-        dispatch(setError(extractApiErrorMessage(err)));
-        return null;
-      }
-    },
-    [setup2FAMutation, dispatch]
-  );
-
-  // ==================== ENABLE 2FA ====================
-  const enable2FA = useCallback(
-    async (totpCode: string): Promise<boolean> => {
-      try {
-        dispatch(clearError());
-        await enable2FAMutation({ totpCode }).unwrap();
-        return true;
-      } catch (err: unknown) {
-        dispatch(setError(extractApiErrorMessage(err)));
-        return false;
-      }
-    },
-    [enable2FAMutation, dispatch]
-  );
-
   // ==================== LOGOUT ====================
   const logout = useCallback(async (): Promise<void> => {
     try {
-      await logoutMutation().unwrap();
+      if (userType === 'registered') {
+        await logoutMutation().unwrap();
+      }
     } catch (err) {
       console.error('Logout error:', err);
     } finally {
@@ -198,7 +211,7 @@ export const useAuth = () => {
       router.push('/auth/login');
       router.refresh();
     }
-  }, [logoutMutation, dispatch, router]);
+  }, [logoutMutation, dispatch, router, userType]);
 
   // ==================== LOGOUT ALL ====================
   const logoutAll = useCallback(async (): Promise<boolean> => {
@@ -255,44 +268,56 @@ export const useAuth = () => {
     [resetPasswordMutation, dispatch]
   );
 
+  // ==================== REFRESH CREDITS ====================
+  const refreshCredits = useCallback(async () => {
+    try {
+      await refetchCredits();
+    } catch (err) {
+      console.error('Failed to refresh credits:', err);
+    }
+  }, [refetchCredits]);
+
   // ==================== HELPER FUNCTIONS ====================
-  
-  // Clear auth error
+
   const clearAuthError = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // Get user's display name
   const getDisplayName = useCallback((): string => {
-    if (!user) return 'Guest';
-    return user.fullName || user.email?.split('@')[0] || 'User';
-  }, [user]);
+    if (userType === 'registered' && registeredUser) {
+      return registeredUser.fullName || registeredUser.email.split('@')[0] || 'User';
+    }
+    return 'Guest';
+  }, [userType, registeredUser]);
 
-  // Get user's remaining credits
-  const getCreditsRemaining = useCallback((): number => {
-    if (!user?.plan) return 0;
-    return Math.max(0, user.plan.dailyCredits - (user.creditsUsed || 0));
-  }, [user]);
+  const getCreditsRemaining = useCallback((): number | string => {
+    if (!credits) return 0;
+    return credits.remaining;
+  }, [credits]);
 
-  // Check if user has enough credits
   const hasEnoughCredits = useCallback(
     (required: number = 1): boolean => {
-      if (!user?.plan) return false;
-      const remaining = user.plan.dailyCredits - (user.creditsUsed || 0);
-      return remaining >= required;
+      if (!credits) return false;
+      if (credits.isUnlimited) return true;
+      return typeof credits.remaining === 'number' && credits.remaining >= required;
     },
-    [user]
+    [credits]
   );
 
-  // Check if email is verified
   const isEmailVerified = useCallback((): boolean => {
-    return user?.isEmailVerified ?? false;
-  }, [user]);
+    if (userType !== 'registered' || !registeredUser) return false;
+    return registeredUser.isEmailVerified;
+  }, [userType, registeredUser]);
 
-  // Check if 2FA is enabled
   const is2FAEnabled = useCallback((): boolean => {
-    return user?.twoFactorEnabled ?? false;
-  }, [user]);
+    if (userType !== 'registered' || !registeredUser) return false;
+    return registeredUser.twoFactorEnabled;
+  }, [userType, registeredUser]);
+
+  // ==================== USER TYPE CHECKS ====================
+  const isGuest = userType === 'guest';
+  const isRegistered = userType === 'registered';
+  const isAnonymous = userType === 'anonymous';
 
   // Combined loading state
   const combinedIsLoading =
@@ -306,32 +331,39 @@ export const useAuth = () => {
     isResetPasswordLoading ||
     isVerifyingEmail ||
     isVerifying2FA ||
-    isSettingUp2FA ||
-    isEnabling2FA ||
     isResendingVerifyEmail;
 
   // ==================== RETURN API ====================
   return {
-    // State
-    user,
+    // User info
+    userType,
+    registeredUser,
+    guestUser,
     accessToken,
+    credits,
     isAuthenticated,
+    isGuest,
+    isRegistered,
+    isAnonymous,
+
+    // Status
     isLoading: combinedIsLoading,
     error,
 
     // Auth operations
     signup,
     verifyEmail,
+    resendVerifyEmail,
     login,
     verify2FA,
-    setup2FA,
-    enable2FA,
     logout,
     logoutAll,
     loginWithGoogle,
     forgotPassword,
     resetPassword,
-    resendVerifyEmail,
+
+    // Credit operations
+    refreshCredits,
 
     // Utilities
     clearError: clearAuthError,
