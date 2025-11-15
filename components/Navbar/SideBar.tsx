@@ -5,6 +5,7 @@ import { ImageConvert, ImageOptamize, ImageResizer } from "../Svg/NavSvg";
 import clsx from "clsx";
 import Link from "next/link";
 import { Backdrop, Header, UserMenu } from "./SideBar.partials";
+import { useRouter } from "next/navigation";
 
 const Tools = [
   { name: "Image Converter", href: "/image-converter", icon: <ImageConvert /> },
@@ -14,6 +15,7 @@ const Tools = [
 
 const SideBar = () => {
   const { isOpenSidebar, setOpenSidebar } = useLoginModal();
+  const router = useRouter();
 
   const {
     logout,
@@ -35,6 +37,12 @@ const SideBar = () => {
 
   // If user is anonymous (not yet guest or registered), hide user menu
   const shouldShowUserMenu = userType !== "anonymous";
+
+  const handleProfileClick = () => {
+    if(userType === 'registered') {
+      router.replace("/user?page=profile");
+    }
+  }
 
   return (
     <>
@@ -72,6 +80,7 @@ const SideBar = () => {
         {/* USER INFO + CREDIT CARD */}
         {shouldShowUserMenu && (
           <UserMenu
+            dashBoardLink={handleProfileClick}
             userType={userType}
             registeredUser={registeredUser}
             guestUser={guestUser}

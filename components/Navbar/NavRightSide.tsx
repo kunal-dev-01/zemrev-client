@@ -16,6 +16,12 @@ const NavRightSide = () => {
     router.replace("/auth/login");
   }
 
+  const handleProfileClick = () => {
+    if(userType === 'registered') {
+      router.replace("/user?page=profile");
+    }
+  }
+
   return (
     <div className="h-full flex items-center gap-2">
       {/* Credit Display */}
@@ -26,6 +32,7 @@ const NavRightSide = () => {
         {userType === 'registered' || userType === 'guest' ? (
           <button
             aria-label="User Avatar"
+            onClick={handleProfileClick}
             className=" w-8 h-full rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-zinc-900 bg-zinc-100 cursor-pointer p-0.5"
           >
             <UserSvg />

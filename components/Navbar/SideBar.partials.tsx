@@ -43,6 +43,7 @@ export const Header = ({ onToggle }: { onToggle: () => void }) => (
 
 // ========================= MAIN MENU =========================
 export const UserMenu = ({
+  dashBoardLink,
   userType,
   registeredUser,
   guestUser,
@@ -58,6 +59,7 @@ export const UserMenu = ({
   isLoadingCredits: boolean;
   isLoggingOut: boolean;
   onLogout: () => void;
+  dashBoardLink: () => void;
 }) => (
   <div className="w-full p-[1vh] md:p-[0.5vw] rounded-xl border-2 border-zinc-100/80 dark:border-zinc-900/50 bg-zinc-100/10 dark:bg-zinc-900/10">
     <div className="flex flex-col gap-3">
@@ -66,6 +68,7 @@ export const UserMenu = ({
         userType={userType}
         registeredUser={registeredUser}
         guestUser={guestUser}
+        dashBoardLink={dashBoardLink}
       />
       <LogoutButton
         userType={userType}
@@ -230,11 +233,13 @@ export const CreditCard = ({
 // ========================= USER CARD =========================
 export const UserCard = ({
   userType,
-  registeredUser
+  registeredUser,
+  dashBoardLink,
 }: {
   userType: UserType;
   registeredUser: RegisteredUser | null;
   guestUser: GuestUser | null;
+  dashBoardLink: () => void;
 }) => {
   const name =
     userType === "registered"
@@ -251,7 +256,7 @@ export const UserCard = ({
       : "No Email";
 
   return (
-    <div className="flex items-center gap-3 rounded-xl bg-zinc-100 dark:bg-zinc-900/50 p-2">
+    <div id="user-card" onClick={dashBoardLink} className="flex items-center gap-3 rounded-xl bg-zinc-100 dark:bg-zinc-900/50 p-2">
       <div className="w-[5vh] h-[5vh] md:w-[2.5vw] md:h-[2.5vw] rounded-xl overflow-hidden">
         <UserSvg />
       </div>
