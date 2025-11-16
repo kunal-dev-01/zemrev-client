@@ -30,6 +30,14 @@ export const EditPencilSvg = React.memo(() => {
 
 EditPencilSvg.displayName = "EditPencilSvg";
 
+export const CancelSvg = React.memo(() => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m5 19l7-7m0 0l7-7m-7 7L5 5m7 7l7 7"/></svg>
+  )
+})
+
+CancelSvg.displayName = "CancelSvg";
+
 export const DasBoardSvg = React.memo(() => {
   return (
     <svg
