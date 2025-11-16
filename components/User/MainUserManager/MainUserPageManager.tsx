@@ -23,8 +23,8 @@ const MainUserPageManager = () => {
 
   const VerifyEmailAlert = () => {
     return (
-      <div className="p-2">
-        <div className="w-full p-3 rounded-md bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
+      <div className="md:px-4 px-2 md:mt-4 mt-2">
+        <div className="w-full p-2 rounded-xl bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
         <p className="text-sm md:text-base text-zinc-700 dark:text-zinc-300 font-medium">
           Your email is not verified. Please verify to access all features.
         </p>
@@ -33,7 +33,7 @@ const MainUserPageManager = () => {
           href="/auth/verify-email-request"
           className="px-3 py-1 text-sm font-semibold rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
         >
-          Resend Email
+          Resend
         </Link>
       </div>
       </div>
@@ -68,9 +68,9 @@ const MainUserPageManager = () => {
       )}
 
       {/* RIGHT CONTENT */}
-      <div className="w-full h-full md:w-[calc(100%-16vw)] dark:bg-zinc-900/10 bg-zinc-100/20 rounded-2xl border-2 border-zinc-100/80 dark:border-zinc-900/50 overflow-y-scroll p-2">
+      <div className="w-full h-full md:w-[calc(100%-16vw)] dark:bg-zinc-900/10 bg-zinc-100/20 rounded-2xl border-2 border-zinc-100/80 dark:border-zinc-900/50 overflow-y-scroll">
         {/* Mobile Menu Button */}
-        <div className="md:hidden w-full h-[4vh] flex flex-row justify-between items-center">
+        <div className="md:hidden w-full h-[4vh] flex flex-row justify-between items-center p-2 mt-2">
           <div
             onClick={toggleUserMenu}
             className="w-[3.5vh] h-[3.5vh] text-zinc-700 dark:text-zinc-300"
