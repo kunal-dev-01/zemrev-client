@@ -24,8 +24,8 @@ const NavRightSide = () => {
 
   return (
     <div className="h-full flex items-center gap-2">
-      {/* Credit Display */}
-      <CreditDisplay />
+      {/* Credit Display
+      <CreditDisplay /> */}
 
       {/* User / Login and Sidebar */}
       <div className="h-full flex items-center gap-3 p-1 rounded-xl border border-zinc-200/50 dark:border-zinc-900 hover:border-zinc-200 dark:hover:border-zinc-800 cursor-pointer">
