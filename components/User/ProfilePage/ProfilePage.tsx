@@ -2,9 +2,23 @@ import { UserSvg } from "@/components/Svg/NavSvg";
 import { EditPencilSvg } from "@/components/Svg/UserPageSvg";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { PlanType, SubscriptionStatus } from "@/services/authService/types";
+import UpdateManager from "./UpdateManager";
+import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 
 const ProfilePage = () => {
   const { registeredUser } = useAuth();
+  const {
+    isPhoneNumberUpdateModalOpen,
+    isAddressUpdateModalOpen,
+    isFullNameUpdateModalOpen,
+    setPhoneNumberUpdateModalOpen,
+    setAddressUpdateModalOpen,
+    setFullNameUpdateModalOpen,
+  } = useLoginModal();
+
+  const handleAddressEdit = () => setAddressUpdateModalOpen(true);
+  const handleNumberEdit = () => setPhoneNumberUpdateModalOpen(true);
+  const handleFullNameEdit = () => setFullNameUpdateModalOpen(true);
 
   const formatDate = (date: string | Date | null | undefined) =>
     date
@@ -28,8 +42,7 @@ const ProfilePage = () => {
   const SUB_COLORS: Record<SubscriptionStatus, string> = {
     active:
       "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-    canceled:
-      "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+    canceled: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
     past_due:
       "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
     trialing:
@@ -39,8 +52,7 @@ const ProfilePage = () => {
   const EMAIL_COLORS = {
     verified:
       "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-    unverified:
-      "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+    unverified: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
   };
 
   /* ----- Reusable Badge Component ----- */
@@ -59,7 +71,7 @@ const ProfilePage = () => {
   );
 
   return (
-    <div className="w-full h-full flex flex-col md:flex-row gap-4 md:p-2">
+    <div className="w-full h-full flex flex-col md:flex-row gap-4 md:p-4 p-2 relative">
       {/* ---------------- LEFT SECTION ---------------- */}
       <div className="md:w-1/2 flex flex-col gap-4 items-center pt-4 md:pt-0">
         {/* Profile Picture */}
@@ -70,13 +82,20 @@ const ProfilePage = () => {
         {/* User Info Card */}
         <div className="w-full p-4 bg-zinc-100/90 dark:bg-zinc-900/50 rounded-xl flex flex-col gap-3">
           {/* Name & Email */}
-          <div className="flex flex-col items-center text-center pb-3 border-b border-zinc-200/80 dark:border-zinc-800/80">
+          <div className="flex flex-col items-center text-center pb-3 border-b border-zinc-200/80 dark:border-zinc-800/80 relative">
             <h1 className="text-xl md:text-2xl font-semibold text-zinc-700 dark:text-zinc-300">
               {registeredUser?.fullName || "Guest User"}
             </h1>
             <p className="text-sm md:text-base text-zinc-500 font-medium">
               {registeredUser?.email || "No email"}
             </p>
+
+            <button
+              onClick={handleFullNameEdit}
+              className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full transition-colors absolute top-2 right-2"
+            >
+              <EditPencilSvg />
+            </button>
           </div>
 
           {/* Reusable Info Row */}
@@ -129,9 +148,7 @@ const ProfilePage = () => {
               value: (
                 <Badge
                   text={
-                    registeredUser?.isEmailVerified
-                      ? "Verified"
-                      : "Unverified"
+                    registeredUser?.isEmailVerified ? "Verified" : "Unverified"
                   }
                   colorClass={
                     registeredUser?.isEmailVerified
@@ -156,7 +173,10 @@ const ProfilePage = () => {
               </div>
 
               {item.editable && (
-                <button className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full transition-colors">
+                <button
+                  onClick={handleNumberEdit}
+                  className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full transition-colors"
+                >
                   <EditPencilSvg />
                 </button>
               )}
@@ -207,7 +227,12 @@ const ProfilePage = () => {
             <h2 className="text-lg md:text-xl font-semibold text-zinc-700 dark:text-zinc-300">
               Address
             </h2>
-            <button className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full">
+            <button
+              type="button"
+              aria-label="edit-address"
+              onClick={handleAddressEdit}
+              className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full"
+            >
               <EditPencilSvg />
             </button>
           </div>
@@ -241,15 +266,24 @@ const ProfilePage = () => {
               label: "Auth Provider",
               value: registeredUser?.authProvider || "Local",
             },
-            { label: "Member Since", value: formatDate(registeredUser?.createdAt) },
-            { label: "Last Updated", value: formatDate(registeredUser?.updatedAt) },
+            {
+              label: "Member Since",
+              value: formatDate(registeredUser?.createdAt),
+            },
+            {
+              label: "Last Updated",
+              value: formatDate(registeredUser?.updatedAt),
+            },
             {
               label: "Billing Cycle",
               value: `${formatDate(
                 registeredUser?.billingCycleStart
               )} - ${formatDate(registeredUser?.billingCycleEnd)}`,
             },
-            { label: "User Role", value: (registeredUser?.role || "User").toUpperCase() },
+            {
+              label: "User Role",
+              value: (registeredUser?.role || "User").toUpperCase(),
+            },
           ].map((item, i) => (
             <div
               key={i}
@@ -267,6 +301,11 @@ const ProfilePage = () => {
           ))}
         </div>
       </div>
+
+      {/* ---------------- UPDATE MANAGER ---------------- */}
+      {(isFullNameUpdateModalOpen ||
+        isPhoneNumberUpdateModalOpen ||
+        isAddressUpdateModalOpen) && <UpdateManager />}
     </div>
   );
 };
