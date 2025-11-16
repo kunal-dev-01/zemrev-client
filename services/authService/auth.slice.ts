@@ -5,7 +5,8 @@ import type {
   AuthState,
   RegisteredUser,
   GuestUser,
-  CreditInfo
+  CreditInfo,
+  Address
 } from './types';
 import { authApi } from './auth.api';
 
@@ -22,7 +23,7 @@ const initialState: AuthState = {
 };
 
 // Extract error message
-const extractErrorMessage = (error: unknown): string => {
+export const extractErrorMessage = (error: unknown): string => {
   if (!error) return 'An unexpected error occurred';
   if (typeof error === 'string') return error;
 
@@ -93,6 +94,27 @@ const authSlice = createSlice({
     updateRegisteredUser: (state, action: PayloadAction<Partial<RegisteredUser>>) => {
       if (state.registeredUser) {
         state.registeredUser = { ...state.registeredUser, ...action.payload };
+      }
+    },
+
+    // Update Address
+    updateAddress: (state, action: PayloadAction<Partial<Address>>) => {
+      if (state.registeredUser) {
+        state.registeredUser.address = { ...state.registeredUser.address, ...action.payload };
+      }
+    },
+
+    // Update Full Name for registered user
+    updateFullName: (state, action: PayloadAction<string>) => {
+      if (state.registeredUser) {
+        state.registeredUser.fullName = action.payload;
+      }
+    },
+
+    // Update Phone Number for registered user
+    updatePhoneNumber: (state, action: PayloadAction<string>) => {
+      if (state.registeredUser) {
+        state.registeredUser.phoneNumber = action.payload;
       }
     },
 
@@ -279,6 +301,9 @@ export const {
   setFingerprint,
   setCredits,
   updateRegisteredUser,
+  updateAddress,
+  updateFullName,
+  updatePhoneNumber,
   convertToGuest,
   setLoading,
   setError,
