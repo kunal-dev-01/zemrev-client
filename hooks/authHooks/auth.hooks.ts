@@ -91,7 +91,7 @@ export const useAuth = () => {
           // Fetch credit status to initialize guest
           await triggerGetCredits().unwrap();
         } catch (error) {
-          console.error('Failed to initialize guest user:', error);
+          console.log('Failed to initialize guest user:', error);
         }
       }
     };
