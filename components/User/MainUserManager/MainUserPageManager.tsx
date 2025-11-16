@@ -23,7 +23,8 @@ const MainUserPageManager = () => {
 
   const VerifyEmailAlert = () => {
     return (
-      <div className="w-full p-3 rounded-md bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
+      <div className="p-2">
+        <div className="w-full p-3 rounded-md bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
         <p className="text-sm md:text-base text-zinc-700 dark:text-zinc-300 font-medium">
           Your email is not verified. Please verify to access all features.
         </p>
@@ -34,6 +35,7 @@ const MainUserPageManager = () => {
         >
           Resend Email
         </Link>
+      </div>
       </div>
     );
   };
