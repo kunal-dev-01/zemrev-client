@@ -43,7 +43,7 @@ const VerifyEmailPage = () => {
       setVerificationStatus("success");
       // Redirect to login after 3 seconds
       setTimeout(() => {
-        router.push("/auth/login");
+        router.push("/user?page=dashboard");
       }, 3000);
     } else {
       setVerificationStatus("error");
