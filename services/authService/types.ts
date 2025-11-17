@@ -165,6 +165,9 @@ export interface SignupResponse {
 export interface VerifyEmailResponse {
   status: string;
   message: string;
+  data: {
+    isEmailVerified: boolean;
+  };
 }
 
 export interface LoginResponse {
