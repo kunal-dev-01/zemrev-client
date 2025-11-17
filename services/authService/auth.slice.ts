@@ -118,6 +118,13 @@ const authSlice = createSlice({
       }
     },
 
+    // Update Email Verification Status
+    updateEmailVerificationStatus: (state, action: PayloadAction<boolean>) => {
+      if (state.registeredUser) {
+        state.registeredUser.isEmailVerified = action.payload;
+      }
+    },
+
     // Convert registered to guest (when session expires)
     convertToGuest: (state) => {
       state.userType = 'guest';
@@ -304,6 +311,7 @@ export const {
   updateAddress,
   updateFullName,
   updatePhoneNumber,
+  updateEmailVerificationStatus,
   convertToGuest,
   setLoading,
   setError,
