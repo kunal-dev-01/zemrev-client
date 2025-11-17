@@ -117,6 +117,8 @@ export const PlanCard = ({ plan }: { plan: PlanDetails }) => {
 
       {/* CTA */}
       <button
+        type="button"
+        onClick={() => window.open("/auth/register", "_self")}
         className={`w-full mt-6 px-4 py-1.5 rounded-lg text-white font-semibold transition-colors duration-300 ease-in-out cursor-pointer ${colors.button}`}
       >
         Get Started
