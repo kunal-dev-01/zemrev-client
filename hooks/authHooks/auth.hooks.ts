@@ -22,7 +22,8 @@ import {
   setError,
   clearError,
   setFingerprint,
-  setGuestCredentials
+  setGuestCredentials,
+  updateEmailVerificationStatus
 } from '@/services/authService/auth.slice';
 import { getFingerprint } from '@/utils/fingerprint.util';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
@@ -182,7 +183,10 @@ export const useAuth = () => {
     async (token: string): Promise<boolean> => {
       try {
         dispatch(clearError());
-        await verifyEmailMutation(token).unwrap();
+        const result = await verifyEmailMutation(token).unwrap();
+        if (result) {
+          dispatch(updateEmailVerificationStatus(true));
+        }
         return true;
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
