@@ -122,7 +122,7 @@ const HeroSection: React.FC = () => {
               key={i}
               desktop={text}
               mobile={text}
-              className="md:text-[2.8vw] text-[2.5vh] tracking-tight md:leading-[3vw] leading-[3.3vh] text-zinc-700 dark:text-zinc-300 fade-in"
+              className="md:text-[2.8vw] text-[2.5vh] tracking-tight md:leading-[3vw] leading-[3.3vh] text-zinc-700 dark:text-zinc-300"
               onHover={setHovering}
             />
           ))}
