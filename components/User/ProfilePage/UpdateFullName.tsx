@@ -60,8 +60,8 @@ const UpdateFullName = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md bg-zinc-100 dark:bg-zinc-900 rounded-xl shadow-2xl border border-zinc-200 dark:border-zinc-800">
+    <div className="fixed inset-0 z-100 flex items-center justify-center dark:bg-black/50 bg-white/50 backdrop-blur-sm p-4">
+      <div className="w-full max-w-md bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800">
           <h2 className="text-xl font-semibold text-zinc-800 dark:text-zinc-200">
@@ -109,14 +109,14 @@ const UpdateFullName = () => {
               type="button"
               onClick={handleClose}
               disabled={isUpdatingName}
-              className="flex-1 px-4 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-lg font-medium hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-lg font-medium hover:bg-zinc-200/70 dark:hover:bg-zinc-800/70 transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isUpdatingName}
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2 bg-light dark:bg-dark text-white rounded-lg font-medium hover:bg-light/80 dark:hover:bg-dark/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isUpdatingName ? (
                 <>
