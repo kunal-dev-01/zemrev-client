@@ -80,7 +80,7 @@ const ProfilePage = () => {
         </div>
 
         {/* User Info Card */}
-        <div className="w-full p-4 bg-zinc-100/90 dark:bg-zinc-900/50 rounded-xl flex flex-col gap-3">
+        <div className="w-full p-4 bg-zinc-100/90 dark:bg-zinc-900/50 rounded-xl flex flex-col gap-3 border border-zinc-100 dark:border-zinc-900">
           {/* Name & Email */}
           <div className="flex flex-col items-center text-center pb-3 border-b border-zinc-200/80 dark:border-zinc-800/80 relative">
             <h1 className="text-xl md:text-2xl font-semibold text-zinc-700 dark:text-zinc-300">
@@ -92,7 +92,7 @@ const ProfilePage = () => {
 
             <button
               onClick={handleFullNameEdit}
-              className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full transition-colors absolute top-2 right-2"
+              className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full transition-colors duration-200 ease-in-out absolute top-2 right-2 cursor-pointer"
             >
               <EditPencilSvg />
             </button>
@@ -175,7 +175,7 @@ const ProfilePage = () => {
               {item.editable && (
                 <button
                   onClick={handleNumberEdit}
-                  className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full transition-colors"
+                  className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full transition-colors duration-200 ease-in-out cursor-pointer"
                 >
                   <EditPencilSvg />
                 </button>
@@ -222,7 +222,7 @@ const ProfilePage = () => {
       {/* ---------------- RIGHT SECTION ---------------- */}
       <div className="md:w-1/2 flex flex-col gap-4 pb-4 md:pb-0">
         {/* Address */}
-        <div className="w-full p-4 bg-zinc-100/90 dark:bg-zinc-900/50 rounded-xl flex flex-col gap-3">
+        <div className="w-full p-4 bg-zinc-100/90 dark:bg-zinc-900/50 rounded-xl flex flex-col gap-3 border border-zinc-100 dark:border-zinc-900">
           <div className="flex justify-between items-center pb-3 border-b border-zinc-200/80 dark:border-zinc-800/80">
             <h2 className="text-lg md:text-xl font-semibold text-zinc-700 dark:text-zinc-300">
               Address
@@ -231,7 +231,7 @@ const ProfilePage = () => {
               type="button"
               aria-label="edit-address"
               onClick={handleAddressEdit}
-              className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full"
+              className="p-1 md:w-9 md:h-9 w-8 h-8 hover:bg-zinc-200/50 dark:hover:bg-zinc-800 rounded-full transition-colors duration-200 ease-in-out cursor-pointer"
             >
               <EditPencilSvg />
             </button>
@@ -256,7 +256,7 @@ const ProfilePage = () => {
         </div>
 
         {/* Additional Details */}
-        <div className="w-full p-4 bg-zinc-100/90 dark:bg-zinc-900/50 rounded-xl flex flex-col gap-3">
+        <div className="w-full p-4 bg-zinc-100/90 dark:bg-zinc-900/50 rounded-xl flex flex-col gap-3 border border-zinc-100 dark:border-zinc-900">
           <h2 className="text-lg md:text-xl font-semibold text-zinc-700 dark:text-zinc-300 pb-3 border-b border-zinc-200/80 dark:border-zinc-800/80">
             Account Details
           </h2>
