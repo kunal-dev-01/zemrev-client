@@ -8,6 +8,7 @@ import Input from "../../Layouts/Input/Input";
 import Spinner from "@/components/Layouts/Loaders/Spinner";
 import AuthErrorAlert from "../../Layouts/ErrorLayout/AuthError";
 import { useState } from "react";
+import { useFadeModal } from "@/hooks/animateHooks/useFads.hooks";
 
 // Country codes with validation
 const COUNTRY_CODES = [
@@ -20,9 +21,6 @@ const COUNTRY_CODES = [
   { code: "+33", country: "France", pattern: /^\+33[1-9]\d{8}$/ },
   { code: "+61", country: "Australia", pattern: /^\+61[2-9]\d{8}$/ },
   { code: "+55", country: "Brazil", pattern: /^\+55[1-9]\d{9,10}$/ },
-
-  // 🔥 MORE COUNTRIES ADDED BELOW
-
   { code: "+34", country: "Spain", pattern: /^\+34[6-9]\d{8}$/ },
   { code: "+39", country: "Italy", pattern: /^\+39[3-9]\d{8,9}$/ },
   { code: "+7", country: "Russia", pattern: /^\+7[1-9]\d{9,10}$/ },
@@ -32,37 +30,29 @@ const COUNTRY_CODES = [
   { code: "+92", country: "Pakistan", pattern: /^\+92[3-9]\d{8}$/ },
   { code: "+94", country: "Sri Lanka", pattern: /^\+94[1-9]\d{8}$/ },
   { code: "+880", country: "Bangladesh", pattern: /^\+8801[3-9]\d{8}$/ },
-
   { code: "+971", country: "UAE", pattern: /^\+971[2-9]\d{7,8}$/ },
   { code: "+966", country: "Saudi Arabia", pattern: /^\+9665\d{8}$/ },
   { code: "+20", country: "Egypt", pattern: /^\+20[1-9]\d{8,9}$/ },
   { code: "+27", country: "South Africa", pattern: /^\+27[1-9]\d{8}$/ },
-
   { code: "+82", country: "South Korea", pattern: /^\+82[1-9]\d{7,8}$/ },
   { code: "+60", country: "Malaysia", pattern: /^\+60[1-9]\d{7,9}$/ },
   { code: "+65", country: "Singapore", pattern: /^\+65[689]\d{7}$/ },
-
   { code: "+46", country: "Sweden", pattern: /^\+46[1-9]\d{7,10}$/ },
   { code: "+31", country: "Netherlands", pattern: /^\+31[1-9]\d{8}$/ },
   { code: "+47", country: "Norway", pattern: /^\+47[489]\d{7}$/ },
   { code: "+41", country: "Switzerland", pattern: /^\+41[1-9]\d{8}$/ },
-
   { code: "+90", country: "Turkey", pattern: /^\+90[1-9]\d{8,9}$/ },
   { code: "+98", country: "Iran", pattern: /^\+98[1-9]\d{8,9}$/ },
-
   { code: "+353", country: "Ireland", pattern: /^\+353[1-9]\d{7,8}$/ },
   { code: "+32", country: "Belgium", pattern: /^\+32[1-9]\d{7,8}$/ },
   { code: "+45", country: "Denmark", pattern: /^\+45\d{8}$/ },
-
   { code: "+48", country: "Poland", pattern: /^\+48[1-9]\d{8}$/ },
   { code: "+420", country: "Czech Republic", pattern: /^\+420[1-9]\d{8}$/ },
   { code: "+421", country: "Slovakia", pattern: /^\+421[1-9]\d{8}$/ },
-
   { code: "+234", country: "Nigeria", pattern: /^\+234[1-9]\d{8,10}$/ },
   { code: "+254", country: "Kenya", pattern: /^\+254[17]\d{7,8}$/ },
   { code: "+255", country: "Tanzania", pattern: /^\+255[1-9]\d{8,9}$/ },
 ];
-
 
 const phoneSchema = z.object({
   phoneNumber: z
@@ -71,7 +61,6 @@ const phoneSchema = z.object({
     .max(15, "Phone number is too long")
     .regex(/^\+\d+$/, "Phone number must start with + and contain only digits")
     .refine((val) => {
-      // Check if number matches any country code pattern
       return COUNTRY_CODES.some((country) => country.pattern.test(val));
     }, "Invalid phone number format for the selected country code"),
 });
@@ -82,6 +71,14 @@ const UpdatePhoneNumber = () => {
   const { updatePhoneNumber, isUpdatingPhone, userError, clearError, user } = useUser();
   const { setPhoneNumberUpdateModalOpen } = useLoginModal();
   const [selectedCode, setSelectedCode] = useState("+91");
+
+  const closeModal = () => {
+    setPhoneNumberUpdateModalOpen(false);
+    clearError();
+  };
+
+  // ⭐ fade animation hook added
+  const { fadeState, handleAnimatedClose } = useFadeModal(closeModal);
 
   const {
     register,
@@ -98,37 +95,31 @@ const UpdatePhoneNumber = () => {
 
   const phoneNumber = watch("phoneNumber");
 
-  const handleClose = () => {
-    setPhoneNumberUpdateModalOpen(false);
-    clearError();
-  };
-
   const handleCodeChange = (code: string) => {
     setSelectedCode(code);
-    // Keep only the digits after the current code, then add new code
     const currentDigits = phoneNumber.replace(/^\+\d+/, "");
     setValue("phoneNumber", code + currentDigits);
   };
 
   const onSubmit = async (data: PhoneFormData) => {
     const success = await updatePhoneNumber(data.phoneNumber);
-    if (success) {
-      handleClose();
-    }
+    if (success) handleAnimatedClose();
   };
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center dark:bg-black/50 bg-white/50 backdrop-blur-sm p-4">
+    <div className={`fixed inset-0 z-100 flex items-center justify-center dark:bg-black/50 bg-white/50 backdrop-blur-sm p-4 ${fadeState}`}>
       <div className="w-full max-w-md bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800">
           <h2 className="text-xl font-semibold text-zinc-800 dark:text-zinc-200">
             Update Phone Number
           </h2>
+
           <button
-            onClick={handleClose}
+            onClick={handleAnimatedClose}
             disabled={isUpdatingPhone}
-            className="w-8 h-8 p-1 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50"
+            className="w-8 h-8 p-1 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50 cursor-pointer"
             aria-label="Close"
           >
             <CancelSvg />
@@ -137,11 +128,13 @@ const UpdatePhoneNumber = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
+          
           {/* Country Code Selector */}
           <div>
             <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-1">
               Country Code
             </label>
+
             <select
               value={selectedCode}
               onChange={(e) => handleCodeChange(e.target.value)}
@@ -171,29 +164,29 @@ const UpdatePhoneNumber = () => {
             <ul className="space-y-0.5">
               <li>• US/CA: +1 followed by 10 digits</li>
               <li>• India: +91 followed by 10 digits (starts with 6-9)</li>
-              <li>• UK: +44 followed by 10-11 digits</li>
+              <li>• UK: +44 followed by 10–11 digits</li>
             </ul>
           </div>
 
           {/* Error Alert */}
-          {userError && (
-            <AuthErrorAlert message={userError} onClose={clearError} />
-          )}
+          {userError && <AuthErrorAlert message={userError} onClose={clearError} />}
 
           {/* Buttons */}
           <div className="flex gap-3 pt-2">
+            
             <button
               type="button"
-              onClick={handleClose}
+              onClick={handleAnimatedClose}
               disabled={isUpdatingPhone}
               className="flex-1 px-4 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-lg font-medium hover:bg-zinc-200/70 dark:hover:bg-zinc-800/70 transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
+
             <button
               type="submit"
               disabled={isUpdatingPhone}
-              className="flex-1 px-4 py-2 bg-light dark:bg-dark text-white rounded-lg font-medium hover:bg-light/80 dark:hover:bg-dark/80 transition-colors  disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2 bg-light dark:bg-dark text-white rounded-lg font-medium hover:bg-light/80 dark:hover:bg-dark/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isUpdatingPhone ? (
                 <>
@@ -204,8 +197,10 @@ const UpdatePhoneNumber = () => {
                 "Update"
               )}
             </button>
+
           </div>
         </form>
+
       </div>
     </div>
   );
