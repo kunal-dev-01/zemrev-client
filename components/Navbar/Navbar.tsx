@@ -30,7 +30,6 @@ const Logo: FC = () => (
 
 /* ----------  Navbar  ---------- */
 const Navbar: FC = memo(() => {
- 
 
   return (
     <nav className="w-full md:h-[2.5vw] h-[5.5vh] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 backdrop-blur-lg border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-between relative">
