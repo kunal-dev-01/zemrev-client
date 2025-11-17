@@ -120,7 +120,7 @@ export const useAuth = () => {
       try {
         dispatch(clearError());
         await signupMutation(data).unwrap();
-        router.push('/user/dashboard');
+        router.push('/user?page=dashboard');
         return true;
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
@@ -147,7 +147,7 @@ export const useAuth = () => {
           };
         }
 
-        router.push('/user/dashboard');
+        router.push('/user?page=dashboard');
         return { success: true };
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
