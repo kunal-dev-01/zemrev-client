@@ -1,6 +1,6 @@
 // src/hooks/authHooks/auth.hooks.ts
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react'; // REMOVE useEffect
 import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '../reduxHooks/redux.hooks';
 import {
@@ -21,13 +21,13 @@ import {
   logout as logoutAction,
   setError,
   clearError,
-  setFingerprint
+  setFingerprint,
+  setGuestCredentials
 } from '@/services/authService/auth.slice';
 import { getFingerprint } from '@/utils/fingerprint.util';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import type { SerializedError } from '@reduxjs/toolkit';
 
-// Extract error message
 const extractApiErrorMessage = (error: FetchBaseQueryError | SerializedError | unknown): string => {
   if (!error) return 'Something went wrong';
   if ('status' in (error as FetchBaseQueryError)) {
@@ -48,7 +48,6 @@ export const useAuth = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
-  // Redux state
   const {
     userType,
     registeredUser,
@@ -61,7 +60,6 @@ export const useAuth = () => {
     error,
   } = useAppSelector((state) => state.auth);
 
-  // RTK Query mutations
   const [signupMutation, { isLoading: isSigningUp }] = useSignupMutation();
   const [loginMutation, { isLoading: isLoggingIn }] = useLoginMutation();
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
@@ -75,29 +73,40 @@ export const useAuth = () => {
   const [resendVerifyEmailMutation, { isLoading: isResendingVerifyEmail }] =
     useResendVerifyEmailMutation();
 
-  // Credit status query
-  const { refetch: refetchCredits } = useGetCreditStatusQuery();
+  const { refetch: refetchCredits } = useGetCreditStatusQuery(undefined, {
+    skip: true, // NEVER auto-fetch
+  });
   const [triggerGetCredits] = useLazyGetCreditStatusQuery();
 
-  // ==================== INITIALIZE GUEST USER ====================
-  useEffect(() => {
-    const initializeGuest = async () => {
-      // Only initialize if anonymous
-      if (userType === 'anonymous' && !storedFingerprint) {
-        try {
-          const fp = await getFingerprint();
-          dispatch(setFingerprint(fp));
+  // ==================== INITIALIZE GUEST (ONLY WHEN NEEDED) ====================
+  const initializeGuestForTool = useCallback(async (): Promise<boolean> => {
+    try {
+      // If already registered, no need for guest
+      if (userType === 'registered') return true;
 
-          // Fetch credit status to initialize guest
-          await triggerGetCredits().unwrap();
-        } catch (error) {
-          console.log('Failed to initialize guest user:', error);
-        }
+      // If guest already exists, reuse it
+      if (userType === 'guest' && guestUser) return true;
+
+      // Create guest user
+      const fp = storedFingerprint || await getFingerprint();
+      dispatch(setFingerprint(fp));
+
+      // Fetch credit status to initialize guest in backend
+      const result = await triggerGetCredits().unwrap();
+      
+      if (result.data.guest) {
+        dispatch(setGuestCredentials({
+          guest: result.data.guest,
+          fingerprint: fp
+        }));
       }
-    };
 
-    initializeGuest();
-  }, [userType, storedFingerprint, dispatch, triggerGetCredits]);
+      return true;
+    } catch (error) {
+      console.error('Failed to initialize guest:', error);
+      return false;
+    }
+  }, [userType, guestUser, storedFingerprint, dispatch, triggerGetCredits]);
 
   // ==================== SIGNUP ====================
   const signup = useCallback(
@@ -314,12 +323,10 @@ export const useAuth = () => {
     return registeredUser.twoFactorEnabled;
   }, [userType, registeredUser]);
 
-  // ==================== USER TYPE CHECKS ====================
   const isGuest = userType === 'guest';
   const isRegistered = userType === 'registered';
   const isAnonymous = userType === 'anonymous';
 
-  // Combined loading state
   const combinedIsLoading =
     isLoading ||
     isSigningUp ||
@@ -333,9 +340,7 @@ export const useAuth = () => {
     isVerifying2FA ||
     isResendingVerifyEmail;
 
-  // ==================== RETURN API ====================
   return {
-    // User info
     userType,
     registeredUser,
     guestUser,
@@ -345,12 +350,9 @@ export const useAuth = () => {
     isGuest,
     isRegistered,
     isAnonymous,
-
-    // Status
     isLoading: combinedIsLoading,
     error,
-
-    // Auth operations
+    
     signup,
     verifyEmail,
     resendVerifyEmail,
@@ -361,11 +363,10 @@ export const useAuth = () => {
     loginWithGoogle,
     forgotPassword,
     resetPassword,
-
-    // Credit operations
+    
     refreshCredits,
-
-    // Utilities
+    initializeGuestForTool, // NEW: Call this ONLY when user actually uses a tool
+    
     clearError: clearAuthError,
     getDisplayName,
     getCreditsRemaining,
