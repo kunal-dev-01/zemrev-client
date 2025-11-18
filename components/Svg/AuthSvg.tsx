@@ -39,7 +39,10 @@ GoogleAuthSvg.displayName = "GoogleAuthSvg";
 export const RightIconSvg = React.memo(() => {
   return (
     <svg
-      className="w-16 h-16 mx-auto text-green-500"
+      xmlns="http://www.w3.org/2000/svg"
+      width="100%"
+      height="100%"
+      className="mx-auto text-green-500"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"

@@ -120,7 +120,6 @@ export const useAuth = () => {
       try {
         dispatch(clearError());
         await signupMutation(data).unwrap();
-        router.push('/user?page=dashboard');
         return true;
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));

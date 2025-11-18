@@ -5,7 +5,7 @@ import Skeleton from "@/components/Layouts/Loaders/Skeleton";
 import { UserMenuSvg } from "../../Svg/UserPageSvg";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
-import Link from "next/link";
+import VerifyEmailAlert from "@/components/Authentication/VerifyEmailAlert";
 
 const ProfilePage = dynamic(() => import("../ProfilePage/ProfilePage"), {
   ssr: false,
@@ -25,26 +25,6 @@ const MainUserPageManager = () => {
 
   const toggleUserMenu = () => setOpenUserMenu(true);
   const closeUserMenu = () => setOpenUserMenu(false);
-
-  const VerifyEmailAlert = () => {
-    return (
-      <div className="md:px-4 px-2 md:mt-4 mt-2">
-        <div className="w-full p-2 rounded-xl bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
-        <p className="text-sm md:text-base text-zinc-700 dark:text-zinc-300 font-medium">
-          Your email is not verified. Please verify to access all features.
-        </p>
-
-        <Link
-          href="/auth/verify-email-request"
-          className="px-3 py-1 text-sm font-semibold rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-        >
-          Resend
-        </Link>
-      </div>
-      </div>
-    );
-  };
-
   return (
     <div className="w-full md:h-[calc(100vh-5vw)] h-[calc(100vh-8vh)] md:flex md:flex-row md:justify-between items-center">
       {/* PC Sidebar */}
