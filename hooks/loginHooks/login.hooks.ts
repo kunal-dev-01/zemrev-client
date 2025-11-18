@@ -11,6 +11,12 @@ interface LoginState {
   setAddressUpdateModalOpen: (v: boolean) => void;
   isFullNameUpdateModalOpen: boolean;
   setFullNameUpdateModalOpen: (v: boolean) => void;
+  isTwoFactorModalOpen: boolean;
+  setTwoFactorModalOpen: (v: boolean) => void;
+  isChangePasswordModalOpen: boolean;
+  setChangePasswordModalOpen: (v: boolean) => void;
+  isPrivacyPolicyModalOpen: boolean;
+  setPrivacyPolicyModalOpen: (v: boolean) => void;
 }
 
 export const useLoginModal = create<LoginState>(set => ({
@@ -24,4 +30,10 @@ export const useLoginModal = create<LoginState>(set => ({
   setAddressUpdateModalOpen: v => set({ isAddressUpdateModalOpen: v }),
   isFullNameUpdateModalOpen: false,
   setFullNameUpdateModalOpen: v => set({ isFullNameUpdateModalOpen: v }),
+  isTwoFactorModalOpen: false,
+  setTwoFactorModalOpen: v => set({ isTwoFactorModalOpen: v }),
+  isChangePasswordModalOpen: false,
+  setChangePasswordModalOpen: v => set({ isChangePasswordModalOpen: v }),
+  isPrivacyPolicyModalOpen: false,
+  setPrivacyPolicyModalOpen: v => set({ isPrivacyPolicyModalOpen: v }),
 }));
