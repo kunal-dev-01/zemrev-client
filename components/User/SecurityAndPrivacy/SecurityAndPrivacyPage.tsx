@@ -1,8 +1,11 @@
-import { TwoFASvg, PasswordSvg, PersonalPrivacy } from "@/components/Svg/UserSvg";
+import { TwoFASvg, PasswordSvg, PersonalPrivacy, RegenerateCode } from "@/components/Svg/UserPageSvg";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { JSX } from "react";
 import ChangePassword from "./ChangePassword";
+import Privacy from "./Privacy";
+import RegenerateBackupCode from "./RegenerateBackupCode";
+import DisableTwoFactor from "./DisableTwoFactor";
 import TwoFA from "./TwoFA";
 
 const SecurityAndPrivacyPage = () => {
@@ -12,9 +15,13 @@ const SecurityAndPrivacyPage = () => {
   const {
     setPrivacyPolicyModalOpen,
     setTwoFactorModalOpen,
+    setTwoFactorDisabledModalOpen,
     setChangePasswordModalOpen,
+    setRegenerateModalOpen,
     isChangePasswordModalOpen,
-    isTwoFactorModalOpen
+    isTwoFactorModalOpen,
+    isRegenerateModalOpen,
+    isTwoFactorDisabledModalOpen,
   } = useLoginModal();
 
   const Card = ({
@@ -60,8 +67,16 @@ const SecurityAndPrivacyPage = () => {
     </div>
   );
 
+  const handleTwoFactorModalOpen = () => {
+    if (TwofaCheck) {
+      setTwoFactorDisabledModalOpen(true);
+    } else {
+      setTwoFactorModalOpen(true);
+    }
+  };
+
   return (
-    <div className="w-full h-full md:p-4 p-2 relative">
+    <div className="w-full md:p-4 p-2 relative">
       <div className="w-full flex flex-col gap-4">
 
         {/* 🔐 TWO-FACTOR AUTHENTICATION */}
@@ -69,7 +84,7 @@ const SecurityAndPrivacyPage = () => {
           icon={<TwoFASvg />}
           title="Two Factor Authentication"
           description="Secure your account with two-step verification."
-          onClick={() => setTwoFactorModalOpen(true)}
+          onClick={handleTwoFactorModalOpen}
           badge={
             TwofaCheck ? (
               <span className="px-3 py-1 text-xs font-medium rounded-full 
@@ -84,6 +99,16 @@ const SecurityAndPrivacyPage = () => {
             )
           }
         />
+
+        {/* 🔄 REGENERATE BACKUP CODES */}
+        {TwofaCheck && (
+          <Card 
+            icon={<RegenerateCode />}
+            title="Regenerate Backup Codes"
+            description="Generate new backup codes for account recovery."
+            onClick={() => setRegenerateModalOpen(true)}
+          />
+        )}
 
         {/* 🔑 CHANGE PASSWORD */}
         <Card
@@ -103,8 +128,11 @@ const SecurityAndPrivacyPage = () => {
 
       </div>
 
+      {/* Modals */}
       {isChangePasswordModalOpen && <ChangePassword />}
       {isTwoFactorModalOpen && <TwoFA />}
+      {isTwoFactorDisabledModalOpen && <DisableTwoFactor />}
+      {isRegenerateModalOpen && <RegenerateBackupCode />}
     </div>
   );
 };
