@@ -168,7 +168,7 @@ export const useAuth = () => {
       try {
         dispatch(clearError());
         await verify2FAMutation(data).unwrap();
-        router.push('/user/dashboard');
+        router.push('/user?page=dashboard');
         return true;
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
