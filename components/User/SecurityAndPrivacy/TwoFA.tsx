@@ -1,16 +1,14 @@
 import Input from "@/components/Layouts/Input/Input";
 import Spinner from "@/components/Layouts/Loaders/Spinner";
-import AuthErrorAlert from "@/components/Layouts/ErrorLayout/AuthError";
 import { CancelSvg } from "@/components/Svg/UserPageSvg";
-
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useTwoFactor } from "@/hooks/authHooks/twoFactor.hooks";
 import { useFadeModal } from "@/hooks/animateHooks/useFads.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { useState } from "react";
+import { RightIconSvg } from "@/components/Svg/AuthSvg";
 
 /* ---------------------------------------------------
    ZOD SCHEMAS
@@ -19,16 +17,10 @@ const verifySchema = z.object({
   totpCode: z.string().min(6, "Enter a valid 6-digit code"),
 });
 
-const disableSchema = z.object({
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  totpCode: z.string().optional(),
-});
-
 /* ---------------------------------------------------
    TYPES
 ----------------------------------------------------- */
 type VerifySchema = z.infer<typeof verifySchema>;
-type DisableSchema = z.infer<typeof disableSchema>;
 
 /* ---------------------------------------------------
    COMPONENT
@@ -37,11 +29,7 @@ const TwoFA = () => {
   const {
     setup2FA,
     enable2FA,
-    disable2FA,
-    regenerateBackupCodes,
     isLoading,
-    is2FAEnabled,
-    backupCodesRemaining,
     refresh2FAStatus,
   } = useTwoFactor();
 
@@ -57,27 +45,17 @@ const TwoFA = () => {
     backupCodes: string[];
   } | null>(null);
 
-  const [mode, setMode] = useState<
-    "initial" | "setup" | "verify" | "enabled" | "disable"
-  >(is2FAEnabled ? "enabled" : "initial");
+  const [mode, setMode] = useState<"initial" | "setup" | "verify" | "success">("initial");
 
   /* ---------------------------------------------------
-     FORMS
+     FORM
   ----------------------------------------------------- */
   const {
-    register: regVerify,
-    handleSubmit: submitVerify,
-    formState: { errors: verifyErrors },
+    register,
+    handleSubmit,
+    formState: { errors },
   } = useForm<VerifySchema>({
     resolver: zodResolver(verifySchema),
-  });
-
-  const {
-    register: regDisable,
-    handleSubmit: submitDisable,
-    formState: { errors: disableErrors },
-  } = useForm<DisableSchema>({
-    resolver: zodResolver(disableSchema),
   });
 
   /* ---------------------------------------------------
@@ -95,22 +73,19 @@ const TwoFA = () => {
     const success = await enable2FA(data.totpCode);
     if (success) {
       await refresh2FAStatus();
-      setMode("enabled");
+      setMode("success");
     }
   };
 
-  const handleDisable = async (data: DisableSchema) => {
-    const success = await disable2FA(data.password, data.totpCode);
-    if (success) {
-      await refresh2FAStatus();
-      setMode("initial");
+  const handleCopyAll = () => {
+    if (setupData?.backupCodes) {
+      navigator.clipboard.writeText(setupData.backupCodes.join("\n"));
     }
   };
 
   /* ---------------------------------------------------
      UI BLOCKS
   ----------------------------------------------------- */
-
   const renderHeader = (title: string) => (
     <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800">
       <h2 className="text-xl font-semibold text-zinc-800 dark:text-zinc-200">{title}</h2>
@@ -139,13 +114,19 @@ const TwoFA = () => {
 
             <div className="p-4 space-y-4">
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Add an extra layer of security by enabling 2FA.
+                Add an extra layer of security to your account by enabling two-factor authentication. You'll need an authenticator app like Google Authenticator or Authy.
               </p>
+
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  💡 You'll receive backup codes that can be used if you lose access to your authenticator app.
+                </p>
+              </div>
 
               <button
                 onClick={handleStartSetup}
                 disabled={isLoading}
-                className="w-full py-2 bg-light dark:bg-dark text-white rounded-lg font-medium hover:opacity-90 transition"
+                className="w-full py-2 bg-light dark:bg-dark text-white rounded-lg font-medium hover:opacity-90 transition disabled:opacity-50"
               >
                 {isLoading ? <Spinner size="sm" color="text-white" /> : "Set up 2FA"}
               </button>
@@ -154,28 +135,28 @@ const TwoFA = () => {
         )}
 
         {/* =====================================================
-             MODE: SETUP (QR + BACKUP CODES)
+             MODE: SETUP (QR CODE)
         ======================================================= */}
         {mode === "setup" && setupData && (
           <>
-            {renderHeader("Set Up 2FA")}
+            {renderHeader("Scan QR Code")}
 
             <div className="p-4 space-y-4">
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Scan the QR code using Google Authenticator, Authy, or any OTP app.
+                Scan this QR code using your authenticator app (Google Authenticator, Authy, etc.)
               </p>
 
               <div className="flex justify-center">
                 <img
                   src={setupData.qrCode}
-                  className="w-48 h-48 border rounded-lg"
+                  className="w-48 h-48 border border-zinc-300 dark:border-zinc-700 rounded-lg"
                   alt="QR Code"
                 />
               </div>
 
-              <div className="text-xs p-2 bg-zinc-200/50 dark:bg-zinc-800/50 rounded-lg">
-                <p className="font-medium">Manual Key:</p>
-                <p className="break-all mt-1">{setupData.manualEntryKey}</p>
+              <div className="text-xs p-3 bg-zinc-200/50 dark:bg-zinc-800/50 rounded-lg border border-zinc-300 dark:border-zinc-700">
+                <p className="font-medium text-zinc-700 dark:text-zinc-300 mb-1">Manual Entry Key:</p>
+                <p className="break-all text-zinc-600 dark:text-zinc-400 font-mono">{setupData.manualEntryKey}</p>
               </div>
 
               <button
@@ -193,90 +174,88 @@ const TwoFA = () => {
         ======================================================= */}
         {mode === "verify" && (
           <>
-            {renderHeader("Verify 2FA")}
+            {renderHeader("Verify 2FA Code")}
 
-            <form onSubmit={submitVerify(handleVerify)} className="p-4 space-y-4">
+            <form onSubmit={handleSubmit(handleVerify)} className="p-4 space-y-4">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Enter the 6-digit code from your authenticator app to complete setup.
+              </p>
+
               <Input
                 label="6-digit Code"
                 type="text"
                 placeholder="Enter OTP"
-                register={regVerify("totpCode")}
-                error={verifyErrors.totpCode}
+                register={register("totpCode")}
+                error={errors.totpCode}
                 disabled={isLoading}
               />
-
-              {verifyErrors.totpCode && <p className="text-red-500 text-xs">{verifyErrors.totpCode.message}</p>}
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-2 bg-light dark:bg-dark text-white rounded-lg hover:opacity-90 transition"
+                className="w-full py-2 bg-light dark:bg-dark text-white rounded-lg font-medium hover:opacity-90 transition disabled:opacity-50"
               >
-                {isLoading ? "Verifying..." : "Enable"}
+                {isLoading ? <Spinner size="sm" color="text-white" /> : "Enable 2FA"}
               </button>
             </form>
           </>
         )}
 
         {/* =====================================================
-             MODE: ENABLED (SHOW BACKUP CODES)
+             MODE: SUCCESS (SHOW BACKUP CODES)
         ======================================================= */}
-        {mode === "enabled" && (
+        {mode === "success" && setupData && (
           <>
-            {renderHeader("2FA Enabled")}
+            {renderHeader("2FA Enabled Successfully")}
 
             <div className="p-4 space-y-4">
+              {/* Success Message */}
+              <div className="flex items-center gap-3 p-3 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg">
+                <div className="w-6 h-6 text-green-600 dark:text-green-400">
+                  <RightIconSvg />
+                </div>
+                <p className="text-sm text-green-800 dark:text-green-200 font-medium">
+                  Two-Factor Authentication is now enabled!
+                </p>
+              </div>
+
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Two-Factor Authentication is currently active.
+                Save these backup codes in a secure location. Each code can only be used once to access your account if you lose your authenticator device.
               </p>
 
-              <p className="text-xs text-zinc-500">
-                Backup codes remaining: <strong>{backupCodesRemaining}</strong>
-              </p>
+              {/* Backup Codes Display */}
+              <div className="bg-zinc-200/50 dark:bg-zinc-800/50 rounded-lg p-4 space-y-2">
+                <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                  Your Backup Codes:
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {setupData.backupCodes.map((code, index) => (
+                    <div
+                      key={index}
+                      className="p-2 bg-white dark:bg-zinc-900 rounded border border-zinc-300 dark:border-zinc-700 text-center font-mono text-sm"
+                    >
+                      {code}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-              <button
-                onClick={() => setMode("disable")}
-                className="w-full py-2 bg-red-600 text-white rounded-lg hover:opacity-90 transition"
-              >
-                Disable 2FA
-              </button>
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCopyAll}
+                  className="flex-1 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 rounded-lg font-medium hover:opacity-90 transition"
+                >
+                  Copy All
+                </button>
+                <button
+                  onClick={closeModal}
+                  className="flex-1 py-2 bg-light dark:bg-dark text-white rounded-lg font-medium hover:opacity-90 transition"
+                >
+                  Done
+                </button>
+              </div>
             </div>
-          </>
-        )}
-
-        {/* =====================================================
-             MODE: DISABLE (PASSWORD + OPTIONAL OTP)
-        ======================================================= */}
-        {mode === "disable" && (
-          <>
-            {renderHeader("Disable 2FA")}
-
-            <form onSubmit={submitDisable(handleDisable)} className="p-4 space-y-4">
-              <Input
-                label="Password"
-                type="password"
-                placeholder="Enter your password"
-                register={regDisable("password")}
-                error={disableErrors.password}
-                disabled={isLoading}
-              />
-
-              <Input
-                label="2FA Code (optional)"
-                type="text"
-                placeholder="Enter code"
-                register={regDisable("totpCode")}
-                disabled={isLoading}
-              />
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-2 bg-red-600 text-white rounded-lg hover:opacity-90 transition"
-              >
-                {isLoading ? "Disabling..." : "Disable 2FA"}
-              </button>
-            </form>
           </>
         )}
 
