@@ -285,7 +285,7 @@ export const useAuth = () => {
     try {
       await refetchCredits();
     } catch (err) {
-      console.error('Failed to refresh credits:', err);
+      console.log('Failed to refresh credits:', err);
     }
   }, [refetchCredits]);
 
