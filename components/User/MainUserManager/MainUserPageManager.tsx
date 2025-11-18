@@ -88,7 +88,7 @@ const MainUserPageManager = () => {
           </p>
         </div>
 
-        <div className="w-full md:h-full h-[calc(100%-4vh)]">
+        <div className="w-full md:h-full h-[calc(100%-5vh)]">
           {!registeredUser?.isEmailVerified && <VerifyEmailAlert />}
           {currentPage === "profile" && <ProfilePage />}
           {currentPage === "security-and-privacy" && <SecurityAndPrivacyPage />}
