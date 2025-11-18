@@ -125,6 +125,13 @@ const authSlice = createSlice({
       }
     },
 
+    // update twofa status
+    update2FAStatus: (state, action: PayloadAction<boolean>) => {
+      if (state.registeredUser) {
+        state.registeredUser.twoFactorEnabled = action.payload;
+      }
+    },
+
     // Convert registered to guest (when session expires)
     convertToGuest: (state) => {
       state.userType = 'guest';
@@ -312,6 +319,7 @@ export const {
   updateFullName,
   updatePhoneNumber,
   updateEmailVerificationStatus,
+  update2FAStatus,
   convertToGuest,
   setLoading,
   setError,

@@ -10,7 +10,7 @@ import {
   useLazyGet2FAStatusQuery,
   useRegenerateBackupCodesMutation,
 } from '@/services/authService/auth.api';
-import { setError, clearError } from '@/services/authService/auth.slice';
+import { setError, clearError, update2FAStatus } from '@/services/authService/auth.slice';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import type { SerializedError } from '@reduxjs/toolkit';
 
@@ -75,7 +75,10 @@ export const useTwoFactor = () => {
     async (totpCode: string): Promise<boolean> => {
       try {
         dispatch(clearError());
-        await enable2FAMutation({ totpCode }).unwrap();
+        const result = await enable2FAMutation({ totpCode }).unwrap();
+        if(result) {
+          dispatch(update2FAStatus(result.data.twoFactorEnabled));
+        }
         return true;
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
@@ -90,7 +93,10 @@ export const useTwoFactor = () => {
     async (password: string, totpCode?: string): Promise<boolean> => {
       try {
         dispatch(clearError());
-        await disable2FAMutation({ password, totpCode }).unwrap();
+        const result = await disable2FAMutation({ password, totpCode }).unwrap();
+        if(result) {
+          dispatch(update2FAStatus(result.data.twoFactorEnabled));
+        }
         return true;
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
@@ -123,7 +129,7 @@ export const useTwoFactor = () => {
     try {
       await triggerGet2FAStatus().unwrap();
     } catch (err) {
-      console.error('Failed to refresh 2FA status:', err);
+      console.log('Failed to refresh 2FA status:', err);
     }
   }, [triggerGet2FAStatus]);
 

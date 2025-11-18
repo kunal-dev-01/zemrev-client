@@ -216,11 +216,17 @@ export interface Setup2FAResponse {
 export interface Enable2FAResponse {
   status: string;
   message: string;
+  data : {
+    twoFactorEnabled: boolean
+  }
 }
 
 export interface Disable2FAResponse {
   status: string;
   message: string;
+  data : {
+    twoFactorEnabled: boolean
+  }
 }
 
 export interface Get2FAStatusResponse {
