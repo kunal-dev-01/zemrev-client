@@ -71,7 +71,7 @@ const ProfilePage = () => {
   );
 
   return (
-    <div className="w-full h-full flex flex-col md:flex-row gap-4 md:p-4 p-2 relative">
+    <div className="w-full flex flex-col md:flex-row gap-4 md:p-4 p-2 relative">
       {/* ---------------- LEFT SECTION ---------------- */}
       <div className="md:w-1/2 flex flex-col gap-4 items-center pt-4 md:pt-0">
         {/* Profile Picture */}
