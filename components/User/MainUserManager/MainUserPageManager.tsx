@@ -12,6 +12,11 @@ const ProfilePage = dynamic(() => import("../ProfilePage/ProfilePage"), {
   loading: () => <Skeleton className="w-full h-full rounded-2xl" />,
 });
 
+const SecurityAndPrivacyPage = dynamic(() => import("../SecurityAndPrivacy/SecurityAndPrivacyPage"), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-full rounded-2xl" />,
+});
+
 const MainUserPageManager = () => {
   const { isOpenUserMenu, setOpenUserMenu } = useLoginModal();
   const { registeredUser } = useAuth();
@@ -86,6 +91,7 @@ const MainUserPageManager = () => {
         <div className="w-full md:h-full h-[calc(100%-4vh)]">
           {!registeredUser?.isEmailVerified && <VerifyEmailAlert />}
           {currentPage === "profile" && <ProfilePage />}
+          {currentPage === "security-and-privacy" && <SecurityAndPrivacyPage />}
         </div>
       </div>
     </div>
