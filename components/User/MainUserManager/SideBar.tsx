@@ -14,7 +14,7 @@ const SideBar = () => {
     { name: "Dashboard", slug: "dashboard", icon: <DasBoardSvg /> },
     { name: "Billing & Payment", slug: "billing" , icon: <PaymentSvg /> },
     { name: "Membership", slug: "membership" , icon: <MembershipSvg /> },
-    { name: "Security & Privacy", slug: "security" , icon: <SecuritySvg /> },
+    { name: "Security & Privacy", slug: "security-and-privacy" , icon: <SecuritySvg /> },
     { name: "Notifications", slug: "notifications" , icon: <NotificationSvg /> },
     { name: "Profile", slug: "profile" , icon: <UserProfileSvg /> },
   ];
