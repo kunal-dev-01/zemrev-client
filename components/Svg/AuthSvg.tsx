@@ -82,7 +82,10 @@ TickIconSvg.displayName = "TickIconSvg";
 export const ErrorSvg = React.memo(() => {
   return (
     <svg
-      className="w-20 h-20 mx-auto text-red-500"
+      xmlns="http://www.w3.org/2000/svg"
+      width="100%"
+      height="100%"
+      className="mx-auto text-red-500"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"

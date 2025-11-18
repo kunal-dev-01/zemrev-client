@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Spinner from "../Layouts/Loaders/Spinner";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
-import { EmailSvg } from "../Svg/AuthSvg";
+import { EmailSvg, RightIconSvg } from "../Svg/AuthSvg";
 
 interface ResendVerifyEmailProps {
   email: string;
@@ -85,8 +85,8 @@ const ResendVerifyEmail = ({ email }: ResendVerifyEmailProps) => {
         {/* Success Message */}
         {resendSuccess && (
           <div className="bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-800 rounded-lg p-3 mb-4 animate-fade-in">
-            <p className="text-green-700 dark:text-green-400 text-sm font-medium">
-              ✓ Verification email sent successfully!
+            <p className="text-green-700 dark:text-green-400 text-sm font-medium flex items-center gap-2">
+             <span className="w-6 h-6"><RightIconSvg /></span> Verification email sent successfully!
             </p>
           </div>
         )}

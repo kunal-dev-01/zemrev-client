@@ -77,7 +77,7 @@ const VerifyEmailPage = () => {
       <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center">
         <div className="w-full md:w-[40%] p-6 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl text-center">
           {/* Success Icon */}
-          <div className="mb-6">
+          <div className="mb-6 w-16 h-16">
             <RightIconSvg />
           </div>
 
@@ -111,7 +111,7 @@ const VerifyEmailPage = () => {
     <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center">
       <div className="w-full md:w-[40%] p-6 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl text-center">
         {/* Error Icon */}
-        <div className="mb-6">
+        <div className="mb-6 w-20 h-20">
           <ErrorSvg />
         </div>
 

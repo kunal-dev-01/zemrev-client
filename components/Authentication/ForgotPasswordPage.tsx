@@ -83,7 +83,7 @@ const ForgotPasswordPage = () => {
           </>
         ) : (
           <div className="text-center">
-            <div className="mb-4">
+            <div className="mb-4 w-16 h-16">
               <RightIconSvg/>
             </div>
             <h2 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
