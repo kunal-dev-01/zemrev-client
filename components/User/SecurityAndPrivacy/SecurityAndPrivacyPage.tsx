@@ -2,6 +2,8 @@ import { TwoFASvg, PasswordSvg, PersonalPrivacy } from "@/components/Svg/UserSvg
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { JSX } from "react";
+import ChangePassword from "./ChangePassword";
+import TwoFA from "./TwoFA";
 
 const SecurityAndPrivacyPage = () => {
   const { registeredUser } = useAuth();
@@ -11,9 +13,10 @@ const SecurityAndPrivacyPage = () => {
     setPrivacyPolicyModalOpen,
     setTwoFactorModalOpen,
     setChangePasswordModalOpen,
+    isChangePasswordModalOpen,
+    isTwoFactorModalOpen
   } = useLoginModal();
 
-  // 🔧 Reusable Card Component
   const Card = ({
     icon,
     title,
@@ -99,6 +102,9 @@ const SecurityAndPrivacyPage = () => {
         />
 
       </div>
+
+      {isChangePasswordModalOpen && <ChangePassword />}
+      {isTwoFactorModalOpen && <TwoFA />}
     </div>
   );
 };
