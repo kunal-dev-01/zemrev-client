@@ -2,7 +2,7 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserState } from "./types";
-import { extractErrorMessage } from "../authService/auth.slice";
+import { extractErrorMessage } from "@/utils/errorExtract.utils";
 import { userApi } from "./user.api";
 
 const initialState: UserState = {
