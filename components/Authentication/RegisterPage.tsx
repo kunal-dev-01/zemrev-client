@@ -10,23 +10,24 @@ import Spinner from "../Layouts/Loaders/Spinner";
 import GoogleAuthButton from "./GoogleAuthButton";
 import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
 import ResendVerifyEmail from "./ResendVerifyEmail";
+import { PlanType } from "@/services/authService/types";
 
 // ==================== VALIDATION SCHEMA ====================
 const registerSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  planType: z.string().min(1, "Please select a plan"),
+  selectedPlan: z.nativeEnum(PlanType),
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 // ==================== PLAN DATA ====================
 const PLANS = [
-  { value: "basic", name: "Basic", price: "$4.99", popular: false },
-  { value: "pro", name: "Pro", price: "$9.99", popular: true },
-  { value: "elite", name: "Elite", price: "$19.99", popular: false },
-  { value: "scale", name: "Scale", price: "Pay as you go", popular: false },
+  { value: PlanType.BASIC, name: "Basic", price: "$4.99", popular: false },
+  { value: PlanType.PRO,   name: "Pro",   price: "$9.99", popular: true },
+  { value: PlanType.ELITE, name: "Elite", price: "$19.99", popular: false },
+  { value: PlanType.CUSTOM,name: "Custom",price: "$0.005/credit", popular: false },
 ];
 
 // ==================== COMPONENT ====================
@@ -41,7 +42,7 @@ const RegisterPage = () => {
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      planType: "pro",
+      selectedPlan: PlanType.PRO,
     },
   });
 
@@ -115,7 +116,7 @@ const RegisterPage = () => {
                   <input
                     type="radio"
                     value={plan.value}
-                    {...register("planType")}
+                    {...register("selectedPlan")}
                     className="peer hidden"
                   />
 
@@ -144,9 +145,9 @@ const RegisterPage = () => {
               ))}
             </div>
 
-            {errors.planType && (
+            {errors.selectedPlan && (
               <span className="text-red-500 text-xs mt-1 block">
-                {errors.planType.message}
+                {errors.selectedPlan.message}
               </span>
             )}
           </div>
