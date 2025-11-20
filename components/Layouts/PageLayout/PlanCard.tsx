@@ -1,11 +1,5 @@
 import { TickIconSvg } from "../../Svg/AuthSvg";
-
-export enum PlanType {
-  BASIC = "BASIC",
-  PRO = "PRO",
-  ELITE = "ELITE",
-  SCALE = "SCALE",
-}
+import { PlanType } from "@/services/authService/types";
 
 export interface PlanDetails {
   type: PlanType;
@@ -47,7 +41,7 @@ export const PLAN_COLORS = {
     button:
       "bg-amber-500 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-700",
   },
-  [PlanType.SCALE]: {
+  [PlanType.CUSTOM]: {
     badge:
       "bg-gradient-to-r from-emerald-500 to-teal-500 dark:from-emerald-900 dark:to-teal-900 border-emerald-500 dark:border-emerald-900",
     dot: "bg-gradient-to-r from-emerald-500 to-teal-500",
@@ -61,7 +55,7 @@ export const PLAN_COLORS = {
 
 export const PlanCard = ({ plan }: { plan: PlanDetails }) => {
   const colors = PLAN_COLORS[plan.type];
-  const isScale = plan.type === PlanType.SCALE;
+  const isScale = plan.type === PlanType.CUSTOM;
 
   return (
     <div
@@ -84,7 +78,7 @@ export const PlanCard = ({ plan }: { plan: PlanDetails }) => {
       <div className="text-center py-4">
         {isScale ? (
           <p className={`text-3xl md:text-4xl font-bold ${colors.price}`}>
-            $0.01{" "}
+            $0.005{" "}
             <span className="text-sm text-zinc-600 dark:text-zinc-400">
               /credit
             </span>
@@ -102,7 +96,7 @@ export const PlanCard = ({ plan }: { plan: PlanDetails }) => {
       {/* Credits Box */}
       <div className={`w-full px-3 py-2.5 rounded-lg mb-4 ${colors.creditBox}`}>
         <p className="text-sm font-semibold text-center">
-          {isScale ? "Pay As You Go" : `${plan.dailyCredits} Credits/Day`}
+          {isScale ? "Buy credits as per your need" : `${plan.dailyCredits} Credits/Day`}
         </p>
       </div>
 
