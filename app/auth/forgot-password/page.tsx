@@ -7,7 +7,7 @@ const ForgotPasswordPage = dynamic(() => import("@/components/Authentication/For
 
 const ForgotPassword = () => {
   return (
-    <div className="w-full">
+    <div className="w-full h-screen flex items-center justify-center">
       <ForgotPasswordPage />
     </div>
   )

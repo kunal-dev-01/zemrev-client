@@ -7,7 +7,7 @@ const ResetPasswordPage = dynamic(() => import("@/components/Authentication/Rese
 
 const ResetPassword = () => {
   return (
-    <div className="w-full">
+    <div className="w-full h-screen flex items-center justify-center">
       <ResetPasswordPage />
     </div>
   )

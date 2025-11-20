@@ -83,7 +83,7 @@ const CallBack = () => {
           </>
         ) : (
           <>
-            <Spinner className="w-16 h-16 stroke-light dark:stroke-dark mx-auto" />
+            <Spinner size={"xl"} color='dark:stroke-dark stroke-light' />
             <div className="text-center">
               <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
                 Completing Sign In

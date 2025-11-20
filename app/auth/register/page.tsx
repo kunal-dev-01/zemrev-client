@@ -7,7 +7,7 @@ const RegisterPage = dynamic(() => import("@/components/Authentication/RegisterP
 
 const Register = () => {
   return (
-    <div className="w-full">
+    <div className="w-full h-screen flex items-center justify-center">
       <RegisterPage />
     </div>
   )

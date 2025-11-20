@@ -7,7 +7,7 @@ const VerifyPage = dynamic(() => import("@/components/Authentication/VerifyPage"
 
 const VerifyEmail = () => {
   return (
-    <div className="w-full">
+    <div className="w-full h-screen flex items-center justify-center">
       <VerifyPage />
     </div>
   )

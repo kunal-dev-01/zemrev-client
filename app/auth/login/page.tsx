@@ -7,7 +7,7 @@ const LoginPage = dynamic(() => import("@/components/Authentication/LoginPage"),
 
 const Login = () => {
   return (
-    <div aria-label="login-page" className="w-full">
+    <div aria-label="login-page" className="w-full h-screen flex items-center justify-center">
       <LoginPage />
     </div>
   )
