@@ -64,7 +64,7 @@ const SideBar = () => {
                 href={tool.href}
                 key={i}
                 onClick={closeSidebar}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg border border-zinc-200/50 dark:border-zinc-800/50 bg-white/50 dark:bg-zinc-900/30 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-all duration-200 group"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg border border-zinc-200/50 dark:border-zinc-800/50 bg-white/50 dark:bg-zinc-900/30 group relative"
               >
                 <div className="text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">
                   {tool.icon}
@@ -72,6 +72,8 @@ const SideBar = () => {
                 <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">
                   {tool.name}
                 </span>
+
+                <div className="opacity-0 group-hover:opacity-100 scale-80 group-hover:scale-100 transition-all duration-300 ease-in-out absolute top-0 left-0 w-full h-full -z-2 dark:bg-zinc-900 bg-zinc-200 rounded-lg"/>
               </Link>
             ))}
           </div>

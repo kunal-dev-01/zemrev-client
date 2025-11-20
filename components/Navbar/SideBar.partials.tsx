@@ -16,7 +16,7 @@ export const Backdrop = ({
   <div
     onClick={onClick}
     className={clsx(
-      "fixed inset-0 bg-white/50 dark:bg-black/50 z-40 transition-opacity duration-300",
+      "fixed inset-0 bg-white/50 dark:bg-black/50 z-40 transition-opacity duration-300 backdrop-blur-sm",
       {
         "opacity-100 visible": isOpen,
         "opacity-0 invisible": !isOpen,
@@ -99,20 +99,19 @@ export const CreditCard = ({
 
   if (!credits) return null;
 
-  const { remaining, used, total, isUnlimited } = credits;
+  const { remaining, used, total } = credits;
 
   const limit = typeof total === "number" ? total : null;
   const remainingNum =
     typeof remaining === "number" ? remaining : Number(remaining) || 0;
 
   const percentage =
-    isUnlimited || !limit ? 100 : (remainingNum / limit) * 100;
+    !limit ? 100 : (remainingNum / limit) * 100;
 
   const isCritical =
-    !isUnlimited && limit && remainingNum < limit * 0.1;
+     limit && remainingNum < limit * 0.1;
 
   const isLow =
-    !isUnlimited &&
     limit &&
     remainingNum < limit * 0.2 &&
     !isCritical;
@@ -160,18 +159,12 @@ export const CreditCard = ({
                   "text-zinc-900 dark:text-zinc-100": !isLow && !isCritical,
                 })}
               >
-                {isUnlimited ? "∞" : remaining}
+                {remaining}
               </span>
 
-              {limit && !isUnlimited && (
+              {limit && (
                 <span className="text-xs text-zinc-500 dark:text-zinc-400">
                   / {limit}
-                </span>
-              )}
-
-              {isUnlimited && (
-                <span className="text-xs text-emerald-500 dark:text-emerald-400">
-                  Unlimited
                 </span>
               )}
             </div>
@@ -190,7 +183,7 @@ export const CreditCard = ({
       </div>
 
       {/* Progress Bar */}
-      {!isUnlimited && limit && (
+      { limit && (
         <>
           <div className="w-full h-2 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-700">
             <div
@@ -218,12 +211,6 @@ export const CreditCard = ({
       {isLow && !isCritical && (
         <p className="text-[10px] text-yellow-600 dark:text-yellow-400 text-center mt-2">
           ⚠️ Credits below 20%
-        </p>
-      )}
-
-      {isUnlimited && (
-        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 text-center mt-2">
-          ✔ You have unlimited credits
         </p>
       )}
     </div>
