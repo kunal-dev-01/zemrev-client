@@ -32,7 +32,7 @@ const Input = ({
         {...register}
         disabled={disabled}
         className={`w-full px-3 py-2 rounded-lg border bg-transparent text-zinc-800 dark:text-zinc-100
-          focus:outline-none focus:ring-1 focus:ring-light dark:focus:ring-dark transition-all duration-300 ease-in-out
+          focus:outline-none focus:ring-1 focus:ring-light dark:focus:ring-dark transition-all duration-200
           ${
             error
               ? "border-red-500 focus:ring-red-500"

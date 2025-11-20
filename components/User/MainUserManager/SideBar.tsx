@@ -29,17 +29,19 @@ const SideBar = () => {
             key={item.slug}
             href={`/user?page=${item.slug}`}
             onClick={closeMenu} 
-            className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 cursor-pointer
+            className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 cursor-pointer relative group
               ${
                 isActive
-                  ? "bg-light dark:bg-dark/70 text-white duration-300"
-                  : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200/60 dark:hover:bg-zinc-800/70"
+                  ? "text-white duration-300"
+                  : "text-zinc-700 dark:text-zinc-300"
               }
             `}
           >
             <div className={`w-5 h-5 md:w-6 md:h-6 ${isActive ? "text-white" : "text-zinc-700 dark:text-zinc-300"} `}>{item.icon}</div>
 
             {item.name}
+
+            <div className={`scale-80 opacity-0 group-hover:scale-100 group-hover:opacity-100 -z-2 transition-all duration-200 absolute top-0 right-0 w-full h-full rounded-lg ${isActive ? "bg-light dark:bg-dark/80 scale-100 opacity-100" : "dark:bg-zinc-800 bg-zinc-200"}`}/>
           </Link>
         );
       })}
