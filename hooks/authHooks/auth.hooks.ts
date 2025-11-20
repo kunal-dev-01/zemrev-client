@@ -1,6 +1,6 @@
 // src/hooks/authHooks/auth.hooks.ts
 
-import { useCallback } from 'react'; // REMOVE useEffect
+import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '../reduxHooks/redux.hooks';
 import {
@@ -23,27 +23,11 @@ import {
   clearError,
   setFingerprint,
   setGuestCredentials,
-  updateEmailVerificationStatus
+  updateEmailVerificationStatus,
 } from '@/services/authService/auth.slice';
 import { getFingerprint } from '@/utils/fingerprint.util';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import type { SerializedError } from '@reduxjs/toolkit';
-
-const extractApiErrorMessage = (error: FetchBaseQueryError | SerializedError | unknown): string => {
-  if (!error) return 'Something went wrong';
-  if ('status' in (error as FetchBaseQueryError)) {
-    const fetchError = error as FetchBaseQueryError;
-    const errorData = fetchError.data as {
-      message?: string;
-      error?: string;
-    };
-    return errorData?.message || errorData?.error || 'Request failed';
-  }
-  if ('message' in (error as SerializedError)) {
-    return (error as SerializedError).message || 'Something went wrong';
-  }
-  return 'Unexpected error occurred';
-};
+import { PlanType } from '@/services/authService/types';
+import {extractApiErrorMessage} from '@/utils/errorExtract.utils';
 
 export const useAuth = () => {
   const router = useRouter();
@@ -75,31 +59,28 @@ export const useAuth = () => {
     useResendVerifyEmailMutation();
 
   const { refetch: refetchCredits } = useGetCreditStatusQuery(undefined, {
-    skip: true, // NEVER auto-fetch
+    skip: true,
   });
   const [triggerGetCredits] = useLazyGetCreditStatusQuery();
 
   // ==================== INITIALIZE GUEST (ONLY WHEN NEEDED) ====================
   const initializeGuestForTool = useCallback(async (): Promise<boolean> => {
     try {
-      // If already registered, no need for guest
       if (userType === 'registered') return true;
-
-      // If guest already exists, reuse it
       if (userType === 'guest' && guestUser) return true;
 
-      // Create guest user
-      const fp = storedFingerprint || await getFingerprint();
+      const fp = storedFingerprint || (await getFingerprint());
       dispatch(setFingerprint(fp));
 
-      // Fetch credit status to initialize guest in backend
       const result = await triggerGetCredits().unwrap();
-      
+
       if (result.data.guest) {
-        dispatch(setGuestCredentials({
-          guest: result.data.guest,
-          fingerprint: fp
-        }));
+        dispatch(
+          setGuestCredentials({
+            guest: result.data.guest,
+            fingerprint: fp,
+          })
+        );
       }
 
       return true;
@@ -115,15 +96,32 @@ export const useAuth = () => {
       fullName: string;
       email: string;
       password: string;
-      planType: string;
-    }): Promise<boolean> => {
+      selectedPlan: PlanType;
+    }): Promise<{ success: boolean; requiresPayment?: boolean; checkoutUrl?: string }> => {
       try {
         dispatch(clearError());
-        await signupMutation(data).unwrap();
-        return true;
+
+        const fp = await getFingerprint();
+        dispatch(setFingerprint(fp));
+
+        const result = await signupMutation({
+          ...data,
+          selectedPlan: data.selectedPlan,
+        }).unwrap();
+
+        if (result.data.requiresPayment && result.data.checkoutUrl) {
+          return {
+            success: true,
+            requiresPayment: true,
+            checkoutUrl: result.data.checkoutUrl,
+          };
+        }
+
+        router.push('/user?page=dashboard');
+        return { success: true };
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
-        return false;
+        return { success: false };
       }
     },
     [signupMutation, dispatch, router]
@@ -138,6 +136,7 @@ export const useAuth = () => {
       try {
         dispatch(clearError());
         const result = await loginMutation(data).unwrap();
+        
         if (result.data.requires2FA && result.data.tempToken) {
           return {
             success: true,
@@ -244,6 +243,10 @@ export const useAuth = () => {
   const loginWithGoogle = useCallback(async (): Promise<void> => {
     try {
       dispatch(clearError());
+
+      const fp = await getFingerprint();
+      dispatch(setFingerprint(fp));
+      
       await googleLoginMutation().unwrap();
     } catch (err: unknown) {
       dispatch(setError(extractApiErrorMessage(err)));
@@ -310,7 +313,6 @@ export const useAuth = () => {
   const hasEnoughCredits = useCallback(
     (required: number = 1): boolean => {
       if (!credits) return false;
-      if (credits.isUnlimited) return true;
       return typeof credits.remaining === 'number' && credits.remaining >= required;
     },
     [credits]
@@ -324,6 +326,11 @@ export const useAuth = () => {
   const is2FAEnabled = useCallback((): boolean => {
     if (userType !== 'registered' || !registeredUser) return false;
     return registeredUser.twoFactorEnabled;
+  }, [userType, registeredUser]);
+
+  const isPlanActive = useCallback((): boolean => {
+    if (userType !== 'registered' || !registeredUser) return false;
+    return registeredUser.planActive;
   }, [userType, registeredUser]);
 
   const isGuest = userType === 'guest';
@@ -355,7 +362,7 @@ export const useAuth = () => {
     isAnonymous,
     isLoading: combinedIsLoading,
     error,
-    
+
     signup,
     verifyEmail,
     resendVerifyEmail,
@@ -366,15 +373,16 @@ export const useAuth = () => {
     loginWithGoogle,
     forgotPassword,
     resetPassword,
-    
+
     refreshCredits,
-    initializeGuestForTool, // NEW: Call this ONLY when user actually uses a tool
-    
+    initializeGuestForTool,
+
     clearError: clearAuthError,
     getDisplayName,
     getCreditsRemaining,
     hasEnoughCredits,
     isEmailVerified,
     is2FAEnabled,
+    isPlanActive,
   };
 };

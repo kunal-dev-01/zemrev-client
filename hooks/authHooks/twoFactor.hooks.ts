@@ -11,27 +11,7 @@ import {
   useRegenerateBackupCodesMutation,
 } from '@/services/authService/auth.api';
 import { setError, clearError, update2FAStatus } from '@/services/authService/auth.slice';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import type { SerializedError } from '@reduxjs/toolkit';
-
-// Extract error message
-const extractApiErrorMessage = (
-  error: FetchBaseQueryError | SerializedError | unknown
-): string => {
-  if (!error) return 'Something went wrong';
-  if ('status' in (error as FetchBaseQueryError)) {
-    const fetchError = error as FetchBaseQueryError;
-    const errorData = fetchError.data as {
-      message?: string;
-      error?: string;
-    };
-    return errorData?.message || errorData?.error || 'Request failed';
-  }
-  if ('message' in (error as SerializedError)) {
-    return (error as SerializedError).message || 'Something went wrong';
-  }
-  return 'Unexpected error occurred';
-};
+import { extractApiErrorMessage } from '@/utils/errorExtract.utils';
 
 export const useTwoFactor = () => {
   const dispatch = useAppDispatch();
