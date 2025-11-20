@@ -16,8 +16,6 @@ import {
   updateFullName as updateAuthFullName,
   updatePhoneNumber as updateAuthPhoneNumber,
 } from '@/services/authService/auth.slice';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import type { SerializedError } from '@reduxjs/toolkit';
 import type {
   UpdatePasswordRequest,
   UpdatePhoneNumberRequest,
@@ -25,25 +23,7 @@ import type {
   UpdateFullNameRequest,
 } from '@/services/userService/types';
 import type { Address } from '@/services/authService/types';
-
-// Extract error message
-const extractApiErrorMessage = (
-  error: FetchBaseQueryError | SerializedError | unknown
-): string => {
-  if (!error) return 'Something went wrong';
-  if ('status' in (error as FetchBaseQueryError)) {
-    const fetchError = error as FetchBaseQueryError;
-    const errorData = fetchError.data as {
-      message?: string;
-      error?: string;
-    };
-    return errorData?.message || errorData?.error || 'Request failed';
-  }
-  if ('message' in (error as SerializedError)) {
-    return (error as SerializedError).message || 'Something went wrong';
-  }
-  return 'Unexpected error occurred';
-};
+import { extractApiErrorMessage } from '@/utils/errorExtract.utils';
 
 export const useUser = () => {
   const dispatch = useAppDispatch();
