@@ -2,9 +2,9 @@ import { useRef } from "react";
 import {
   PlanCard,
   PlanDetails,
-  PlanType,
 } from "../Layouts/PageLayout/PlanCard";
 import { ChevronLeft, ChevronRight } from "../Svg/ImageToolSvg";
+import { PlanType } from "@/services/authService/types";
 
 const PLANS: Record<PlanType, PlanDetails> = {
   [PlanType.BASIC]: {
@@ -52,12 +52,12 @@ const PLANS: Record<PlanType, PlanDetails> = {
       "Highest priority queue",
     ],
   },
-  [PlanType.SCALE]: {
-    type: PlanType.SCALE,
+  [PlanType.CUSTOM]: {
+    type: PlanType.CUSTOM,
     dailyCredits: -1,
     concurrentJobLimit: 100,
     priority: "Dedicated",
-    price: 0.01,
+    price: 0.005,
     features: [
       "All Elite features",
       "API access",
