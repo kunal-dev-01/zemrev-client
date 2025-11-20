@@ -15,19 +15,21 @@ import storage from 'redux-persist/lib/storage';
 import { baseApi } from '@/lib/baseApi/base.api';
 import authReducer from '@/services/authService/auth.slice';
 import userReducer from '@/services/userService/user.slice';
+import paymentReducer from '@/services/paymentService/payment.slice';
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage,
   whitelist: ['auth'],
-  blacklist: ['api'],
+  blacklist: ['api' , 'payment' , 'user'],
 };
 
 const rootReducer = combineReducers({
   [baseApi.reducerPath]: baseApi.reducer,
   auth: authReducer,
   user: userReducer,
+  payment: paymentReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

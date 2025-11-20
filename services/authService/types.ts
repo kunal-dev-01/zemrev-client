@@ -1,14 +1,14 @@
 // src/services/authService/types.ts
 
 export enum UserRole {
-  USER = "user"
+  USER = "user",
 }
 
 export enum PlanType {
   BASIC = "basic",
   PRO = "pro",
   ELITE = "elite",
-  SCALE = "scale",
+  CUSTOM = "custom",
 }
 
 export enum AuthProvider {
@@ -17,22 +17,23 @@ export enum AuthProvider {
 }
 
 export enum SubscriptionStatus {
+  INACTIVE = "inactive",
   ACTIVE = "active",
   CANCELED = "canceled",
   PAST_DUE = "past_due",
-  TRIALING = "trialing",
 }
 
-export type PlanPriority = "normal" | "high" | "highest" | "dedicated";
+export type PlanPriority = "normal" | "high" | "highest" | "custom";
 export type UserType = "guest" | "registered" | "anonymous";
 
 export interface PlanDetails {
   type: PlanType;
-  dailyCredits: number;
+  dailyCredits: number; // 0 for CUSTOM
   concurrentJobLimit: number;
   priority: PlanPriority;
   price: number;
   features: string[];
+  perCreditPrice?: number; // For CUSTOM only
 }
 
 export interface Address {
@@ -54,19 +55,27 @@ export interface RegisteredUser {
   phoneNumber?: string;
   address?: Address;
   role: UserRole;
+
+  // Plan info
+  planType: PlanType;
+  planActive: boolean; // false until payment
   plan: PlanDetails;
+  credits: number;
   creditsUsed: number;
-  lastCreditReset: Date;
+  nextCreditReset: Date;
+
+  // Status
   isEmailVerified: boolean;
   twoFactorEnabled: boolean;
   isActive: boolean;
   isBlocked: boolean;
   blockedReason?: string;
+
+  // Stripe
   stripeCustomerId?: string;
   subscriptionId?: string;
   subscriptionStatus: SubscriptionStatus;
-  billingCycleStart: Date;
-  billingCycleEnd: Date;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -84,25 +93,22 @@ export interface CreditInfo {
   used: number;
   remaining: number | string;
   resetDate?: Date;
-  isUnlimited?: boolean;
+  planType?: PlanType;
+  planActive?: boolean;
 }
 
 // ==================== AUTH STATE ====================
 
 export interface AuthState {
-  // User info
   userType: UserType;
   registeredUser: RegisteredUser | null;
   guestUser: GuestUser | null;
-  
-  // Auth tokens
+
   accessToken: string | null;
   fingerprint: string | null;
-  
-  // Credit info
+
   credits: CreditInfo | null;
-  
-  // Status
+
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -114,7 +120,7 @@ export interface SignupRequest {
   fullName: string;
   email: string;
   password: string;
-  planType: string;
+  selectedPlan: PlanType; // REQUIRED
 }
 
 export interface LoginRequest {
@@ -159,6 +165,13 @@ export interface SignupResponse {
   data: {
     user: RegisteredUser;
     accessToken: string;
+    requiresPayment?: boolean; // true if paid plan selected
+    checkoutUrl?: string;
+    creditInfo?: {
+      total: number;
+      used: number;
+      remaining: number;
+    };
   };
 }
 
@@ -216,17 +229,17 @@ export interface Setup2FAResponse {
 export interface Enable2FAResponse {
   status: string;
   message: string;
-  data : {
-    twoFactorEnabled: boolean
-  }
+  data: {
+    twoFactorEnabled: boolean;
+  };
 }
 
 export interface Disable2FAResponse {
   status: string;
   message: string;
-  data : {
-    twoFactorEnabled: boolean
-  }
+  data: {
+    twoFactorEnabled: boolean;
+  };
 }
 
 export interface Get2FAStatusResponse {
@@ -259,7 +272,6 @@ export interface CreditStatusResponse {
   status: string;
   data: {
     userType: UserType;
-    plan?: PlanType;
     user?: RegisteredUser;
     guest?: GuestUser;
     credits: CreditInfo;
