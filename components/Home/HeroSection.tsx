@@ -1,4 +1,3 @@
-// HeroSection.tsx
 import React, { useState, useEffect, useMemo } from "react";
 
 type Mouse = { x: number; y: number };
@@ -87,7 +86,7 @@ const HeroSection: React.FC = () => {
 
       <section
         id="hero"
-        className="relative w-full md:h-[25vw] h-[30vh] overflow-hidden rounded-2xl select-none cursor-none border-2 border-zinc-100/50 dark:border-zinc-900/50"
+        className="relative w-full md:h-[25vw] h-[40vh] overflow-hidden rounded-2xl select-none cursor-none border-2 border-zinc-100/50 dark:border-zinc-900/50 shadow-sm bg-white dark:bg-zinc-900/20"
         style={{
           backgroundImage: `
             radial-gradient(circle at 20% 30%, rgba(99,102,241,.15) 0%, transparent 50%),
@@ -116,16 +115,19 @@ const HeroSection: React.FC = () => {
         />
 
         {/* content */}
-        <div className="flex h-full flex-col items-center justify-center text-center font-semibold">
+        <div className="flex h-full flex-col items-center justify-center text-center font-semibold ">
           {headings.map((text, i) => (
             <Line
               key={i}
               desktop={text}
               mobile={text}
-              className="md:text-[2.8vw] text-[2.5vh] tracking-tight md:leading-[3vw] leading-[3.3vh] text-zinc-700 dark:text-zinc-300"
+              className="md:text-[2.8vw] text-[2.5vh] tracking-tight md:leading-[3vw] leading-[3vh] text-zinc-700 dark:text-zinc-300 mb-2"
               onHover={setHovering}
             />
           ))}
+          <p className="mt-3 text-zinc-500 max-w-md mx-auto text-sm md:text-lg font-normal px-2">
+            Professional grade file utilities without the bloat. Compress, convert, and manage documents securely in your browser.
+          </p>
         </div>
       </section>
     </>
