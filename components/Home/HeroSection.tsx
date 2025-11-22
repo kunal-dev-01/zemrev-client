@@ -116,7 +116,7 @@ const HeroSection: React.FC = () => {
         />
 
         {/* content */}
-        <div className="flex h-full flex-col items-center justify-center text-center font-medium">
+        <div className="flex h-full flex-col items-center justify-center text-center font-semibold">
           {headings.map((text, i) => (
             <Line
               key={i}

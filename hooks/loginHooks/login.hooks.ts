@@ -6,6 +6,8 @@ interface LoginState {
   isOpenUserMenu: boolean;
   setOpenUserMenu: (v: boolean) => void;
   isPhoneNumberUpdateModalOpen: boolean;
+  selectedCredit: number;
+  setCredit: (credit: number) => void;
   setPhoneNumberUpdateModalOpen: (v: boolean) => void;
   isAddressUpdateModalOpen: boolean;
   setAddressUpdateModalOpen: (v: boolean) => void;
@@ -28,6 +30,8 @@ export const useLoginModal = create<LoginState>(set => ({
   setOpenSidebar: v => set({ isOpenSidebar: v }),
   isOpenUserMenu: false,
   setOpenUserMenu: v => set({ isOpenUserMenu: v }),
+  selectedCredit: 1000,
+  setCredit: (credit) => set({ selectedCredit: credit }),
   isPhoneNumberUpdateModalOpen: false,
   setPhoneNumberUpdateModalOpen: v => set({ isPhoneNumberUpdateModalOpen: v }),
   isAddressUpdateModalOpen: false,
