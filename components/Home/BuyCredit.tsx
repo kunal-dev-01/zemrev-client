@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Tick2IconSvg, CreditIconSvg, BoltIcon } from '@/components/Svg/AuthSvg';
-import { useLoginModal } from '@/hooks/loginHooks/login.hooks';
 
 const MIN_CREDITS = 1000;
 const MAX_CREDITS = 100000;
@@ -17,27 +16,50 @@ const FEATURE_LIST = [
 ];
 
 const BuyCredit: React.FC = () => {
-  const { selectedCredit, setCredit } = useLoginModal();
+  const [selectedCredit, setCredit] = useState<number>(MIN_CREDITS);
+  const [inputValue, setInputValue] = useState<string>(MIN_CREDITS.toString());
 
   const totalPrice = useMemo(() => {
     return (selectedCredit * PRICE_PER_CREDIT).toFixed(2);
   }, [selectedCredit]);
 
-  const handleManualInput = (value: string) => {
-    const num = Number(value);
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = Number(e.target.value);
+    setCredit(val);
+    setInputValue(val.toString());
+  };
 
-    if (!num) return;
-    if (num < MIN_CREDITS) return setCredit(MIN_CREDITS);
-    if (num > MAX_CREDITS) return setCredit(MAX_CREDITS);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setInputValue(val);
 
+    // Allow empty string or partial typing
+    if (val === '') return;
+
+    const num = Number(val);
+    // Only update slider if valid and within range
+    if (!isNaN(num) && num >= MIN_CREDITS && num <= MAX_CREDITS) {
+      setCredit(num);
+    }
+  };
+
+  const handleInputBlur = () => {
+    let num = Number(inputValue);
+    // Clamp value on blur
+    if (isNaN(num) || num < MIN_CREDITS) {
+      num = MIN_CREDITS;
+    } else if (num > MAX_CREDITS) {
+      num = MAX_CREDITS;
+    }
     setCredit(num);
+    setInputValue(num.toString());
   };
 
   const sliderPercentage =
     ((selectedCredit - MIN_CREDITS) / (MAX_CREDITS - MIN_CREDITS)) * 100;
 
   const handlePurchase = () => {
-    window.location.href = "/auth/register";
+    console.log("Processing purchase for credits:", selectedCredit);
   };
 
   return (
@@ -111,8 +133,9 @@ const BuyCredit: React.FC = () => {
                   {/* Manual Input */}
                   <input
                     type="number"
-                    value={selectedCredit}
-                    onChange={(e) => handleManualInput(e.target.value)}
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    onBlur={handleInputBlur}
                     className="px-3 py-2 w-28 bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 rounded-lg text-zinc-700 dark:text-zinc-300 text-sm font-medium outline-none"
                   />
                 </div>
