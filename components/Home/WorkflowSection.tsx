@@ -25,10 +25,10 @@ const WorkflowSection: React.FC = () => {
       <div className="w-full py-12 md:py-16 px-6 md:px-12 border-2 border-zinc-100/50 dark:border-zinc-900/50 rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 text-center">
         
         <div className="mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+          <h2 className="text-2xl md:text-3xl font-bold text-zinc-700 dark:text-zinc-300">
             How it works
           </h2>
-          <p className="text-zinc-500 dark:text-zinc-400 mt-2">
+          <p className="text-zinc-500 mt-2">
             Three simple steps to transform your documents.
           </p>
         </div>
@@ -40,16 +40,13 @@ const WorkflowSection: React.FC = () => {
 
           {steps.map((step, idx) => (
             <div key={idx} className="relative flex flex-col items-center z-10">
-              <div className="w-24 h-24 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm flex items-center justify-center mb-6">
-                <div className="text-indigo-600 dark:text-indigo-400 w-16 h-16"> <step.icon /></div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 flex items-center justify-center font-bold text-sm border-4 border-white dark:border-zinc-950">
-                  {idx + 1}
-                </div>
+              <div className="w-24 h-24 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center mb-6">
+                <div className="text-light dark:text-dark w-16 h-16"> <step.icon /></div>
               </div>
-              <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 mb-3">
+              <h3 className="text-xl font-semibold text-zinc-700 dark:text-zinc-300 mb-3">
                 {step.title}
               </h3>
-              <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed max-w-xs">
+              <p className="text-zinc-500 text-sm leading-relaxed max-w-xs">
                 {step.desc}
               </p>
             </div>
