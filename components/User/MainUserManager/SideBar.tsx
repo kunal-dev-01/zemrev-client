@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
-import {DashBoardSvg,PaymentSvg,UserRoundSvg,SecuritySvg,NotificationSvg,APISvg} from "../../Svg/UserPageSvg";
-import { CreditSvg } from "@/components/Svg/CommonSvg";
+import {DashBoardSvg,PaymentSvg,UserRoundSvg,SecuritySvg,NotificationSvg,APISvg,BuyCreditSvg} from "@/components/Svg/UserPageSvg";
 
 const SideBar = () => {
   const searchParams = useSearchParams();
@@ -14,7 +13,7 @@ const SideBar = () => {
   const UserLinks = [
     { name: "Dashboard", slug: "dashboard", icon: <DashBoardSvg /> },
     { name: "Billing & Payment", slug: "billing" , icon: <PaymentSvg /> },
-    { name: "Buy Credits", slug: "buy-credits" , icon: <CreditSvg /> },
+    { name: "Buy Credits", slug: "buy-credits" , icon: <BuyCreditSvg /> },
     { name: "API Access", slug: "api-access" , icon: <APISvg /> },
     { name: "Security & Privacy", slug: "security-and-privacy" , icon: <SecuritySvg /> },
     { name: "Notifications", slug: "notifications" , icon: <NotificationSvg /> },
