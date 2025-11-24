@@ -1,32 +1,20 @@
 // src/services/paymentService/types.ts
 
-import { PlanType } from '../authService/types';
-
 // ==================== REQUEST TYPES ====================
 
-export interface CreateCheckoutRequest {
-  planType: PlanType;  // BASIC, PRO, ELITE only
-}
-
 export interface BuyCreditsRequest {
-  credits: number;  // Minimum 1000
+  credits: number;
 }
 
 // ==================== RESPONSE TYPES ====================
-
-export interface CreateCheckoutResponse {
-  status: string;
-  data: {
-    checkoutUrl: string;
-  };
-}
 
 export interface BuyCreditsResponse {
   status: string;
   data: {
     checkoutUrl: string;
     credits: number;
-    price: string; 
+    pricePerCredit: number;
+    totalPrice: string;
   };
 }
 
@@ -34,14 +22,10 @@ export interface VerifyPaymentResponse {
   status: string;
   message: string;
   data: {
-    planType: string;
+    credits: number;
     amountTotal: number;
+    paymentStatus: string;
   };
-}
-
-export interface CancelSubscriptionResponse {
-  status: string;
-  message: string;
 }
 
 export interface BillingPortalResponse {
@@ -58,7 +42,7 @@ export interface Payment {
   stripeInvoiceId?: string;
   amount: number;
   currency: string;
-  planType: PlanType;
+  credits: number;
   paymentStatus: string;
   paymentMethod: string;
   paidAt: Date;
@@ -75,6 +59,13 @@ export interface PaymentHistoryResponse {
       total: number;
       totalPages: number;
     };
+  };
+}
+
+export interface TotalSpentResponse {
+  status: string;
+  data: {
+    totalSpent: string;
   };
 }
 
