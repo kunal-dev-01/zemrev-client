@@ -3,16 +3,18 @@
 import { useState, useEffect } from "react";
 import Spinner from "../Layouts/Loaders/Spinner";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
+import { useAuthVerify } from "@/hooks/authHooks/auth.verify.hooks";
 import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
-import { EmailSvg, RightIconSvg } from "../Svg/AuthSvg";
+import { EmailSvg, CheckSvg } from "../Svg/CommonSvg";
 
 interface ResendVerifyEmailProps {
   email: string;
 }
 
 const ResendVerifyEmail = ({ email }: ResendVerifyEmailProps) => {
-  const { resendVerifyEmail, error, clearError } = useAuth();
-  
+  const { error, clearError } = useAuth();
+  const { resendVerifyEmail } = useAuthVerify();
+
   const [countdown, setCountdown] = useState(60);
   const [isResending, setIsResending] = useState(false);
   const [canResend, setCanResend] = useState(false);
@@ -74,8 +76,8 @@ const ResendVerifyEmail = ({ email }: ResendVerifyEmailProps) => {
         {/* Instructions */}
         <div className="bg-zinc-100 dark:bg-zinc-800/50 rounded-lg p-4 mb-6 text-left">
           <p className="text-zinc-600 dark:text-zinc-400 text-sm">
-            📧 <strong>Check your inbox</strong> and click the verification link to
-            activate your account.
+            📧 <strong>Check your inbox</strong> and click the verification link
+            to activate your account.
           </p>
           <p className="text-zinc-600 dark:text-zinc-400 text-sm mt-2">
             💡 Don't see it? Check your spam folder.
@@ -86,15 +88,11 @@ const ResendVerifyEmail = ({ email }: ResendVerifyEmailProps) => {
         {resendSuccess && (
           <div className="bg-green-100 dark:bg-green-900/20 border border-green-300 dark:border-green-800 rounded-lg p-3 mb-4 animate-fade-in">
             <p className="text-green-700 dark:text-green-400 text-sm font-medium flex items-center gap-2">
-             <span className="w-6 h-6"><RightIconSvg /></span> Verification email sent successfully!
+              <span className="w-6 h-6 text-emerald-400">
+                <CheckSvg />
+              </span>{" "}
+              Verification email sent successfully!
             </p>
-          </div>
-        )}
-
-        {/* Error Alert */}
-        {error && (
-          <div className="mb-4">
-            <AuthErrorAlert message={error} onClose={clearError} />
           </div>
         )}
 
@@ -115,6 +113,8 @@ const ResendVerifyEmail = ({ email }: ResendVerifyEmailProps) => {
           )}
         </button>
 
+        {!error && <AuthErrorAlert message={error} onClose={clearError} />}
+
         {/* Back to Login */}
         <div className="py-2 border border-zinc-300 dark:border-zinc-800 rounded-lg">
           <a
@@ -129,10 +129,10 @@ const ResendVerifyEmail = ({ email }: ResendVerifyEmailProps) => {
         <p className="text-zinc-400 dark:text-zinc-500 text-sm mt-6">
           Having trouble? Contact{" "}
           <a
-            href="mailto:contact.zemrev@gmail.com"
+            href="mailto:contact@zemrev.com"
             className="text-light dark:text-dark hover:underline"
           >
-            contact.zemrev@gmail.com
+            contact@zemrev.com
           </a>
         </p>
       </div>

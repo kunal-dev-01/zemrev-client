@@ -123,10 +123,8 @@ const LoginPage = () => {
           </form>
 
           {/* Error Alert */}
-          {error && (
-            <div className="mt-4">
+          {!error && (
               <AuthErrorAlert message={error} onClose={clearError} />
-            </div>
           )}
 
           {/* OR DIVIDER */}

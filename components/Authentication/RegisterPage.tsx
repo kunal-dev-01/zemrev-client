@@ -24,21 +24,21 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 const Logo: FC = () => (
   <Link href="/" className="block md:w-[2.8vw] w-[6vh] mx-auto mb-2">
-    <Image 
-      src="/favicon.svg" 
-      alt="logo" 
-      width={50} 
-      height={50} 
-      loading='eager'
-      className="w-full h-full object-cover dark:hidden" 
+    <Image
+      src="/favicon.svg"
+      alt="logo"
+      width={50}
+      height={50}
+      loading="eager"
+      className="w-full h-full object-cover dark:hidden"
     />
-    <Image 
-      src="/favicon-dark.svg" 
-      alt="logo" 
-      width={50} 
-      height={50} 
-      loading='eager'
-      className="w-full h-full object-cover hidden dark:block" 
+    <Image
+      src="/favicon-dark.svg"
+      alt="logo"
+      width={50}
+      height={50}
+      loading="eager"
+      className="w-full h-full object-cover hidden dark:block"
     />
   </Link>
 );
@@ -53,7 +53,7 @@ const RegisterPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema)
+    resolver: zodResolver(registerSchema),
   });
 
   // ==================== HANDLERS ====================
@@ -74,7 +74,6 @@ const RegisterPage = () => {
   return (
     <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
       <div className="w-full md:w-[40%] md:p-6 p-4 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl">
-
         {/* Logo */}
         <Logo />
 
@@ -114,7 +113,10 @@ const RegisterPage = () => {
             error={errors.password}
           />
 
-          
+          {/* Error Alert */}
+          {!error && (
+              <AuthErrorAlert message={error} onClose={clearError} />
+          )}
 
           {/* Submit Button */}
           <button
@@ -156,13 +158,6 @@ const RegisterPage = () => {
             </a>
           </p>
         </div>
-
-        {/* Error Alert */}
-        {error && (
-          <div className="mt-4">
-            <AuthErrorAlert message={error} onClose={clearError} />
-          </div>
-        )}
       </div>
     </div>
   );

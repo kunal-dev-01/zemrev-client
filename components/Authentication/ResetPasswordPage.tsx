@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
+import { useAuthVerify } from "@/hooks/authHooks/auth.verify.hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useState, useEffect } from "react";
@@ -7,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import Input from "@/components/Layouts/Input/Input";
 import Spinner from "../Layouts/Loaders/Spinner";
 import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
-import { ErrorSvg, RightIconSvg } from "../Svg/AuthSvg";
+import { CheckSvg, ErrorSvg } from "../Svg/CommonSvg";
 
 // ==================== VALIDATION SCHEMA ====================
 const resetPasswordSchema = z
@@ -25,7 +26,8 @@ type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 // ==================== COMPONENT ====================
 const ResetPasswordPage = () => {
   const searchParams = useSearchParams();
-  const { resetPassword, isLoading, error, clearError } = useAuth();
+  const { isLoading, error, clearError } = useAuth();
+  const { resetPassword } = useAuthVerify();
 
   // Local state
   const [resetPasswordToken, setResetPasswordToken] = useState<string | null>(null);
@@ -99,8 +101,8 @@ const ResetPasswordPage = () => {
       <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center">
         <div className="w-full md:w-[40%] p-6 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl text-center">
           {/* Success Icon */}
-          <div className="mb-4 w-16 h-16 mx-auto">
-           <RightIconSvg/>
+          <div className="mb-4 w-16 h-16 mx-auto text-emerald-400">
+           <CheckSvg/>
           </div>
 
           <h2 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
@@ -170,9 +172,7 @@ const ResetPasswordPage = () => {
 
         {/* Error Alert */}
         {error && (
-          <div className="mt-4">
             <AuthErrorAlert message={error} onClose={clearError} />
-          </div>
         )}
 
         {/* Back to Login */}

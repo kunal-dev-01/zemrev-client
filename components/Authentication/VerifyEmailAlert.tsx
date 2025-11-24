@@ -1,10 +1,12 @@
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
+import { useAuthVerify } from "@/hooks/authHooks/auth.verify.hooks";
 import { useState, useEffect } from "react";
 import Spinner from "@/components/Layouts/Loaders/Spinner";
-import { RightIconSvg } from "@/components/Svg/AuthSvg";
+import { CheckSvg } from "../Svg/CommonSvg";
 
 const VerifyEmailAlert = () => {
-  const { registeredUser, resendVerifyEmail, isLoading } = useAuth();
+  const { registeredUser, isLoading } = useAuth();
+  const { resendVerifyEmail } = useAuthVerify();
   const [cooldown, setCooldown] = useState(0);
   const [emailSent, setEmailSent] = useState(false);
 
@@ -57,8 +59,8 @@ const VerifyEmailAlert = () => {
         <div className="flex-1">
           {!emailSent ? (
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 text-green-600 dark:text-green-400">
-                <RightIconSvg />
+              <div className="w-6 h-6 text-emerald-400">
+                <CheckSvg />
               </div>
               <p className="text-sm md:text-base text-green-700 dark:text-green-300 font-medium">
                 Verification email sent successfully!

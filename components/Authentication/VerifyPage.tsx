@@ -3,14 +3,16 @@
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
+import { useAuthVerify } from "@/hooks/authHooks/auth.verify.hooks";
 import Spinner from "../Layouts/Loaders/Spinner";
 import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
-import { ErrorSvg, RightIconSvg } from "../Svg/AuthSvg";
+import { CheckSvg , ErrorSvg} from "../Svg/CommonSvg";
 
 const VerifyEmailPage = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { verifyEmail, error, clearError } = useAuth();
+  const { error, clearError } = useAuth();
+  const { verifyEmail } = useAuthVerify();
 
   const [verificationStatus, setVerificationStatus] = useState<"loading" | "success" | "error">("loading");
   const [token, setToken] = useState<string | null>(null);
@@ -77,8 +79,8 @@ const VerifyEmailPage = () => {
       <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center">
         <div className="w-full md:w-[40%] p-6 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl text-center">
           {/* Success Icon */}
-          <div className="mb-6 w-16 h-16 mx-auto">
-            <RightIconSvg />
+          <div className="mb-6 w-16 h-16 text-emerald-400 mx-auto">
+            <CheckSvg />
           </div>
 
           <h2 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
@@ -111,7 +113,7 @@ const VerifyEmailPage = () => {
     <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center">
       <div className="w-full md:w-[40%] p-6 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl text-center">
         {/* Error Icon */}
-        <div className="mb-6 w-20 h-20">
+        <div className="mb-6 w-20 h-20 text-red-500 mx-auto">
           <ErrorSvg />
         </div>
 
@@ -126,9 +128,7 @@ const VerifyEmailPage = () => {
 
         {/* Error Alert */}
         {error && (
-          <div className="mb-6">
             <AuthErrorAlert message={error} onClose={clearError} />
-          </div>
         )}
 
         {/* Actions */}

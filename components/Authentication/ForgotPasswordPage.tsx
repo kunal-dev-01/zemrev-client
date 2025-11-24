@@ -1,11 +1,12 @@
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
+import { useAuthVerify } from "@/hooks/authHooks/auth.verify.hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useState } from "react";
 import Input from "@/components/Layouts/Input/Input";
 import Spinner from "../Layouts/Loaders/Spinner";
-import { RightIconSvg } from "../Svg/AuthSvg";
+import { CheckSvg } from "../Svg/CommonSvg";
 import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
 
 const forgotPasswordSchema = z.object({
@@ -16,7 +17,8 @@ type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 const ForgotPasswordPage = () => {
   const [emailSent, setEmailSent] = useState(false);
-  const { isLoading, forgotPassword, error, clearError } = useAuth();
+  const { isLoading, error, clearError } = useAuth();
+  const { forgotPassword } = useAuthVerify();
 
   const {
     register,
@@ -83,8 +85,8 @@ const ForgotPasswordPage = () => {
           </>
         ) : (
           <div className="text-center">
-            <div className="mb-4 w-16 h-16">
-              <RightIconSvg/>
+            <div className="mb-4 w-16 h-16 text-emerald-400 ">
+              <CheckSvg/>
             </div>
             <h2 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
               Check Your Email

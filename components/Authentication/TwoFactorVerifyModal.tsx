@@ -17,7 +17,7 @@ const TwoFactorVerifyModal = ({
   onCancel,
 }: TwoFactorVerifyModalProps) => {
   const { verify2FA, error, isLoading, clearError } = useAuth();
-  
+
   const [totpCode, setTotpCode] = useState("");
   const [isBackupCode, setIsBackupCode] = useState(false);
   const [codeError, setCodeError] = useState<string>("");
@@ -62,7 +62,6 @@ const TwoFactorVerifyModal = ({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border-2 border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
-        
         {/* HEADER */}
         <div className="text-center">
           <h2 className="text-2xl font-semibold text-zinc-800 dark:text-zinc-200">
@@ -99,13 +98,6 @@ const TwoFactorVerifyModal = ({
             <p className="text-red-500 text-sm mt-1">{codeError}</p>
           )}
         </div>
-
-        {/* Error Alert */}
-        {error && (
-          <div>
-            <AuthErrorAlert message={error} onClose={clearError} />
-          </div>
-        )}
 
         {/* TOGGLE BACKUP CODE */}
         <button
@@ -147,6 +139,8 @@ const TwoFactorVerifyModal = ({
             )}
           </button>
         </div>
+
+        {error && <AuthErrorAlert message={error} onClose={clearError} />}
 
         {/* INFO */}
         <p className="text-xs text-center text-zinc-500 dark:text-zinc-400">
