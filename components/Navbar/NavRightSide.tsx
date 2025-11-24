@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { CreditSvg,  } from "@/components/Svg/CommonSvg";
 import { SidebarOpenSvg } from "../Svg/NavSvg";
-import { UserSvg } from "../Svg/UserPageSvg";
+import { UserRoundSvg } from "../Svg/UserPageSvg";
 
 const NavRightSide = () => {
   const { userType, credits } = useAuth();
@@ -34,12 +34,12 @@ const NavRightSide = () => {
         className="flex items-center gap-3 px-3 h-full rounded-xl border border-zinc-200/50 dark:border-zinc-900 hover:border-zinc-200 dark:hover:border-zinc-800 bg-white/50 cursor-pointer select-none dark:bg-zinc-900/30"
       >
         {/* Credit Icon */}
-        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-zinc-100 dark:bg-zinc-800">
+        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-zinc-200 dark:bg-zinc-800">
           <CreditSvg />
         </div>
 
         {/* Credit Number */}
-        <span className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+        <span className="text-base font-bold text-zinc-700 dark:text-zinc-300">
           {credits?.remaining}
         </span>
       </div>
@@ -53,9 +53,9 @@ const NavRightSide = () => {
           <button
             aria-label="User Avatar"
             onClick={handleProfileClick}
-            className="w-8 h-full rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-zinc-900 bg-zinc-100 cursor-pointer p-0.5"
+            className="w-7 h-7 text-zinc-700 dark:text-zinc-300 rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
-            <UserSvg />
+            <UserRoundSvg />
           </button>
         ) : (
           <button
@@ -70,7 +70,7 @@ const NavRightSide = () => {
         <button
           aria-label="Nav Sidebar"
           onClick={handleSidebarClick}
-          className="transition-transform duration-300 ease-in-out cursor-pointer"
+          className="transition-transform duration-300 ease-in-out cursor-pointer text-zinv-700 dark:text-zinc-300 w-7 h-7"
         >
           <SidebarOpenSvg />
         </button>

@@ -5,7 +5,7 @@ import { SidebarCloseSvg } from "../Svg/NavSvg";
 import { CreditSvg } from "../Svg/CommonSvg";
 import clsx from "clsx";
 import Spinner from "../Layouts/Loaders/Spinner";
-import { UserSvg } from "../Svg/UserPageSvg";
+import { UserRoundSvg } from "../Svg/UserPageSvg";
 
 // ========================= BACKDROP =========================
 export const Backdrop = ({
@@ -32,7 +32,7 @@ export const Header = ({ onToggle }: { onToggle: () => void }) => (
   <div className="flex items-center p-1 rounded-xl border-2 border-zinc-100/80 dark:border-zinc-900/50 bg-zinc-100/10 dark:bg-zinc-900/10">
     <button
       onClick={onToggle}
-      className="rounded-lg cursor-pointer"
+      className="rounded-lg cursor-pointer text-zinc-700 dark:text-zinc-300"
       aria-label="Toggle sidebar"
     >
       <SidebarCloseSvg />
@@ -111,7 +111,7 @@ export const CreditCard = ({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           {/* SVG (no color change) */}
-          <div className="w-7 h-7 text-zinc-500 dark:text-zinc-700  flex items-center justify-center">
+          <div className="w-8 h-8">
             <CreditSvg />
           </div>
 
@@ -120,7 +120,7 @@ export const CreditCard = ({
               Daily Credits
             </p>
 
-            <p className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
+            <p className="text-lg font-bold text-zinc-700 dark:text-zinc-300">
               {remain}
               {limit ? (
                 <span className="text-xs text-zinc-500 dark:text-zinc-400">
@@ -171,8 +171,8 @@ export const UserCard = ({
 
   return (
     <div id="user-card" onClick={dashBoardLink} className="flex items-center gap-3 rounded-xl bg-zinc-100 dark:bg-zinc-900/50 p-2 cursor-pointer">
-      <div className="w-[5vh] h-[5vh] md:w-[2.5vw] md:h-[2.5vw] rounded-xl overflow-hidden text-zinc-500 dark:text-zinc-700 flex items-center justify-center">
-        <UserSvg />
+      <div className="w-[5vh] h-[5vh] md:w-[2.5vw] md:h-[2.5vw] rounded-xl overflow-hidden text-zinc-500 dark:text-zinc-400 flex items-center justify-center">
+        <UserRoundSvg />
       </div>
 
       <div className="flex-1 min-w-0">

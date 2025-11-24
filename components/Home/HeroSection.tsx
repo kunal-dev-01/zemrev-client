@@ -86,7 +86,7 @@ const HeroSection: React.FC = () => {
 
       <section
         id="hero"
-        className="relative w-full md:h-[25vw] h-[40vh] overflow-hidden rounded-2xl select-none cursor-none border-2 border-zinc-100/50 dark:border-zinc-900/50 shadow-sm bg-white dark:bg-zinc-900/20"
+        className="relative w-full md:h-[25vw] h-[35vh] overflow-hidden rounded-2xl select-none cursor-none border-2 border-zinc-100/50 dark:border-zinc-900/50 shadow-sm bg-white dark:bg-zinc-900/20"
         style={{
           backgroundImage: `
             radial-gradient(circle at 20% 30%, rgba(99,102,241,.15) 0%, transparent 50%),

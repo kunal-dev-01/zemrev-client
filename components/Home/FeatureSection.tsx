@@ -10,7 +10,7 @@ const FeatureSection: React.FC = () => {
         {/* Background Gradient Decoration */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 p-8 md:p-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 p-4 md:p-12 relative z-10">
           
           <div className="flex flex-col justify-center space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full dark:bg-zinc-800 bg-zinc-200/50 border dark:border-zinc-700 border-zinc-300 w-fit">

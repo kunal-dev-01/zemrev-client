@@ -3,7 +3,10 @@ import React from "react";
 // ================ Credit Svg ================ //
 export const CreditSvg = React.memo(() => (
   <svg
-    className="w-5 h-5 text-zinc-600 dark:text-zinc-400"
+    xmlns="http://www.w3.org/2000/svg"
+    width="100%"
+    height="100%"
+    className="text-zinc-500 dark:text-zinc-400"
     fill="currentColor"
     viewBox="0 0 20 20"
   >

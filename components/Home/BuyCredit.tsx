@@ -52,7 +52,7 @@ const BuyCredit: React.FC = () => {
           <div className="lg:col-span-5 p-4 md:p-10 flex flex-col justify-between bg-zinc-50 dark:bg-zinc-900/50 border-b lg:border-b-0 lg:border-r border-zinc-100 dark:border-zinc-800">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider mb-8">
-                <BoltSvg />
+                <span className='md:w-10 md:h-10 h-6 w-6'><BoltSvg /></span>
                 Instant Activation
               </div>
 
@@ -82,7 +82,7 @@ const BuyCredit: React.FC = () => {
           <div className="lg:col-span-7 p-4 md:p-12 relative bg-zinc-100 dark:bg-zinc-900/30 flex flex-col justify-center">
 
             {/* Decorative Icon */}
-            <div className="absolute top-6 right-6 opacity-20 pointer-events-none w-6 h-6 text-zinc-500 dark:text-zinc-700">
+            <div className="absolute top-6 right-6 opacity-20 pointer-events-none w-10 h-10 text-zinc-500 dark:text-zinc-700">
               <CreditSvg />
             </div>
 
