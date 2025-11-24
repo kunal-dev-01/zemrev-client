@@ -16,7 +16,6 @@ import { baseApi } from '@/lib/baseApi/base.api';
 import authReducer from '@/services/authService/auth.slice';
 import userReducer from '@/services/userService/user.slice';
 import paymentReducer from '@/services/paymentService/payment.slice';
-import creditReducer from '@/services/creditService/credit.slice';
 
 const persistConfig = {
   key: 'root',
@@ -31,7 +30,6 @@ const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   payment: paymentReducer,
-  credit: creditReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

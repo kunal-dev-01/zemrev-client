@@ -1,6 +1,5 @@
 // services/userService/types.ts
 
-import { boolean } from "zod";
 import { RegisteredUser, Address } from "../authService/types";
 
 export interface GetProfileResponse {
@@ -15,17 +14,6 @@ export interface UpdatePasswordRequest {
 export interface UpdatePasswordResponse {
     status: string;
     message: string;
-}
-
-export interface UpdatePhoneNumberRequest {
-    phoneNumber: string;
-}
-
-export interface UpdatePhoneNumberResponse {
-    status: string;
-    data:{
-        phoneNumber: string;
-    }
 }
 
 export interface UpdateAddressRequest {

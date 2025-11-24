@@ -5,8 +5,6 @@ import {
   GetProfileResponse,
   UpdatePasswordRequest,
   UpdatePasswordResponse,
-  UpdatePhoneNumberRequest,
-  UpdatePhoneNumberResponse,
   UpdateAddressRequest,
   UpdateAddressResponse,
   UpdateFullNameRequest,
@@ -28,16 +26,6 @@ export const userApi = baseApi.injectEndpoints({
         updatePassword: builder.mutation<UpdatePasswordResponse, UpdatePasswordRequest>({
             query: (credentials) => ({
                 url: '/user/update-password',
-                method: 'PATCH',
-                body: credentials,
-            }),
-            invalidatesTags: ['User'],
-        }),
-
-        // ==================== UPDATE PHONE NUMBER ====================
-        updatePhoneNumber: builder.mutation<UpdatePhoneNumberResponse, UpdatePhoneNumberRequest>({
-            query: (credentials) => ({
-                url: '/user/update-phone-number',
                 method: 'PATCH',
                 body: credentials,
             }),
@@ -70,7 +58,6 @@ export const userApi = baseApi.injectEndpoints({
 export const {
     useGetProfileQuery,
     useUpdatePasswordMutation,
-    useUpdatePhoneNumberMutation,
     useUpdateAddressMutation,
     useUpdateFullNameMutation,
 } = userApi;

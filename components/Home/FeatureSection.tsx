@@ -1,6 +1,6 @@
 import React from 'react';
 import { Zap, Shield, HardDrive } from '@/components/Svg/HomeSvg';
-import { TickIconSvg } from '../Svg/AuthSvg';
+import { CheckSvg } from '../Svg/CommonSvg';
 
 const FeatureSection: React.FC = () => {
   return (
@@ -32,7 +32,7 @@ const FeatureSection: React.FC = () => {
             <ul className="space-y-3 mt-4">
               {['No server uploads', 'Military-grade encryption', 'Fast processing'].map((item, i) => (
                 <li key={i} className="flex items-center gap-3 dark:text-zinc-300 text-zinc-700">
-                  <TickIconSvg />
+                  <span className='w-5 h-5 text-emerald-400'><CheckSvg /></span>
                   {item}
                 </li>
               ))}

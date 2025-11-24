@@ -200,14 +200,6 @@ export interface Disable2FAResponse {
   };
 }
 
-export interface Get2FAStatusResponse {
-  status: string;
-  data: {
-    enabled: boolean;
-    backupCodesRemaining: number;
-  };
-}
-
 export interface RegenerateBackupCodesResponse {
   status: string;
   message: string;

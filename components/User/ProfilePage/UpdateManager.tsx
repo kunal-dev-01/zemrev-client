@@ -1,21 +1,23 @@
+import React from 'react';
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import UpdateAddress from "./UpdateAddress";
-import UpdatePhoneNumber from "./UpdatePhoneNumber";
 import UpdateFullName from "./UpdateFullName";
 
-const UpdateManager = () => {
+const UpdateManager: React.FC = () => {
   const {
-    isPhoneNumberUpdateModalOpen,
     isAddressUpdateModalOpen,
     isFullNameUpdateModalOpen,
   } = useLoginModal();
 
+  if (!isAddressUpdateModalOpen && !isFullNameUpdateModalOpen) {
+    return null;
+  }
+
   return (
-    <>
+    <React.Fragment>
       {isAddressUpdateModalOpen && <UpdateAddress />}
-      {isPhoneNumberUpdateModalOpen && <UpdatePhoneNumber />}
       {isFullNameUpdateModalOpen && <UpdateFullName />}
-    </>
+    </React.Fragment>
   );
 };
 

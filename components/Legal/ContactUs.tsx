@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Input from "@/components/Layouts/Input/Input";
 import Spinner from "@/components/Layouts/Loaders/Spinner";
 import { useState } from "react";
-import { RightIconSvg } from "@/components/Svg/AuthSvg"; // <-- your icon import
+import { CheckSvg } from "../Svg/CommonSvg";
 
 // ==================== SCHEMA ====================
 const contactSchema = z.object({
@@ -56,8 +56,8 @@ const ContactUs = () => {
       {/* ================= SUCCESS STATE ================ */}
       {isSent ? (
         <div className="w-full h-full flex flex-col items-center justify-center">
-          <div className="w-16 h-16 mx-auto">
-            <RightIconSvg  />
+          <div className="w-16 h-16 mx-auto text-emerald-400">
+            <CheckSvg  />
           </div>
 
           <h2 className="text-xl font-semibold text-zinc-700 dark:text-zinc-200 mt-3">

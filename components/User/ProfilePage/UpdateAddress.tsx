@@ -1,21 +1,20 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { CancelSvg, SaveSvg } from "@/components/Svg/UserPageSvg";
 import { useUser } from "@/hooks/userHooks/user.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { useFadeModal } from "@/hooks/animateHooks/useFads.hooks";
-
-import { CancelSvg } from "../../Svg/UserPageSvg";
-import Input from "../../Layouts/Input/Input";
-import Spinner from "@/components/Layouts/Loaders/Spinner";
+import Input from "@/components/Layouts/Input/Input";
 import AuthErrorAlert from "../../Layouts/ErrorLayout/AuthError";
+import Spinner from "@/components/Layouts/Loaders/Spinner";
 
 const addressSchema = z.object({
-  street: z.string().min(3, "Street must be at least 3 characters").max(100, "Street too long"),
-  city: z.string().min(2, "City must be at least 2 characters").max(50, "City too long"),
-  state: z.string().min(2, "State must be at least 2 characters").max(50, "State too long"),
-  zipCode: z.string().min(3, "ZIP code must be at least 3 characters").max(10, "ZIP code too long"),
-  country: z.string().min(2, "Country must be at least 2 characters").max(50, "Country too long"),
+  street: z.string().min(3, "Street address required").max(100),
+  city: z.string().min(2, "City required").max(50),
+  state: z.string().min(2, "State required").max(50),
+  zipCode: z.string().min(3, "Zip Code required").max(10),
+  country: z.string().min(2, "Country required").max(50),
 });
 
 type AddressFormData = z.infer<typeof addressSchema>;
@@ -44,7 +43,6 @@ const UpdateAddress = () => {
     clearError();
   };
 
-  // ⭐ Add fade animation
   const { fadeState, handleAnimatedClose } = useFadeModal(closeModal);
 
   const onSubmit = async (data: AddressFormData) => {
@@ -53,37 +51,37 @@ const UpdateAddress = () => {
   };
 
   return (
-    <div className={`fixed inset-0 z-100 flex items-center justify-center dark:bg-black/50 bg-white/50 backdrop-blur-sm p-4 ${fadeState}`}>
-      <div className="w-full max-w-md bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${fadeState}`}>
+      <div className="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden transform transition-all duration-300">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800">
-          <h2 className="text-xl font-semibold text-zinc-800 dark:text-zinc-200">
-            Update Address
-          </h2>
+        <div className="flex items-center justify-between p-5 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+          <div>
+            <h2 className="text-lg font-bold text-zinc-900 dark:text-white">Update Location</h2>
+            <p className="text-xs text-zinc-500">Billing and shipping details.</p>
+          </div>
           <button
             onClick={handleAnimatedClose}
             disabled={isUpdatingAddress}
-            className="w-8 h-8 p-1 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors disabled:opacity-50 cursor-pointer"
-            aria-label="Close"
+            className="p-1 w-5 h-5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors"
           >
             <CancelSvg />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
           
           <Input
             label="Street Address"
             type="text"
-            placeholder="123 Main St"
+            placeholder="e.g. 123 Innovation Blvd"
             register={register("street")}
             error={errors.street}
             disabled={isUpdatingAddress}
           />
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <Input
               label="City"
               type="text"
@@ -93,7 +91,7 @@ const UpdateAddress = () => {
               disabled={isUpdatingAddress}
             />
             <Input
-              label="State"
+              label="State / Province"
               type="text"
               placeholder="NY"
               register={register("state")}
@@ -102,9 +100,9 @@ const UpdateAddress = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <Input
-              label="ZIP Code"
+              label="ZIP / Postal Code"
               type="text"
               placeholder="10001"
               register={register("zipCode")}
@@ -114,7 +112,7 @@ const UpdateAddress = () => {
             <Input
               label="Country"
               type="text"
-              placeholder="USA"
+              placeholder="United States"
               register={register("country")}
               error={errors.country}
               disabled={isUpdatingAddress}
@@ -125,29 +123,27 @@ const UpdateAddress = () => {
             <AuthErrorAlert message={userError} onClose={clearError} />
           )}
 
-          <div className="flex gap-3 pt-2">
+          {/* Actions */}
+          <div className="flex gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800 mt-2">
             <button
               type="button"
               onClick={handleAnimatedClose}
               disabled={isUpdatingAddress}
-              className="flex-1 px-4 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-lg font-medium hover:bg-zinc-200/70 dark:hover:bg-zinc-800/70 transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-lg text-sm font-medium hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
             >
               Cancel
             </button>
-
             <button
               type="submit"
               disabled={isUpdatingAddress}
-              className="flex-1 px-4 py-2 bg-light dark:bg-dark text-white rounded-lg font-medium hover:bg-light/80 dark:hover:bg-dark/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2.5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg text-sm font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all shadow-sm flex items-center justify-center gap-2"
             >
-              {isUpdatingAddress ? (
-                <>
-                  <Spinner size="sm" color="text-white" />
-                  Updating...
-                </>
-              ) : (
-                "Update"
+              {isUpdatingAddress ? <Spinner size="sm" /> : (
+                <div className="w-5 h-5 p-1">
+                  <SaveSvg />
+                </div>
               )}
+              {isUpdatingAddress ? "Updating..." : "Update"}
             </button>
           </div>
         </form>

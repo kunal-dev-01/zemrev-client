@@ -49,7 +49,6 @@ const userSlice = createSlice({
         // ==================== UPDATE OPERATIONS ====================
         const updateEndpoints = [
             userApi.endpoints.updatePassword,
-            userApi.endpoints.updatePhoneNumber,
             userApi.endpoints.updateAddress,
             userApi.endpoints.updateFullName
         ];

@@ -19,7 +19,6 @@ import type {
   Enable2FAResponse,
   Disable2FARequest,
   Disable2FAResponse,
-  Get2FAStatusResponse,
   RegenerateBackupCodesRequest,
   RegenerateBackupCodesResponse,
   CreditStatusResponse,
@@ -133,15 +132,8 @@ export const authApi = baseApi.injectEndpoints({
       invalidatesTags: ['User'],
     }),
 
-    // ==================== GET 2FA STATUS ====================
-    get2FAStatus: builder.query<Get2FAStatusResponse, void>({
-      query: () => '/auth/2fa/status',
-      providesTags: ['User'],
-    }),
-
     // ==================== REGENERATE BACKUP CODES ====================
-    regenerateBackupCodes: builder.mutation<
-      RegenerateBackupCodesResponse,
+    regenerateBackupCodes: builder.mutation<RegenerateBackupCodesResponse,
       RegenerateBackupCodesRequest
     >({
       query: (data) => ({
@@ -171,7 +163,10 @@ export const authApi = baseApi.injectEndpoints({
 
     // ==================== GET CREDIT STATUS ====================
     getCreditStatus: builder.query<CreditStatusResponse, void>({
-      query: () => '/credits/status',
+      query: () => ({
+        url: `/credit/status`,
+        method: 'GET',
+      }),
       providesTags: ['Credits'],
     }),
   }),
@@ -194,7 +189,5 @@ export const {
   useSetup2FAMutation,
   useEnable2FAMutation,
   useDisable2FAMutation,
-  useGet2FAStatusQuery,
-  useLazyGet2FAStatusQuery,
   useRegenerateBackupCodesMutation
 } = authApi;

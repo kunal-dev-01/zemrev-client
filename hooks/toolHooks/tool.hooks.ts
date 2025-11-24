@@ -1,16 +1,25 @@
 // src/hooks/toolHooks/tool.hooks.ts
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useAppSelector, useAppDispatch } from '../reduxHooks/redux.hooks';
-import { setFingerprint, setGuestCredentials, setCredits } from '@/services/authService/auth.slice';
+import {
+  setFingerprint,
+  setGuestCredentials,
+  setCredits,
+} from '@/services/authService/auth.slice';
 import { useLazyGetCreditStatusQuery } from '@/services/authService/auth.api';
 import { getFingerprint } from '@/utils/fingerprint.util';
 
 interface UseToolGuardOptions {
-  requiredCredits?: number; // Credits needed for this tool
+  requiredCredits?: number;
   onInsufficientCredits?: () => void;
   onGuestInitialized?: () => void;
   onError?: (error: string) => void;
+}
+
+interface CreditsShape {
+  remaining?: number | string;
+  [k: string]: any;
 }
 
 interface ToolGuardResult {
@@ -24,68 +33,47 @@ interface ToolGuardResult {
   isAnonymous: boolean;
 }
 
-/**
- * Guard hook for tools that need credits
- * Automatically initializes guest if needed
- * Checks if user has enough credits
- * 
- * @example
- * ```typescript
- * const { canUseTool, hasEnoughCredits } = useToolGuard({
- *   requiredCredits: 5,
- *   onInsufficientCredits: () => router.push('/buy-credits'),
- * });
- * 
- * const handleToolUse = async () => {
- *   if (await canUseTool()) {
- *     // Use tool
- *   }
- * };
- * ```
- */
+// Hook to guard access to tools
 export const useToolGuard = (options: UseToolGuardOptions = {}): ToolGuardResult => {
-  const { 
-    requiredCredits = 1, 
-    onInsufficientCredits, 
+  const {
+    requiredCredits = 1,
+    onInsufficientCredits,
     onGuestInitialized,
-    onError 
+    onError,
   } = options;
 
   const dispatch = useAppDispatch();
-  const { 
-    userType, 
-    guestUser, 
-    credits, 
-    fingerprint: storedFingerprint,
-    isAuthenticated 
-  } = useAppSelector((state) => state.auth);
 
+  const {
+    userType,
+    guestUser,
+    credits,
+    fingerprint: storedFingerprint,
+    isAuthenticated,
+  } = useAppSelector((s) => s.auth);
+
+  // lazy query to call /credit/status (auto-creates guest if needed)
   const [triggerGetCredits, { isLoading }] = useLazyGetCreditStatusQuery();
+
   const [isInitializing, setIsInitializing] = useState(false);
 
-  // ==================== ENSURE GUEST INITIALIZED ====================
+  // Ensure guest or registered user is available; will auto-create guest by calling credit status
   const ensureInitialized = useCallback(async (): Promise<boolean> => {
+    // If already registered and authenticated — done
+    if (userType === 'registered' && isAuthenticated) return true;
+
+    // If already a guest and guest data present — done
+    if (userType === 'guest' && guestUser) return true;
+
+    setIsInitializing(true);
     try {
-      // ✅ Already registered - good to go
-      if (userType === 'registered' && isAuthenticated) {
-        return true;
-      }
-
-      // ✅ Already guest - good to go
-      if (userType === 'guest' && guestUser) {
-        return true;
-      }
-
-      // ✅ Need to initialize guest
-      setIsInitializing(true);
-
-      const fp = storedFingerprint || (await getFingerprint());
+      const fp = storedFingerprint ?? (await getFingerprint());
       dispatch(setFingerprint(fp));
 
-      // ✅ Call /credit/status - this auto-creates guest
+      // call server which will return credits and possibly guest credentials
       const result = await triggerGetCredits().unwrap();
 
-      if (result.data.guest) {
+      if (result?.data?.guest) {
         dispatch(
           setGuestCredentials({
             guest: result.data.guest,
@@ -94,17 +82,16 @@ export const useToolGuard = (options: UseToolGuardOptions = {}): ToolGuardResult
         );
       }
 
-      // ✅ Update credits in auth state
-      if (result.data.credits) {
+      if (result?.data?.credits) {
         dispatch(setCredits(result.data.credits));
       }
 
       onGuestInitialized?.();
       return true;
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Failed to initialize';
-      console.error('Failed to initialize:', error);
-      onError?.(errorMsg);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to initialize user';
+      console.error('ensureInitialized error:', err);
+      onError?.(msg);
       return false;
     } finally {
       setIsInitializing(false);
@@ -120,50 +107,57 @@ export const useToolGuard = (options: UseToolGuardOptions = {}): ToolGuardResult
     onError,
   ]);
 
-  // ==================== CHECK CREDITS AVAILABLE ====================
-  const hasEnoughCredits = useCallback((): boolean => {
-    if (!credits) return false;
-    const remaining = credits.remaining;
-    return typeof remaining === 'number' && remaining >= requiredCredits;
-  }, [credits, requiredCredits]);
+  // Readable remaining credits value
+  const creditsRemaining = useMemo<number | string>(() => {
+    const rem = (credits as CreditsShape | undefined)?.remaining;
+    return rem ?? 0;
+  }, [credits]);
 
-  // ==================== CHECK IF CAN USE TOOL ====================
+  // Pure check for having enough credits
+  const hasEnoughCredits = useCallback((): boolean => {
+    const rem = creditsRemaining;
+    if (typeof rem === 'number') return rem >= requiredCredits;
+    // if string parse to number if possible
+    const parsed = typeof rem === 'string' ? Number(rem) : NaN;
+    return !Number.isNaN(parsed) && parsed >= requiredCredits;
+  }, [creditsRemaining, requiredCredits]);
+
+  // Main guard to check initialization + credits
   const canUseTool = useCallback(async (): Promise<boolean> => {
     try {
-      // ✅ Step 1: Ensure user is initialized (guest or registered)
       const initialized = await ensureInitialized();
       if (!initialized) {
         onError?.('Failed to initialize user');
         return false;
       }
 
-      // ✅ Step 2: Check if has enough credits
-      const hasCredits = hasEnoughCredits();
-      if (!hasCredits) {
+      if (!hasEnoughCredits()) {
         onInsufficientCredits?.();
         return false;
       }
 
       return true;
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Failed to verify tool access';
-      console.error('Tool guard error:', error);
-      onError?.(errorMsg);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to verify tool access';
+      console.error('canUseTool error:', err);
+      onError?.(msg);
       return false;
     }
   }, [ensureInitialized, hasEnoughCredits, onInsufficientCredits, onError]);
 
+  // Derived booleans
+  const isGuest = userType === 'guest';
+  const isRegistered = userType === 'registered';
+  const isAnonymous = userType === 'anonymous';
+
   return {
-    // Operations
     canUseTool,
     ensureInitialized,
-
-    // Status
     isInitializing: isInitializing || isLoading,
     hasEnoughCredits: hasEnoughCredits(),
-    creditsRemaining: credits?.remaining || 0,
-    isGuest: userType === 'guest',
-    isRegistered: userType === 'registered',
-    isAnonymous: userType === 'anonymous',
+    creditsRemaining,
+    isGuest,
+    isRegistered,
+    isAnonymous,
   };
 };

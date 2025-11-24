@@ -3,7 +3,9 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
-import { CreditSvg, SidebarSvg, UserSvg } from "../Svg/NavSvg";
+import { CreditSvg,  } from "@/components/Svg/CommonSvg";
+import { SidebarOpenSvg } from "../Svg/NavSvg";
+import { UserSvg } from "../Svg/UserPageSvg";
 
 const NavRightSide = () => {
   const { userType, credits } = useAuth();
@@ -51,7 +53,7 @@ const NavRightSide = () => {
           <button
             aria-label="User Avatar"
             onClick={handleProfileClick}
-            className=" w-8 h-full rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-zinc-900 bg-zinc-100 cursor-pointer p-0.5"
+            className="w-8 h-full rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-zinc-900 bg-zinc-100 cursor-pointer p-0.5"
           >
             <UserSvg />
           </button>
@@ -70,7 +72,7 @@ const NavRightSide = () => {
           onClick={handleSidebarClick}
           className="transition-transform duration-300 ease-in-out cursor-pointer"
         >
-          <SidebarSvg />
+          <SidebarOpenSvg />
         </button>
       </div>
     </div>

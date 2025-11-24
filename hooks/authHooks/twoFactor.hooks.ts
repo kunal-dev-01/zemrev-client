@@ -6,8 +6,6 @@ import {
   useSetup2FAMutation,
   useEnable2FAMutation,
   useDisable2FAMutation,
-  useGet2FAStatusQuery,
-  useLazyGet2FAStatusQuery,
   useRegenerateBackupCodesMutation,
 } from '@/services/authService/auth.api';
 import { setError, clearError, update2FAStatus } from '@/services/authService/auth.slice';
@@ -22,9 +20,6 @@ export const useTwoFactor = () => {
   const [disable2FAMutation, { isLoading: isDisabling }] = useDisable2FAMutation();
   const [regenerateBackupCodesMutation, { isLoading: isRegenerating }] =
     useRegenerateBackupCodesMutation();
-
-  const { data: statusData, isLoading: isLoadingStatus } = useGet2FAStatusQuery();
-  const [triggerGet2FAStatus] = useLazyGet2FAStatusQuery();
 
   // ==================== SETUP 2FA ====================
   const setup2FA = useCallback(async (): Promise<{
@@ -104,17 +99,8 @@ export const useTwoFactor = () => {
     [regenerateBackupCodesMutation, dispatch]
   );
 
-  // ==================== GET 2FA STATUS ====================
-  const refresh2FAStatus = useCallback(async () => {
-    try {
-      await triggerGet2FAStatus().unwrap();
-    } catch (err) {
-      console.log('Failed to refresh 2FA status:', err);
-    }
-  }, [triggerGet2FAStatus]);
-
   // Combined loading state
-  const isLoading = isSettingUp || isEnabling || isDisabling || isRegenerating || isLoadingStatus;
+  const isLoading = isSettingUp || isEnabling || isDisabling || isRegenerating;
 
   return {
     // Operations
@@ -122,11 +108,8 @@ export const useTwoFactor = () => {
     enable2FA,
     disable2FA,
     regenerateBackupCodes,
-    refresh2FAStatus,
 
     // Status
-    isLoading,
-    is2FAEnabled: statusData?.data?.enabled ?? false,
-    backupCodesRemaining: statusData?.data?.backupCodesRemaining ?? 0,
+    isLoading
   };
 };

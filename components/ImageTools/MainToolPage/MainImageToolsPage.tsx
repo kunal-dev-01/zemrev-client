@@ -1,15 +1,15 @@
 import {
-  ImageConverterTool,
-  ImageCompressorTool,
-  ImageResizerTool,
+  ImageConvert,
+  ImageOptamize,
+  ImageResizer,
 } from "@/components/Svg/ImageToolSvg";
 
 import Link from "next/link";
 
 const ImageToolsData = [
-  { tool: "Image Converter", icon: <ImageConverterTool />, href: "/image-converter", colors:"bg-indigo-100/80 dark:bg-indigo-900/80" },
-  { tool: "Image Compressor", icon: <ImageCompressorTool />, href: "/image-compressor" , colors:"bg-green-100 dark:bg-green-900" },
-  { tool: "Image Resizer", icon: <ImageResizerTool />, href: "/image-resizer", colors:"bg-violet-100 dark:bg-violet-700/50" },
+  { tool: "Image Converter", icon: <ImageConvert />, href: "/image-converter", colors:"bg-indigo-100/80 dark:bg-indigo-900/80" },
+  { tool: "Image Compressor", icon: <ImageOptamize />, href: "/image-compressor" , colors:"bg-green-100 dark:bg-green-900" },
+  { tool: "Image Resizer", icon: <ImageResizer />, href: "/image-resizer", colors:"bg-violet-100 dark:bg-violet-700/50" },
   
 ];
 

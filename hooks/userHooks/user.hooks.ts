@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '../reduxHooks/redux.hooks';
 import {
   useGetProfileQuery,
   useUpdatePasswordMutation,
-  useUpdatePhoneNumberMutation,
   useUpdateAddressMutation,
   useUpdateFullNameMutation,
 } from '@/services/userService/user.api';
@@ -14,11 +13,9 @@ import {
   updateRegisteredUser,
   updateAddress as updateAuthAddress,
   updateFullName as updateAuthFullName,
-  updatePhoneNumber as updateAuthPhoneNumber,
 } from '@/services/authService/auth.slice';
 import type {
   UpdatePasswordRequest,
-  UpdatePhoneNumberRequest,
   UpdateAddressRequest,
   UpdateFullNameRequest,
 } from '@/services/userService/types';
@@ -31,7 +28,6 @@ export const useUser = () => {
   // RTK Query mutations and query
   const { data: profileData, isLoading: isLoadingProfile, refetch: refetchProfile } = useGetProfileQuery();
   const [updatePasswordMutation, { isLoading: isUpdatingPassword }] = useUpdatePasswordMutation();
-  const [updatePhoneNumberMutation, { isLoading: isUpdatingPhone }] = useUpdatePhoneNumberMutation();
   const [updateAddressMutation, { isLoading: isUpdatingAddress }] = useUpdateAddressMutation();
   const [updateFullNameMutation, { isLoading: isUpdatingName }] = useUpdateFullNameMutation();
 
@@ -72,28 +68,6 @@ export const useUser = () => {
       }
     },
     [updatePasswordMutation, dispatch]
-  );
-
-  // ==================== UPDATE PHONE NUMBER ====================
-  const updatePhoneNumber = useCallback(
-    async (phoneNumber: string): Promise<boolean> => {
-      try {
-        dispatch(clearUserError());
-        const credentials: UpdatePhoneNumberRequest = { phoneNumber };
-        const result = await updatePhoneNumberMutation(credentials).unwrap();
-        
-        if (result.data?.phoneNumber) {
-          dispatch(updateAuthPhoneNumber(result.data.phoneNumber));
-        }
-        
-        return true;
-      } catch (err: unknown) {
-        const errorMessage = extractApiErrorMessage(err);
-        dispatch(setUserError(errorMessage));
-        return false;
-      }
-    },
-    [updatePhoneNumberMutation, dispatch]
   );
 
   // ==================== UPDATE ADDRESS ====================
@@ -149,7 +123,6 @@ export const useUser = () => {
   const isLoading = 
     isLoadingProfile || 
     isUpdatingPassword || 
-    isUpdatingPhone || 
     isUpdatingAddress || 
     isUpdatingName || 
     isUpdating;
@@ -158,7 +131,6 @@ export const useUser = () => {
     // Operations
     getProfile,
     updatePassword,
-    updatePhoneNumber,
     updateAddress,
     updateFullName,
     clearError,
@@ -167,7 +139,6 @@ export const useUser = () => {
     isLoading,
     isLoadingProfile,
     isUpdatingPassword,
-    isUpdatingPhone,
     isUpdatingAddress,
     isUpdatingName,
     userError,

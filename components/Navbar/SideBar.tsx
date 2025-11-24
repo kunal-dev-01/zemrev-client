@@ -1,16 +1,14 @@
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { useCallback } from "react";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
-import { ImageConvert, ImageOptamize, ImageResizer } from "../Svg/NavSvg";
+import { ImageSvg } from "../Svg/NavSvg";
 import clsx from "clsx";
 import Link from "next/link";
 import { Backdrop, Header, UserMenu } from "./SideBar.partials";
 import { useRouter } from "next/navigation";
 
 const Tools = [
-  { name: "Image Converter", href: "/image-converter", icon: <ImageConvert /> },
-  { name: "Image Optimizer", href: "/image-optimizer", icon: <ImageOptamize /> },
-  { name: "Image Resizer", href: "/image-resizer", icon: <ImageResizer /> },
+  { name: "Image ToolKit", href: "/image-tools", icon: <ImageSvg /> },
 ];
 
 const SideBar = () => {
@@ -66,7 +64,7 @@ const SideBar = () => {
                 onClick={closeSidebar}
                 className="flex items-center gap-3 px-3 py-2 rounded-lg border border-zinc-200/50 dark:border-zinc-800/50 bg-white/50 dark:bg-zinc-900/30 group relative"
               >
-                <div className="text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">
+                <div className="text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors w-5 h-5">
                   {tool.icon}
                 </div>
                 <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">

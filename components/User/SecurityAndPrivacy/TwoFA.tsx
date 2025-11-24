@@ -30,7 +30,6 @@ const TwoFA = () => {
     setup2FA,
     enable2FA,
     isLoading,
-    refresh2FAStatus,
   } = useTwoFactor();
 
   const { setTwoFactorModalOpen } = useLoginModal();
@@ -71,10 +70,6 @@ const TwoFA = () => {
 
   const handleVerify = async (data: VerifySchema) => {
     const success = await enable2FA(data.totpCode);
-    if (success) {
-      await refresh2FAStatus();
-      setMode("success");
-    }
   };
 
   const handleCopyAll = () => {
