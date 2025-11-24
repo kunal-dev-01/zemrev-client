@@ -11,6 +11,7 @@ import TwoFA from "./TwoFA";
 const SecurityAndPrivacyPage = () => {
   const { registeredUser } = useAuth();
   const TwofaCheck = registeredUser?.twoFactorEnabled;
+  const LocalAccount = registeredUser?.authProvider === "local";
 
   const {
     setPrivacyPolicyModalOpen,
@@ -76,11 +77,12 @@ const SecurityAndPrivacyPage = () => {
   };
 
   return (
-    <div className="w-full md:p-4 p-2 relative">
+    <div className="w-full md:p-4 p-2 relative fade-in">
       <div className="w-full flex flex-col gap-4">
 
         {/* 🔐 TWO-FACTOR AUTHENTICATION */}
-        <Card
+        {LocalAccount && (
+          <Card
           icon={<TwoFASvg />}
           title="Two Factor Authentication"
           description="Secure your account with two-step verification."
@@ -99,6 +101,7 @@ const SecurityAndPrivacyPage = () => {
             )
           }
         />
+        )}
 
         {/* 🔄 REGENERATE BACKUP CODES */}
         {TwofaCheck && (

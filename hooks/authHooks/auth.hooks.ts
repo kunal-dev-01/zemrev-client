@@ -64,8 +64,6 @@ export const useAuth = () => {
             checkoutUrl: result.data.checkoutUrl,
           };
         }
-
-        router.push('/user?page=dashboard');
         return { success: true };
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));

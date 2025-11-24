@@ -54,10 +54,10 @@ const VerifyEmailAlert = () => {
 
   return (
     <div className="md:px-4 px-2 md:mt-4 mt-2">
-      <div className="w-full p-2 rounded-xl bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-3">
+      <div className="w-full p-2 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-3">
         
         <div className="flex-1">
-          {!emailSent ? (
+          {emailSent ? (
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 text-emerald-400">
                 <CheckSvg />

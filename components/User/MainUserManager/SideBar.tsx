@@ -14,7 +14,7 @@ const SideBar = () => {
   const UserLinks = [
     { name: "Dashboard", slug: "dashboard", icon: <DashBoardSvg /> },
     { name: "Billing & Payment", slug: "billing" , icon: <PaymentSvg /> },
-    { name: "Membership", slug: "membership" , icon: <CreditSvg /> },
+    { name: "Buy Credits", slug: "buy-credits" , icon: <CreditSvg /> },
     { name: "Security & Privacy", slug: "security-and-privacy" , icon: <SecuritySvg /> },
     { name: "Notifications", slug: "notifications" , icon: <NotificationSvg /> },
     { name: "Profile", slug: "profile" , icon: <UserRoundSvg /> },
