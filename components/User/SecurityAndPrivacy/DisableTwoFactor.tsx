@@ -73,7 +73,7 @@ const DisableTwoFactor = () => {
           />
 
           <Input
-            label="2FA Code (optional)"
+            label="2FA Code"
             type="text"
             placeholder="Enter 6-digit code"
             register={register("totpCode")}

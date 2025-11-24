@@ -202,3 +202,17 @@ export const ChevronLeft = React.memo(() => (
 ));
 
 ChevronLeft.displayName = "ChevronLeft";
+
+// =============== Clock Svg =============== //
+export const ClockSvg = React.memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 16 16"><path fill="currentColor" fillRule="evenodd" d="M14.5 8a6.5 6.5 0 1 1-13 0a6.5 6.5 0 0 1 13 0ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0ZM8.75 3.75a.75.75 0 0 0-1.5 0v4.56l.22.22l2.254 2.254a.75.75 0 1 0 1.06-1.06L8.75 7.689V3.75Z" clipRule="evenodd"/></svg>
+))
+
+ClockSvg.displayName = "ClockSvg"
+
+// =============== Database Svg =============== //
+export const DataBaseSvg = React.memo(() => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="currentColor"><g fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M22 5.5C22 7.433 17.523 9 12 9S2 7.433 2 5.5S6.477 2 12 2s10 1.567 10 3.5Zm0 6c0 1.933-4.477 3.5-10 3.5S2 13.433 2 11.5"/><path d="M22 5.5V18c0 1.933-4.477 3.5-10 3.5S2 19.933 2 18V5.5"/></g></svg>
+))
+
+DataBaseSvg.displayName = "DataBaseSvg"

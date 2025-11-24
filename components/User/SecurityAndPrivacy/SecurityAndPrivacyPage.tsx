@@ -1,4 +1,9 @@
-import { TwoFASvg, PasswordSvg, PrivacySvg, RegenerateCodeSvg } from "@/components/Svg/UserPageSvg";
+import {
+  TwoFASvg,
+  PasswordSvg,
+  PrivacySvg,
+  RegenerateCodeSvg,
+} from "@/components/Svg/UserPageSvg";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { JSX } from "react";
@@ -23,6 +28,7 @@ const SecurityAndPrivacyPage = () => {
     isTwoFactorModalOpen,
     isRegenerateModalOpen,
     isTwoFactorDisabledModalOpen,
+    isPrivacyPolicyModalOpen,
   } = useLoginModal();
 
   const Card = ({
@@ -78,58 +84,64 @@ const SecurityAndPrivacyPage = () => {
 
   return (
     <>
-      <div className="w-full flex flex-col gap-4 md:p-4 p-2 relative fade-in">
+      {isPrivacyPolicyModalOpen ? (
+        <Privacy />
+      ) : (
+        <div className="w-full flex flex-col gap-4 md:p-4 p-2 relative fade-in">
+          {/* 🔐 TWO-FACTOR AUTHENTICATION */}
+          {LocalAccount && (
+            <Card
+              icon={<TwoFASvg />}
+              title="Two Factor Authentication"
+              description="Secure your account with two-step verification."
+              onClick={handleTwoFactorModalOpen}
+              badge={
+                TwofaCheck ? (
+                  <span
+                    className="px-3 py-1 text-xs font-medium rounded-full 
+              bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                  >
+                    Enabled
+                  </span>
+                ) : (
+                  <span
+                    className="px-3 py-1 text-xs font-medium rounded-full 
+              bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                  >
+                    Disabled
+                  </span>
+                )
+              }
+            />
+          )}
 
-        {/* 🔐 TWO-FACTOR AUTHENTICATION */}
-        {LocalAccount && (
+          {/* 🔄 REGENERATE BACKUP CODES */}
+          {TwofaCheck && (
+            <Card
+              icon={<RegenerateCodeSvg />}
+              title="Regenerate Backup Codes"
+              description="Generate new backup codes for account recovery."
+              onClick={() => setRegenerateModalOpen(true)}
+            />
+          )}
+
+          {/* 🔑 CHANGE PASSWORD */}
           <Card
-          icon={<TwoFASvg />}
-          title="Two Factor Authentication"
-          description="Secure your account with two-step verification."
-          onClick={handleTwoFactorModalOpen}
-          badge={
-            TwofaCheck ? (
-              <span className="px-3 py-1 text-xs font-medium rounded-full 
-              bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                Enabled
-              </span>
-            ) : (
-              <span className="px-3 py-1 text-xs font-medium rounded-full 
-              bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                Disabled
-              </span>
-            )
-          }
-        />
-        )}
-
-        {/* 🔄 REGENERATE BACKUP CODES */}
-        {TwofaCheck && (
-          <Card 
-            icon={<RegenerateCodeSvg />}
-            title="Regenerate Backup Codes"
-            description="Generate new backup codes for account recovery."
-            onClick={() => setRegenerateModalOpen(true)}
+            icon={<PasswordSvg />}
+            title="Change Password"
+            description="Update your account password securely."
+            onClick={() => setChangePasswordModalOpen(true)}
           />
-        )}
 
-        {/* 🔑 CHANGE PASSWORD */}
-        <Card
-          icon={<PasswordSvg />}
-          title="Change Password"
-          description="Update your account password securely."
-          onClick={() => setChangePasswordModalOpen(true)}
-        />
-
-        {/* 🔒 PRIVACY SETTINGS */}
-        <Card
-          icon={<PrivacySvg />}
-          title="Privacy Settings"
-          description="Manage how your data is used and stored."
-          onClick={() => setPrivacyPolicyModalOpen(true)}
-        />
-
-      </div>
+          {/* 🔒 PRIVACY SETTINGS */}
+          <Card
+            icon={<PrivacySvg />}
+            title="Privacy Settings"
+            description="Manage how your data is used and stored."
+            onClick={() => setPrivacyPolicyModalOpen(true)}
+          />
+        </div>
+      )}
 
       {/* Modals */}
       {isChangePasswordModalOpen && <ChangePassword />}
