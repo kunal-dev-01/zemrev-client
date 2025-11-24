@@ -3,7 +3,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { PaymentState } from './types';
 import { paymentApi } from './payment.api';
-import {extractErrorMessage} from "@/utils/errorExtract.utils";
+import { extractErrorMessage } from '@/utils/errorExtract.utils';
 
 const initialState: PaymentState = {
   isLoading: false,
@@ -22,20 +22,6 @@ const paymentSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // ==================== CREATE CHECKOUT ====================
-    builder
-      .addMatcher(paymentApi.endpoints.createCheckout.matchPending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addMatcher(paymentApi.endpoints.createCheckout.matchFulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addMatcher(paymentApi.endpoints.createCheckout.matchRejected, (state, action) => {
-        state.isLoading = false;
-        state.error = extractErrorMessage(action.payload);
-      });
-
     // ==================== BUY CREDITS ====================
     builder
       .addMatcher(paymentApi.endpoints.buyCredits.matchPending, (state) => {
@@ -46,20 +32,6 @@ const paymentSlice = createSlice({
         state.isLoading = false;
       })
       .addMatcher(paymentApi.endpoints.buyCredits.matchRejected, (state, action) => {
-        state.isLoading = false;
-        state.error = extractErrorMessage(action.payload);
-      });
-
-    // ==================== CANCEL SUBSCRIPTION ====================
-    builder
-      .addMatcher(paymentApi.endpoints.cancelSubscription.matchPending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addMatcher(paymentApi.endpoints.cancelSubscription.matchFulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addMatcher(paymentApi.endpoints.cancelSubscription.matchRejected, (state, action) => {
         state.isLoading = false;
         state.error = extractErrorMessage(action.payload);
       });
