@@ -1,74 +1,32 @@
 // src/hooks/paymentHooks/payment.hooks.ts
 
 import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '../reduxHooks/redux.hooks';
 import {
-  useCreateCheckoutMutation,
   useBuyCreditsMutation,
   useLazyVerifyPaymentQuery,
-  useCancelSubscriptionMutation,
   useLazyGetBillingPortalQuery,
   useGetPaymentHistoryQuery,
+  useGetTotalSpentQuery,
 } from '@/services/paymentService/payment.api';
 import { setPaymentError, clearPaymentError } from '@/services/paymentService/payment.slice';
-import type { PlanType } from '@/services/authService/types';
 import { extractApiErrorMessage } from '@/utils/errorExtract.utils';
 
 export const usePayment = () => {
-  const router = useRouter();
   const dispatch = useAppDispatch();
 
   const { isLoading, error } = useAppSelector((state) => state.payment);
 
-  const [createCheckoutMutation, { isLoading: isCreatingCheckout }] = useCreateCheckoutMutation();
   const [buyCreditsUutation, { isLoading: isBuyingCredits }] = useBuyCreditsMutation();
   const [verifyPaymentTrigger, { isLoading: isVerifyingPayment }] = useLazyVerifyPaymentQuery();
-  const [cancelSubscriptionMutation, { isLoading: isCancelingSubscription }] =
-    useCancelSubscriptionMutation();
   const [getBillingPortalTrigger, { isLoading: isLoadingBillingPortal }] =
     useLazyGetBillingPortalQuery();
 
-  // ==================== CREATE CHECKOUT (Subscriptions: BASIC, PRO, ELITE) ====================
-  const createCheckout = useCallback(
-    async (planType: PlanType): Promise<{ success: boolean; checkoutUrl?: string }> => {
-      try {
-        dispatch(clearPaymentError());
-
-        // Validate plan type
-        if (planType === 'custom') {
-          dispatch(setPaymentError('Use buyCredits() for CUSTOM plan'));
-          return { success: false };
-        }
-
-        const result = await createCheckoutMutation({ planType }).unwrap();
-
-        if (result.data.checkoutUrl) {
-          // Redirect to Stripe Checkout
-          window.location.href = result.data.checkoutUrl;
-          return { success: true, checkoutUrl: result.data.checkoutUrl };
-        }
-
-        return { success: false };
-      } catch (err: unknown) {
-        dispatch(setPaymentError(extractApiErrorMessage(err)));
-        return { success: false };
-      }
-    },
-    [createCheckoutMutation, dispatch]
-  );
-
-  // ==================== BUY CREDITS (CUSTOM plan) ====================
+  // ==================== BUY CREDITS ====================
   const buyCredits = useCallback(
-    async (credits: number): Promise<{ success: boolean; checkoutUrl?: string; price?: string }> => {
+    async (credits: number): Promise<{ success: boolean; checkoutUrl?: string; totalPrice?: string }> => {
       try {
         dispatch(clearPaymentError());
-
-        // Validate minimum
-        if (credits < 1000) {
-          dispatch(setPaymentError('Minimum 1000 credits required'));
-          return { success: false };
-        }
 
         const result = await buyCreditsUutation({ credits }).unwrap();
 
@@ -78,7 +36,7 @@ export const usePayment = () => {
           return {
             success: true,
             checkoutUrl: result.data.checkoutUrl,
-            price: result.data.price,
+            totalPrice: result.data.totalPrice,
           };
         }
 
@@ -93,7 +51,7 @@ export const usePayment = () => {
 
   // ==================== VERIFY PAYMENT ====================
   const verifyPayment = useCallback(
-    async (sessionId: string): Promise<{ success: boolean; planType?: string; amount?: number }> => {
+    async (sessionId: string): Promise<{ success: boolean; credits?: number; amount?: number }> => {
       try {
         dispatch(clearPaymentError());
 
@@ -102,7 +60,7 @@ export const usePayment = () => {
         if (result.data) {
           return {
             success: true,
-            planType: result.data.planType,
+            credits: result.data.credits,
             amount: result.data.amountTotal,
           };
         }
@@ -115,22 +73,6 @@ export const usePayment = () => {
     },
     [verifyPaymentTrigger, dispatch]
   );
-
-  // ==================== CANCEL SUBSCRIPTION ====================
-  const cancelSubscription = useCallback(async (): Promise<boolean> => {
-    try {
-      dispatch(clearPaymentError());
-
-      await cancelSubscriptionMutation().unwrap();
-
-      // Refresh page to update user state
-      router.refresh();
-      return true;
-    } catch (err: unknown) {
-      dispatch(setPaymentError(extractApiErrorMessage(err)));
-      return false;
-    }
-  }, [cancelSubscriptionMutation, dispatch, router]);
 
   // ==================== GET BILLING PORTAL ====================
   const openBillingPortal = useCallback(async (): Promise<boolean> => {
@@ -163,27 +105,31 @@ export const usePayment = () => {
     };
   };
 
+  // ==================== GET TOTAL SPENT ====================
+  const useTotalSpent = () => {
+    const { data, isLoading, error } = useGetTotalSpentQuery();
+
+    return {
+      totalSpent: data?.data.totalSpent || '$0.00',
+      isLoading,
+      error: error ? extractApiErrorMessage(error) : null,
+    };
+  };
+
   // ==================== CLEAR ERROR ====================
   const clearError = useCallback(() => {
     dispatch(clearPaymentError());
   }, [dispatch]);
 
-  const combinedIsLoading =
-    isLoading ||
-    isCreatingCheckout ||
-    isBuyingCredits ||
-    isVerifyingPayment ||
-    isCancelingSubscription ||
-    isLoadingBillingPortal;
+  const combinedIsLoading = isLoading || isBuyingCredits || isVerifyingPayment || isLoadingBillingPortal;
 
   return {
     // Operations
-    createCheckout,
     buyCredits,
     verifyPayment,
-    cancelSubscription,
     openBillingPortal,
     usePaymentHistory,
+    useTotalSpent,
 
     // Status
     isLoading: combinedIsLoading,
