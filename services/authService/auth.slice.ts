@@ -89,12 +89,6 @@ const authSlice = createSlice({
       }
     },
 
-    updatePhoneNumber: (state, action: PayloadAction<string>) => {
-      if (state.registeredUser) {
-        state.registeredUser.phoneNumber = action.payload;
-      }
-    },
-
     updateEmailVerificationStatus: (state, action: PayloadAction<boolean>) => {
       if (state.registeredUser) {
         state.registeredUser.isEmailVerified = action.payload;
@@ -270,7 +264,6 @@ export const {
   updateRegisteredUser,
   updateAddress,
   updateFullName,
-  updatePhoneNumber,
   updateEmailVerificationStatus,
   update2FAStatus,
   convertToGuest,

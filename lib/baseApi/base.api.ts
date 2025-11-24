@@ -20,21 +20,20 @@ const baseQueryWithAuth = fetchBaseQuery({
     const state = getState() as RootState;
     const { accessToken, userType, fingerprint: storedFingerprint } = state.auth;
 
-    // Add access token for registered users
+    // ✅ ALWAYS send fingerprint (for tracking + guest identification)
+    try {
+      const fingerprint = storedFingerprint || await getFingerprint();
+      headers.set('X-Fingerprint', fingerprint);
+    } catch (error) {
+      console.error('Failed to set fingerprint header:', error);
+    }
+
+    // ✅ Add access token for registered users
     if (accessToken && userType === 'registered') {
       headers.set('Authorization', `Bearer ${accessToken}`);
     }
 
-    // Add fingerprint for guest users (or as fallback)
-    if (userType === 'guest' || !accessToken) {
-      try {
-        const fingerprint = storedFingerprint || await getFingerprint();
-        headers.set('X-Fingerprint', fingerprint);
-      } catch (error) {
-        console.error('Failed to set fingerprint header:', error);
-      }
-    }
-
+    // ✅ Set Content-Type if not already set
     if (!headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json');
     }
@@ -50,10 +49,12 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   let result = await baseQueryWithAuth(args, api, extraOptions);
 
+  // ✅ Handle 401 Unauthorized
   if (result.error?.status === 401) {
     const state = api.getState() as RootState;
     
     if (state.auth.userType === 'registered') {
+      // ✅ Try to refresh token
       const refreshResult = await baseQueryWithAuth(
         { url: '/auth/refresh-token', method: 'POST' },
         api,
@@ -65,8 +66,10 @@ const baseQueryWithReauth: BaseQueryFn<
         const data = refreshResult.data as RefreshTokenResponse;
         api.dispatch(setAccessToken(data.data.accessToken));
 
+        // ✅ Retry original request
         result = await baseQueryWithAuth(args, api, extraOptions);
       } else {
+        // ✅ Refresh failed - convert to guest
         const { convertToGuest } = await import('@/services/authService/auth.slice');
         api.dispatch(convertToGuest());
 
@@ -75,9 +78,10 @@ const baseQueryWithReauth: BaseQueryFn<
         }
       }
     }
+    // ✅ For guest/anonymous - 401 is expected, don't redirect
   }
 
-  // Log errors in development
+  // ✅ Log errors in development
   if (result.error && process.env.NODE_ENV === 'development') {
     console.log('🔴 API Error:', result.error);
   }
