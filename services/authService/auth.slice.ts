@@ -241,6 +241,20 @@ const authSlice = createSlice({
         state.error = extractErrorMessage(action.payload) || 'Email verification failed';
       })
 
+      // =================== Resend Email ====================
+      .addMatcher(authApi.endpoints.resendVerifyEmail.matchPending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addMatcher(authApi.endpoints.resendVerifyEmail.matchFulfilled, (state) => {
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addMatcher(authApi.endpoints.resendVerifyEmail.matchRejected, (state, action) => {
+        state.isLoading = false;
+        state.error = extractErrorMessage(action.payload) || 'Email verification failed';
+      })
+
       // ==================== 2FA OPERATIONS ====================
       .addMatcher(authApi.endpoints.enable2FA.matchFulfilled, (state) => {
         if (state.registeredUser) {

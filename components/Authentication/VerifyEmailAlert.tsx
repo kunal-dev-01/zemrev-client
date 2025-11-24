@@ -80,7 +80,7 @@ const VerifyEmailAlert = () => {
           className="px-4 py-1.5 text-sm font-semibold rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 flex items-center justify-center"
         >
           {isLoading ? (
-            <Spinner size="sm" color="text-white" />
+            <Spinner size="sm" color="text-white" /> 
           ) : cooldown > 0 ? (
             `Resend (${cooldown}s)`
           ) : (
