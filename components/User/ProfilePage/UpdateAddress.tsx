@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 // Components
-import { CancelSvg, SaveSvg } from "@/components/Svg/CommonSvg";
+import { SaveSvg } from "@/components/Svg/CommonSvg";
 import Input from "@/components/Layouts/Input/Input";
 import AuthErrorAlert from "../../Layouts/ErrorLayout/AuthError";
 import Spinner from "@/components/Layouts/Loaders/Spinner";

@@ -77,8 +77,8 @@ const SecurityAndPrivacyPage = () => {
   };
 
   return (
-    <div className="w-full md:p-4 p-2 relative fade-in">
-      <div className="w-full flex flex-col gap-4">
+    <>
+      <div className="w-full flex flex-col gap-4 md:p-4 p-2 relative fade-in">
 
         {/* 🔐 TWO-FACTOR AUTHENTICATION */}
         {LocalAccount && (
@@ -136,7 +136,7 @@ const SecurityAndPrivacyPage = () => {
       {isTwoFactorModalOpen && <TwoFA />}
       {isTwoFactorDisabledModalOpen && <DisableTwoFactor />}
       {isRegenerateModalOpen && <RegenerateBackupCode />}
-    </div>
+    </>
   );
 };
 
