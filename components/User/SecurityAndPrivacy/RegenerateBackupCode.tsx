@@ -1,7 +1,6 @@
 import Input from "@/components/Layouts/Input/Input";
 import Spinner from "@/components/Layouts/Loaders/Spinner";
-import { CancelSvg } from "@/components/Svg/UserPageSvg";
-import { RightIconSvg } from "@/components/Svg/AuthSvg";
+import { CancelSvg, CheckSvg } from "@/components/Svg/CommonSvg";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -100,7 +99,7 @@ const RegenerateBackupCode = () => {
             {/* Success Message */}
             <div className="flex items-center gap-3 p-3 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg">
               <div className="w-6 h-6 text-green-600 dark:text-green-400">
-                <RightIconSvg />
+                <CheckSvg />
               </div>
               <p className="text-sm text-green-800 dark:text-green-200 font-medium">
                 Backup codes regenerated successfully!

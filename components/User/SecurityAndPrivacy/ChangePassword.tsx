@@ -9,7 +9,7 @@ import { useFadeModal } from "@/hooks/animateHooks/useFads.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 
 import AuthErrorAlert from "@/components/Layouts/ErrorLayout/AuthError";
-import { CancelSvg } from "@/components/Svg/UserPageSvg";
+import { CancelSvg } from "@/components/Svg/CommonSvg";
 
 /* -----------------------------------------
    ZOD SCHEMA

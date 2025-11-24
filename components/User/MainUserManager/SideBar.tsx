@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
-import {DasBoardSvg,PaymentSvg,UserProfileSvg,SecuritySvg,NotificationSvg,MembershipSvg} from "../../Svg/UserPageSvg";
+import {DashBoardSvg,PaymentSvg,UserRoundSvg,SecuritySvg,NotificationSvg} from "../../Svg/UserPageSvg";
+import { CreditSvg } from "@/components/Svg/CommonSvg";
 
 const SideBar = () => {
   const searchParams = useSearchParams();
@@ -11,12 +12,12 @@ const SideBar = () => {
   const closeMenu = () => setOpenUserMenu(false);
 
   const UserLinks = [
-    { name: "Dashboard", slug: "dashboard", icon: <DasBoardSvg /> },
+    { name: "Dashboard", slug: "dashboard", icon: <DashBoardSvg /> },
     { name: "Billing & Payment", slug: "billing" , icon: <PaymentSvg /> },
-    { name: "Membership", slug: "membership" , icon: <MembershipSvg /> },
+    { name: "Membership", slug: "membership" , icon: <CreditSvg /> },
     { name: "Security & Privacy", slug: "security-and-privacy" , icon: <SecuritySvg /> },
     { name: "Notifications", slug: "notifications" , icon: <NotificationSvg /> },
-    { name: "Profile", slug: "profile" , icon: <UserProfileSvg /> },
+    { name: "Profile", slug: "profile" , icon: <UserRoundSvg /> },
   ];
 
   return (

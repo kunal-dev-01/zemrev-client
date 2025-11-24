@@ -1,6 +1,6 @@
 import Input from "@/components/Layouts/Input/Input";
 import Spinner from "@/components/Layouts/Loaders/Spinner";
-import { CancelSvg } from "@/components/Svg/UserPageSvg";
+import { CancelSvg } from "@/components/Svg/CommonSvg";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

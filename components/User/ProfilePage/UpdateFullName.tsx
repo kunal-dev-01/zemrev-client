@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CancelSvg, SaveSvg } from "@/components/Svg/UserPageSvg";
+import { CancelSvg, SaveSvg } from "@/components/Svg/CommonSvg";
 import Spinner from "@/components/Layouts/Loaders/Spinner";
 import { useUser } from "@/hooks/userHooks/user.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";

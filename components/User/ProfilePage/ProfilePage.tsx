@@ -1,18 +1,16 @@
 import { 
-  UserProfileSvg, 
-  EditPencilSvg,
+  UserRoundSvg,
   GlobeSvg,
-  MapPin, 
+  MapPinSvg, 
+  PaymentSvg
 } from "@/components/Svg/UserPageSvg";
-import {ErrorSvg, EmailSvg} from "@/components/Svg/AuthSvg";
 import {Shield, Zap,Lock } from "@/components/Svg/HomeSvg";
-import {PaymentSvg, } from "@/components/Svg/UserPageSvg";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import UpdateManager from "./UpdateManager";
 import Badge from "@/components/Layouts/PageLayout/Badge";
 import type { RegisteredUser } from "@/services/authService/types";
-import { Tick2IconSvg } from "@/components/Svg/AuthSvg";
+import { CheckSvg, EditSvg, EmailSvg, ErrorSvg } from "@/components/Svg/CommonSvg";
 
 const ProfilePage = () => {
   const { registeredUser } = useAuth();
@@ -86,7 +84,7 @@ const ProfilePage = () => {
           
           <div className="mt-6 flex flex-wrap gap-4">
             <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800 px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-700/50">
-              {user.isEmailVerified ? <Tick2IconSvg/> : (
+              {user.isEmailVerified ? <CheckSvg/> : (
                 <span className="w-5 h-5 p-1 text-yellow-500"><ErrorSvg/></span>
               )}
               <span>Email {user.isEmailVerified ? "Verified" : "Unverified"}</span>
@@ -110,7 +108,7 @@ const ProfilePage = () => {
         <div className="lg:col-span-1 bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm h-fit">
           <div className="flex flex-col items-center text-center">
             <div className="w-24 h-24 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center mb-4 border-4 border-white dark:border-zinc-900 shadow-md">
-              <UserProfileSvg />
+              <UserRoundSvg />
             </div>
             
             <div className="relative w-full">
@@ -122,7 +120,7 @@ const ProfilePage = () => {
                 className="absolute right-0 top-1 p-1.5 w-6 h-6 text-zinc-400 hover:text-zinc-900 dark:hover:text-white bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-all"
                 title="Edit Name"
               >
-                <EditPencilSvg />
+                <EditSvg />
               </button>
             </div>
            
@@ -152,7 +150,7 @@ const ProfilePage = () => {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="p-1 w-5 h-5 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-zinc-500">
-                  <MapPin />
+                  <MapPinSvg />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Address Details</h3>
@@ -163,7 +161,7 @@ const ProfilePage = () => {
                 onClick={handleAddressEdit}
                 className="flex items-center w-6 h-6 gap-2 px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-lg transition-colors border border-transparent hover:border-zinc-300 dark:hover:border-zinc-600"
               >
-                <EditPencilSvg />
+                <EditSvg />
                 <span>Edit Address</span>
               </button>
             </div>

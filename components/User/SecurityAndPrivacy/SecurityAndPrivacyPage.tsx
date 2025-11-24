@@ -1,4 +1,4 @@
-import { TwoFASvg, PasswordSvg, PersonalPrivacy, RegenerateCode } from "@/components/Svg/UserPageSvg";
+import { TwoFASvg, PasswordSvg, PrivacySvg, RegenerateCodeSvg } from "@/components/Svg/UserPageSvg";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
 import { JSX } from "react";
@@ -103,7 +103,7 @@ const SecurityAndPrivacyPage = () => {
         {/* 🔄 REGENERATE BACKUP CODES */}
         {TwofaCheck && (
           <Card 
-            icon={<RegenerateCode />}
+            icon={<RegenerateCodeSvg />}
             title="Regenerate Backup Codes"
             description="Generate new backup codes for account recovery."
             onClick={() => setRegenerateModalOpen(true)}
@@ -120,7 +120,7 @@ const SecurityAndPrivacyPage = () => {
 
         {/* 🔒 PRIVACY SETTINGS */}
         <Card
-          icon={<PersonalPrivacy />}
+          icon={<PrivacySvg />}
           title="Privacy Settings"
           description="Manage how your data is used and stored."
           onClick={() => setPrivacyPolicyModalOpen(true)}
