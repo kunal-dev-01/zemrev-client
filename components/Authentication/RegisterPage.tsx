@@ -4,31 +4,44 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/hooks/authHooks/auth.hooks";
 import * as z from "zod";
-import { useState } from "react";
+import { FC, useState } from "react";
 import Input from "@/components/Layouts/Input/Input";
 import Spinner from "../Layouts/Loaders/Spinner";
 import GoogleAuthButton from "./GoogleAuthButton";
 import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
 import ResendVerifyEmail from "./ResendVerifyEmail";
-import { PlanType } from "@/services/authService/types";
+import Image from "next/image";
+import Link from "next/link";
 
 // ==================== VALIDATION SCHEMA ====================
 const registerSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  selectedPlan: z.nativeEnum(PlanType),
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-// ==================== PLAN DATA ====================
-const PLANS = [
-  { value: PlanType.BASIC, name: "Basic", price: "$4.99", popular: false },
-  { value: PlanType.PRO,   name: "Pro",   price: "$9.99", popular: true },
-  { value: PlanType.ELITE, name: "Elite", price: "$19.99", popular: false },
-  { value: PlanType.CUSTOM,name: "Custom",price: "$0.005/credit", popular: false },
-];
+const Logo: FC = () => (
+  <Link href="/" className="block md:w-[2.8vw] w-[6vh] mx-auto mb-2">
+    <Image 
+      src="/favicon.svg" 
+      alt="logo" 
+      width={50} 
+      height={50} 
+      loading='eager'
+      className="w-full h-full object-cover dark:hidden" 
+    />
+    <Image 
+      src="/favicon-dark.svg" 
+      alt="logo" 
+      width={50} 
+      height={50} 
+      loading='eager'
+      className="w-full h-full object-cover hidden dark:block" 
+    />
+  </Link>
+);
 
 // ==================== COMPONENT ====================
 const RegisterPage = () => {
@@ -40,10 +53,7 @@ const RegisterPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      selectedPlan: PlanType.PRO,
-    },
+    resolver: zodResolver(registerSchema)
   });
 
   // ==================== HANDLERS ====================
@@ -64,6 +74,10 @@ const RegisterPage = () => {
   return (
     <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
       <div className="w-full md:w-[40%] md:p-6 p-4 dark:md:bg-zinc-900/50 md:bg-zinc-100/50 md:rounded-2xl">
+
+        {/* Logo */}
+        <Logo />
+
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 select-none">
@@ -100,63 +114,13 @@ const RegisterPage = () => {
             error={errors.password}
           />
 
-          {/* Plan Selector */}
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-300 mb-2">
-              Select Plan
-            </label>
-
-            <div className="w-full grid grid-cols-2 gap-2 border border-zinc-300 dark:border-zinc-800 rounded-lg p-2">
-              {PLANS.map((plan) => (
-                <label
-                  key={plan.value}
-                  className="relative cursor-pointer flex items-center gap-3 p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 hover:border-light dark:hover:border-dark transition-all duration-300"
-                >
-                  {/* Hidden Radio Input */}
-                  <input
-                    type="radio"
-                    value={plan.value}
-                    {...register("selectedPlan")}
-                    className="peer hidden"
-                  />
-
-                  {/* Custom Radio Circle */}
-                  <div className="w-4 h-4 rounded-full border-2 border-zinc-300 dark:border-zinc-800 peer-checked:border-light dark:peer-checked:border-dark flex items-center justify-center transition">
-                    <div className="w-2.5 h-2.5 rounded-full bg-light dark:bg-dark opacity-0 peer-checked:opacity-100 transition" />
-                  </div>
-
-                  {/* Plan Details */}
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-zinc-700 dark:text-zinc-300">
-                      {plan.name}
-                    </span>
-                    <span className="text-zinc-500 dark:text-zinc-400 text-sm">
-                      {plan.price}
-                    </span>
-                  </div>
-
-                  {/* Popular Badge */}
-                  {plan.popular && (
-                    <span className="absolute top-1 right-1 text-[10px] px-2 py-0.5 rounded-full bg-linear-to-r from-indigo-400 to-purple-400 text-white font-semibold">
-                      Popular
-                    </span>
-                  )}
-                </label>
-              ))}
-            </div>
-
-            {errors.selectedPlan && (
-              <span className="text-red-500 text-xs mt-1 block">
-                {errors.selectedPlan.message}
-              </span>
-            )}
-          </div>
+          
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-light hover:bg-light/80 dark:hover:bg-dark/80 dark:bg-dark text-white font-medium py-2 rounded-lg transition-colors duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-light hover:bg-light/80 dark:hover:bg-dark/80 dark:bg-dark text-white font-medium py-2 rounded-lg transition-colors duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed mt-4"
           >
             {isLoading ? (
               <div className="flex items-center justify-center gap-2">

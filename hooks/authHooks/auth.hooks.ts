@@ -9,25 +9,16 @@ import {
   useLogoutMutation,
   useLogoutAllMutation,
   useGoogleLoginMutation,
-  useForgotPasswordMutation,
-  useResetPasswordMutation,
-  useVerifyEmailMutation,
-  useResendVerifyEmailMutation,
   useVerify2FAMutation,
-  useGetCreditStatusQuery,
-  useLazyGetCreditStatusQuery,
 } from '@/services/authService/auth.api';
 import {
   logout as logoutAction,
   setError,
   clearError,
   setFingerprint,
-  setGuestCredentials,
-  updateEmailVerificationStatus,
 } from '@/services/authService/auth.slice';
 import { getFingerprint } from '@/utils/fingerprint.util';
-import { PlanType } from '@/services/authService/types';
-import {extractApiErrorMessage} from '@/utils/errorExtract.utils';
+import { extractApiErrorMessage } from '@/utils/errorExtract.utils';
 
 export const useAuth = () => {
   const router = useRouter();
@@ -38,7 +29,6 @@ export const useAuth = () => {
     registeredUser,
     guestUser,
     accessToken,
-    fingerprint: storedFingerprint,
     credits,
     isAuthenticated,
     isLoading,
@@ -50,45 +40,7 @@ export const useAuth = () => {
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
   const [logoutAllMutation, { isLoading: isLoggingOutAll }] = useLogoutAllMutation();
   const [googleLoginMutation, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
-  const [forgotPasswordMutation, { isLoading: isForgotPasswordLoading }] =
-    useForgotPasswordMutation();
-  const [resetPasswordMutation, { isLoading: isResetPasswordLoading }] = useResetPasswordMutation();
-  const [verifyEmailMutation, { isLoading: isVerifyingEmail }] = useVerifyEmailMutation();
   const [verify2FAMutation, { isLoading: isVerifying2FA }] = useVerify2FAMutation();
-  const [resendVerifyEmailMutation, { isLoading: isResendingVerifyEmail }] =
-    useResendVerifyEmailMutation();
-
-  const { refetch: refetchCredits } = useGetCreditStatusQuery(undefined, {
-    skip: true,
-  });
-  const [triggerGetCredits] = useLazyGetCreditStatusQuery();
-
-  // ==================== INITIALIZE GUEST (ONLY WHEN NEEDED) ====================
-  const initializeGuestForTool = useCallback(async (): Promise<boolean> => {
-    try {
-      if (userType === 'registered') return true;
-      if (userType === 'guest' && guestUser) return true;
-
-      const fp = storedFingerprint || (await getFingerprint());
-      dispatch(setFingerprint(fp));
-
-      const result = await triggerGetCredits().unwrap();
-
-      if (result.data.guest) {
-        dispatch(
-          setGuestCredentials({
-            guest: result.data.guest,
-            fingerprint: fp,
-          })
-        );
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Failed to initialize guest:', error);
-      return false;
-    }
-  }, [userType, guestUser, storedFingerprint, dispatch, triggerGetCredits]);
 
   // ==================== SIGNUP ====================
   const signup = useCallback(
@@ -96,7 +48,6 @@ export const useAuth = () => {
       fullName: string;
       email: string;
       password: string;
-      selectedPlan: PlanType;
     }): Promise<{ success: boolean; requiresPayment?: boolean; checkoutUrl?: string }> => {
       try {
         dispatch(clearError());
@@ -104,10 +55,7 @@ export const useAuth = () => {
         const fp = await getFingerprint();
         dispatch(setFingerprint(fp));
 
-        const result = await signupMutation({
-          ...data,
-          selectedPlan: data.selectedPlan,
-        }).unwrap();
+        const result = await signupMutation(data).unwrap();
 
         if (result.data.requiresPayment && result.data.checkoutUrl) {
           return {
@@ -136,7 +84,7 @@ export const useAuth = () => {
       try {
         dispatch(clearError());
         const result = await loginMutation(data).unwrap();
-        
+
         if (result.data.requires2FA && result.data.tempToken) {
           return {
             success: true,
@@ -176,39 +124,6 @@ export const useAuth = () => {
     [verify2FAMutation, dispatch, router]
   );
 
-  // ==================== VERIFY EMAIL ====================
-  const verifyEmail = useCallback(
-    async (token: string): Promise<boolean> => {
-      try {
-        dispatch(clearError());
-        const result = await verifyEmailMutation(token).unwrap();
-        if (result) {
-          dispatch(updateEmailVerificationStatus(true));
-        }
-        return true;
-      } catch (err: unknown) {
-        dispatch(setError(extractApiErrorMessage(err)));
-        return false;
-      }
-    },
-    [verifyEmailMutation, dispatch]
-  );
-
-  // ==================== RESEND VERIFY EMAIL ====================
-  const resendVerifyEmail = useCallback(
-    async (data: { email: string }): Promise<boolean> => {
-      try {
-        dispatch(clearError());
-        await resendVerifyEmailMutation(data).unwrap();
-        return true;
-      } catch (err: unknown) {
-        dispatch(setError(extractApiErrorMessage(err)));
-        return false;
-      }
-    },
-    [resendVerifyEmailMutation, dispatch]
-  );
-
   // ==================== LOGOUT ====================
   const logout = useCallback(async (): Promise<void> => {
     try {
@@ -246,143 +161,39 @@ export const useAuth = () => {
 
       const fp = await getFingerprint();
       dispatch(setFingerprint(fp));
-      
+
       await googleLoginMutation().unwrap();
     } catch (err: unknown) {
       dispatch(setError(extractApiErrorMessage(err)));
     }
   }, [googleLoginMutation, dispatch]);
 
-  // ==================== FORGOT PASSWORD ====================
-  const forgotPassword = useCallback(
-    async (data: { email: string }): Promise<boolean> => {
-      try {
-        dispatch(clearError());
-        await forgotPasswordMutation(data).unwrap();
-        return true;
-      } catch (err: unknown) {
-        dispatch(setError(extractApiErrorMessage(err)));
-        return false;
-      }
-    },
-    [forgotPasswordMutation, dispatch]
-  );
-
-  // ==================== RESET PASSWORD ====================
-  const resetPassword = useCallback(
-    async (data: { resetPasswordToken: string; newPassword: string }): Promise<boolean> => {
-      try {
-        dispatch(clearError());
-        await resetPasswordMutation(data).unwrap();
-        return true;
-      } catch (err: unknown) {
-        dispatch(setError(extractApiErrorMessage(err)));
-        return false;
-      }
-    },
-    [resetPasswordMutation, dispatch]
-  );
-
-  // ==================== REFRESH CREDITS ====================
-  const refreshCredits = useCallback(async () => {
-    try {
-      await refetchCredits();
-    } catch (err) {
-      console.log('Failed to refresh credits:', err);
-    }
-  }, [refetchCredits]);
-
-  // ==================== HELPER FUNCTIONS ====================
-
+  // ==================== CLEAR ERROR ====================
   const clearAuthError = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  const getDisplayName = useCallback((): string => {
-    if (userType === 'registered' && registeredUser) {
-      return registeredUser.fullName || registeredUser.email.split('@')[0] || 'User';
-    }
-    return 'Guest';
-  }, [userType, registeredUser]);
-
-  const getCreditsRemaining = useCallback((): number | string => {
-    if (!credits) return 0;
-    return credits.remaining;
-  }, [credits]);
-
-  const hasEnoughCredits = useCallback(
-    (required: number = 1): boolean => {
-      if (!credits) return false;
-      return typeof credits.remaining === 'number' && credits.remaining >= required;
-    },
-    [credits]
-  );
-
-  const isEmailVerified = useCallback((): boolean => {
-    if (userType !== 'registered' || !registeredUser) return false;
-    return registeredUser.isEmailVerified;
-  }, [userType, registeredUser]);
-
-  const is2FAEnabled = useCallback((): boolean => {
-    if (userType !== 'registered' || !registeredUser) return false;
-    return registeredUser.twoFactorEnabled;
-  }, [userType, registeredUser]);
-
-  const isPlanActive = useCallback((): boolean => {
-    if (userType !== 'registered' || !registeredUser) return false;
-    return registeredUser.planActive;
-  }, [userType, registeredUser]);
-
-  const isGuest = userType === 'guest';
-  const isRegistered = userType === 'registered';
-  const isAnonymous = userType === 'anonymous';
-
   const combinedIsLoading =
-    isLoading ||
-    isSigningUp ||
-    isLoggingIn ||
-    isLoggingOut ||
-    isLoggingOutAll ||
-    isGoogleLoading ||
-    isForgotPasswordLoading ||
-    isResetPasswordLoading ||
-    isVerifyingEmail ||
-    isVerifying2FA ||
-    isResendingVerifyEmail;
+    isLoading || isSigningUp || isLoggingIn || isLoggingOut || isLoggingOutAll || isGoogleLoading || isVerifying2FA;
 
   return {
+    // State
     userType,
     registeredUser,
     guestUser,
     accessToken,
     credits,
     isAuthenticated,
-    isGuest,
-    isRegistered,
-    isAnonymous,
     isLoading: combinedIsLoading,
     error,
 
+    // Operations
     signup,
-    verifyEmail,
-    resendVerifyEmail,
     login,
     verify2FA,
     logout,
     logoutAll,
     loginWithGoogle,
-    forgotPassword,
-    resetPassword,
-
-    refreshCredits,
-    initializeGuestForTool,
-
     clearError: clearAuthError,
-    getDisplayName,
-    getCreditsRemaining,
-    hasEnoughCredits,
-    isEmailVerified,
-    is2FAEnabled,
-    isPlanActive,
   };
 };
