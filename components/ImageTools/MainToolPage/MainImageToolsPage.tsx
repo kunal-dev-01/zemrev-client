@@ -15,14 +15,14 @@ const ImageToolsData = [
 
 const MainImageToolsPage = () => {
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full">
       <header className="w-full p-4 rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-zinc-700 dark:text-zinc-300 select-none text-center">
           Image Toolkit
         </h1>
       </header>
 
-      <div className="w-full p-3 rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50">
+      <div className="w-full p-3 mt-2 rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {ImageToolsData.map((item, index) => (
             <Link
