@@ -54,7 +54,7 @@ export interface CreditInfo {
   total: number | string;
   used: number;
   remaining: number | string;
-  resetDate?: Date;
+  resetDate?: Date; // For guests
 }
 
 // ==================== AUTH STATE ====================
