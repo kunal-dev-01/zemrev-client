@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useLoginModal } from "@/hooks/loginHooks/login.hooks";
-import {DashBoardSvg,PaymentSvg,UserRoundSvg,SecuritySvg,NotificationSvg} from "../../Svg/UserPageSvg";
+import {DashBoardSvg,PaymentSvg,UserRoundSvg,SecuritySvg,NotificationSvg,APISvg} from "../../Svg/UserPageSvg";
 import { CreditSvg } from "@/components/Svg/CommonSvg";
 
 const SideBar = () => {
@@ -15,6 +15,7 @@ const SideBar = () => {
     { name: "Dashboard", slug: "dashboard", icon: <DashBoardSvg /> },
     { name: "Billing & Payment", slug: "billing" , icon: <PaymentSvg /> },
     { name: "Buy Credits", slug: "buy-credits" , icon: <CreditSvg /> },
+    { name: "API Access", slug: "api-access" , icon: <APISvg /> },
     { name: "Security & Privacy", slug: "security-and-privacy" , icon: <SecuritySvg /> },
     { name: "Notifications", slug: "notifications" , icon: <NotificationSvg /> },
     { name: "Profile", slug: "profile" , icon: <UserRoundSvg /> },
