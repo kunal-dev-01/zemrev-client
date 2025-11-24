@@ -40,7 +40,7 @@ const SecurityAndPrivacyPage = () => {
   }) => (
     <div
       onClick={onClick}
-      className="w-full p-4 rounded-xl bg-zinc-100/90 dark:bg-zinc-900/50 
+      className="w-full p-4 rounded-xl bg-transparent dark:bg-zinc-900/50 
                  border border-zinc-200 dark:border-zinc-800 flex items-start justify-between 
                  cursor-pointer relative group overflow-hidden transition-all"
     >
