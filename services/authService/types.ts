@@ -4,37 +4,13 @@ export enum UserRole {
   USER = "user",
 }
 
-export enum PlanType {
-  BASIC = "basic",
-  PRO = "pro",
-  ELITE = "elite",
-  CUSTOM = "custom",
-}
-
 export enum AuthProvider {
   LOCAL = "local",
   GOOGLE = "google",
 }
 
-export enum SubscriptionStatus {
-  INACTIVE = "inactive",
-  ACTIVE = "active",
-  CANCELED = "canceled",
-  PAST_DUE = "past_due",
-}
-
-export type PlanPriority = "normal" | "high" | "highest" | "custom";
 export type UserType = "guest" | "registered" | "anonymous";
-
-export interface PlanDetails {
-  type: PlanType;
-  dailyCredits: number; // 0 for CUSTOM
-  concurrentJobLimit: number;
-  priority: PlanPriority;
-  price: number;
-  features: string[];
-  perCreditPrice?: number; // For CUSTOM only
-}
+export type UserStatus = "inactive" | "active";
 
 export interface Address {
   street?: string;
@@ -47,35 +23,21 @@ export interface Address {
 // ==================== USER TYPES ====================
 
 export interface RegisteredUser {
-  _id: string;
-  googleId?: string;
   authProvider: AuthProvider;
   fullName: string;
   email: string;
-  phoneNumber?: string;
+  password?: string;
   address?: Address;
   role: UserRole;
-
-  // Plan info
-  planType: PlanType;
-  planActive: boolean; // false until payment
-  plan: PlanDetails;
   credits: number;
-  creditsUsed: number;
-  nextCreditReset: Date;
-
-  // Status
+  status: UserStatus;
+  stripeCustomerId?: string;
   isEmailVerified: boolean;
+  passwordChangedAt?: Date;
   twoFactorEnabled: boolean;
   isActive: boolean;
   isBlocked: boolean;
   blockedReason?: string;
-
-  // Stripe
-  stripeCustomerId?: string;
-  subscriptionId?: string;
-  subscriptionStatus: SubscriptionStatus;
-
   createdAt: Date;
   updatedAt: Date;
 }
@@ -93,8 +55,6 @@ export interface CreditInfo {
   used: number;
   remaining: number | string;
   resetDate?: Date;
-  planType?: PlanType;
-  planActive?: boolean;
 }
 
 // ==================== AUTH STATE ====================
@@ -120,7 +80,6 @@ export interface SignupRequest {
   fullName: string;
   email: string;
   password: string;
-  selectedPlan: PlanType; // REQUIRED
 }
 
 export interface LoginRequest {
@@ -131,7 +90,6 @@ export interface LoginRequest {
 export interface Verify2FARequest {
   tempToken: string;
   totpCode: string;
-  superKey?: string;
   isBackupCode?: boolean;
 }
 
@@ -165,7 +123,7 @@ export interface SignupResponse {
   data: {
     user: RegisteredUser;
     accessToken: string;
-    requiresPayment?: boolean; // true if paid plan selected
+    requiresPayment?: boolean;
     checkoutUrl?: string;
     creditInfo?: {
       total: number;
