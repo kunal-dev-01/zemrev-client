@@ -113,7 +113,7 @@ const ResendVerifyEmail = ({ email }: ResendVerifyEmailProps) => {
           )}
         </button>
 
-        {!error && <AuthErrorAlert message={error} onClose={clearError} />}
+        {error && <AuthErrorAlert message={error} onClose={clearError} />}
 
         {/* Back to Login */}
         <div className="py-2 border border-zinc-300 dark:border-zinc-800 rounded-lg">

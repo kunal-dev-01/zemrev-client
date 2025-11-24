@@ -114,7 +114,7 @@ const RegisterPage = () => {
           />
 
           {/* Error Alert */}
-          {!error && (
+          {error && (
               <AuthErrorAlert message={error} onClose={clearError} />
           )}
 

@@ -68,6 +68,9 @@ const TwoFA = () => {
 
   const handleVerify = async (data: VerifySchema) => {
     const success = await enable2FA(data.totpCode);
+    if (success) {
+      setMode("success");
+    }
   };
 
   const handleCopyAll = () => {
@@ -204,7 +207,7 @@ const TwoFA = () => {
             <div className="p-4 space-y-4">
               {/* Success Message */}
               <div className="flex items-center gap-3 p-3 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg">
-                <div className="w-6 h-6 text-green-600 dark:text-green-400">
+                <div className="w-6 h-6 text-emerald-400">
                   <CheckSvg />
                 </div>
                 <p className="text-sm text-green-800 dark:text-green-200 font-medium">

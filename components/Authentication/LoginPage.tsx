@@ -66,7 +66,6 @@ const LoginPage = () => {
   };
 
   return (
-    <>
       <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
         <div className="w-full md:w-[40%] p-6 md:bg-zinc-100/50 dark:md:bg-zinc-900/50 md:rounded-2xl">
           
@@ -123,7 +122,7 @@ const LoginPage = () => {
           </form>
 
           {/* Error Alert */}
-          {!error && (
+          {error && (
               <AuthErrorAlert message={error} onClose={clearError} />
           )}
 
@@ -150,9 +149,8 @@ const LoginPage = () => {
             </p>
           </div>
         </div>
-      </div>
 
-      {/* 2FA Verification Modal */}
+              {/* 2FA Verification Modal */}
       {show2FAModal && (
         <TwoFactorVerifyModal
           tempToken={tempToken}
@@ -160,7 +158,7 @@ const LoginPage = () => {
           onCancel={handle2FACancel}
         />
       )}
-    </>
+      </div>
   );
 };
 

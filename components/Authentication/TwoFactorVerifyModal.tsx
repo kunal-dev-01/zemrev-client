@@ -60,8 +60,7 @@ const TwoFactorVerifyModal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border-2 border-zinc-200 dark:border-zinc-800 p-6 space-y-6">
+    <div className="w-full md:w-[40%] p-6 md:bg-zinc-100/50 dark:md:bg-zinc-900/50 md:rounded-2xl">
         {/* HEADER */}
         <div className="text-center">
           <h2 className="text-2xl font-semibold text-zinc-800 dark:text-zinc-200">
@@ -146,7 +145,6 @@ const TwoFactorVerifyModal = ({
         <p className="text-xs text-center text-zinc-500 dark:text-zinc-400">
           Can't access your authenticator? Contact support for assistance.
         </p>
-      </div>
     </div>
   );
 };

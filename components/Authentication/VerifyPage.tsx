@@ -132,7 +132,7 @@ const VerifyEmailPage = () => {
         )}
 
         {/* Actions */}
-        <div className="space-y-3">
+        <div className="space-y-3 mt-4">
           <a
             href="/auth/register"
             className="block w-full bg-light hover:bg-light/80 dark:hover:bg-dark/80 dark:bg-dark text-white font-medium py-2 px-6 rounded-lg transition-colors duration-300 ease-in-out"
