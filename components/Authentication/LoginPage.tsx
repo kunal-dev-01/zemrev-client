@@ -20,10 +20,9 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 const LoginPage = () => {
   const { login, error, isLoading, clearError } = useAuth();
-  
-  // State for 2FA
+
   const [show2FAModal, setShow2FAModal] = useState(false);
-  const [tempToken, setTempToken] = useState<string>("");
+  const [tempToken, setTempToken] = useState("");
 
   const {
     register,
@@ -35,18 +34,11 @@ const LoginPage = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const result = await login({
-        email: data.email,
-        password: data.password,
-      });
+      const result = await login({ email: data.email, password: data.password });
 
-      if (result.success) {
-        // Check if 2FA is required
-        if (result.requires2FA && result.tempToken) {
-          setTempToken(result.tempToken);
-          setShow2FAModal(true);
-        }
-        // If no 2FA, user is already redirected by the hook
+      if (result.success && result.requires2FA && result.tempToken) {
+        setTempToken(result.tempToken);
+        setShow2FAModal(true);
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -56,7 +48,6 @@ const LoginPage = () => {
   const handle2FASuccess = () => {
     setShow2FAModal(false);
     setTempToken("");
-    // User will be redirected by verify2FA hook
   };
 
   const handle2FACancel = () => {
@@ -66,9 +57,18 @@ const LoginPage = () => {
   };
 
   return (
-      <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
+    <div className="w-full md:min-h-[45vw] min-h-[80vh] md:py-[2vw] rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 border-2 border-zinc-100/80 dark:border-zinc-900/50 flex items-center justify-center relative">
+
+      {/* ✔ SHOW 2FA MODAL */}
+      {show2FAModal ? (
+        <TwoFactorVerifyModal
+          tempToken={tempToken}
+          onSuccess={handle2FASuccess}
+          onCancel={handle2FACancel}
+        />
+      ) : (
         <div className="w-full md:w-[40%] p-6 md:bg-zinc-100/50 dark:md:bg-zinc-900/50 md:rounded-2xl">
-          
+
           {/* HEADER */}
           <div className="text-center mb-6">
             <h1 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 select-none">
@@ -121,12 +121,10 @@ const LoginPage = () => {
             </button>
           </form>
 
-          {/* Error Alert */}
-          {error && (
-              <AuthErrorAlert message={error} onClose={clearError} />
-          )}
+          {/* ERROR ALERT */}
+          {error && <AuthErrorAlert message={error} onClose={clearError} />}
 
-          {/* OR DIVIDER */}
+          {/* Divider */}
           <div className="w-full flex items-center my-6 select-none">
             <div className="grow border-t border-zinc-300 dark:border-zinc-800"></div>
             <span className="px-4 text-sm text-gray-500 dark:text-gray-400">or</span>
@@ -149,16 +147,8 @@ const LoginPage = () => {
             </p>
           </div>
         </div>
-
-              {/* 2FA Verification Modal */}
-      {show2FAModal && (
-        <TwoFactorVerifyModal
-          tempToken={tempToken}
-          onSuccess={handle2FASuccess}
-          onCancel={handle2FACancel}
-        />
       )}
-      </div>
+    </div>
   );
 };
 

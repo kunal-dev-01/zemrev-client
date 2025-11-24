@@ -31,26 +31,30 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{ user: RegisteredUser; accessToken: string }>
     ) => {
-      state.userType = 'registered';
-      state.registeredUser = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-      state.guestUser = null;
-      state.fingerprint = null;
-      state.isAuthenticated = true;
-      state.error = null;
+      Object.assign(state, {
+        userType: 'registered',
+        registeredUser: action.payload.user,
+        accessToken: action.payload.accessToken,
+        guestUser: null,
+        fingerprint: null,
+        isAuthenticated: true,
+        error: null,
+      });
     },
 
     setGuestCredentials: (
       state,
       action: PayloadAction<{ guest: GuestUser; fingerprint: string }>
     ) => {
-      state.userType = 'guest';
-      state.guestUser = action.payload.guest;
-      state.fingerprint = action.payload.fingerprint;
-      state.registeredUser = null;
-      state.accessToken = null;
-      state.isAuthenticated = false;
-      state.error = null;
+      Object.assign(state, {
+        userType: 'guest',
+        guestUser: action.payload.guest,
+        fingerprint: action.payload.fingerprint,
+        registeredUser: null,
+        accessToken: null,
+        isAuthenticated: false,
+        error: null,
+      });
     },
 
     setAccessToken: (state, action: PayloadAction<string>) => {
@@ -70,16 +74,13 @@ const authSlice = createSlice({
 
     updateRegisteredUser: (state, action: PayloadAction<Partial<RegisteredUser>>) => {
       if (state.registeredUser) {
-        state.registeredUser = { ...state.registeredUser, ...action.payload };
+        Object.assign(state.registeredUser, action.payload);
       }
     },
 
     updateAddress: (state, action: PayloadAction<Partial<Address>>) => {
-      if (state.registeredUser) {
-        state.registeredUser.address = {
-          ...state.registeredUser.address,
-          ...action.payload,
-        };
+      if (state.registeredUser?.address) {
+        Object.assign(state.registeredUser.address, action.payload);
       }
     },
 
@@ -102,10 +103,12 @@ const authSlice = createSlice({
     },
 
     convertToGuest: (state) => {
-      state.userType = 'guest';
-      state.registeredUser = null;
-      state.accessToken = null;
-      state.isAuthenticated = false;
+      Object.assign(state, {
+        userType: 'guest',
+        registeredUser: null,
+        accessToken: null,
+        isAuthenticated: false,
+      });
     },
 
     setLoading: (state, action: PayloadAction<boolean>) => {
@@ -124,84 +127,74 @@ const authSlice = createSlice({
   },
 
   extraReducers: (builder) => {
+    // Helper to set registered user state
+    const setRegisteredUserState = (
+      state: AuthState,
+      user: RegisteredUser,
+      accessToken: string,
+      isAuthenticated: boolean = true
+    ) => {
+      Object.assign(state, {
+        userType: 'registered',
+        registeredUser: user,
+        accessToken,
+        guestUser: null,
+        fingerprint: null,
+        isAuthenticated,
+        isLoading: false,
+        error: null,
+      });
+    };
+
+    // Helper for pending state
+    const setPendingState = (state: AuthState) => {
+      state.isLoading = true;
+      state.error = null;
+    };
+
+    // Helper for rejected state
+    const setRejectedState = (state: AuthState, action: any, defaultMsg: string) => {
+      state.isLoading = false;
+      state.error = extractErrorMessage(action.payload) || defaultMsg;
+    };
+
     builder
       // ==================== SIGNUP ====================
-      .addMatcher(authApi.endpoints.signup.matchPending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
+      .addMatcher(authApi.endpoints.signup.matchPending, setPendingState)
       .addMatcher(authApi.endpoints.signup.matchFulfilled, (state, action) => {
-        // ✅ UPDATED: Don't auto-authenticate if payment required
-        if (action.payload.data.requiresPayment) {
-          // User created but not active yet
-          state.userType = 'registered';
-          state.registeredUser = action.payload.data.user;
-          state.accessToken = action.payload.data.accessToken;
-          state.isAuthenticated = false;  // Not fully authenticated until payment
-          state.isLoading = false;
-          return;
-        }
-
-        // Normal signup (no payment required - shouldn't happen now)
-        state.userType = 'registered';
-        state.registeredUser = action.payload.data.user;
-        state.accessToken = action.payload.data.accessToken;
-        state.guestUser = null;
-        state.fingerprint = null;
-        state.isAuthenticated = true;
-        state.isLoading = false;
-        state.error = null;
+        const { user, accessToken, requiresPayment } = action.payload.data;
+        setRegisteredUserState(state, user, accessToken, !requiresPayment);
       })
       .addMatcher(authApi.endpoints.signup.matchRejected, (state, action) => {
-        state.isLoading = false;
-        state.error = extractErrorMessage(action.payload) || 'Signup failed';
+        setRejectedState(state, action, 'Signup failed');
       })
 
       // ==================== LOGIN ====================
-      .addMatcher(authApi.endpoints.login.matchPending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
+      .addMatcher(authApi.endpoints.login.matchPending, setPendingState)
       .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
-        if (action.payload.data.requires2FA) {
+        const { requires2FA, user, accessToken } = action.payload.data;
+        
+        if (requires2FA) {
           state.isLoading = false;
           return;
         }
 
-        if (action.payload.data.user && action.payload.data.accessToken) {
-          state.userType = 'registered';
-          state.registeredUser = action.payload.data.user;
-          state.accessToken = action.payload.data.accessToken;
-          state.guestUser = null;
-          state.fingerprint = null;
-          state.isAuthenticated = true;
+        if (user && accessToken) {
+          setRegisteredUserState(state, user, accessToken);
         }
-        state.isLoading = false;
-        state.error = null;
       })
       .addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
-        state.isLoading = false;
-        state.error = extractErrorMessage(action.payload) || 'Login failed';
+        setRejectedState(state, action, 'Login failed');
       })
 
       // ==================== VERIFY 2FA ====================
-      .addMatcher(authApi.endpoints.verify2FA.matchPending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
+      .addMatcher(authApi.endpoints.verify2FA.matchPending, setPendingState)
       .addMatcher(authApi.endpoints.verify2FA.matchFulfilled, (state, action) => {
-        state.userType = 'registered';
-        state.registeredUser = action.payload.data.user;
-        state.accessToken = action.payload.data.accessToken;
-        state.guestUser = null;
-        state.fingerprint = null;
-        state.isAuthenticated = true;
-        state.isLoading = false;
-        state.error = null;
+        const { user, accessToken } = action.payload.data;
+        setRegisteredUserState(state, user, accessToken);
       })
       .addMatcher(authApi.endpoints.verify2FA.matchRejected, (state, action) => {
-        state.isLoading = false;
-        state.error = extractErrorMessage(action.payload) || '2FA verification failed';
+        setRejectedState(state, action, '2FA verification failed');
       })
 
       // ==================== LOGOUT ====================
@@ -225,34 +218,41 @@ const authSlice = createSlice({
       })
 
       // ==================== EMAIL VERIFICATION ====================
-      .addMatcher(authApi.endpoints.verifyEmail.matchPending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
+      .addMatcher(authApi.endpoints.verifyEmail.matchPending, setPendingState)
       .addMatcher(authApi.endpoints.verifyEmail.matchFulfilled, (state) => {
         state.isLoading = false;
-        state.error = null;
         if (state.registeredUser) {
           state.registeredUser.isEmailVerified = true;
         }
       })
       .addMatcher(authApi.endpoints.verifyEmail.matchRejected, (state, action) => {
-        state.isLoading = false;
-        state.error = extractErrorMessage(action.payload) || 'Email verification failed';
+        setRejectedState(state, action, 'Email verification failed');
       })
 
-      // =================== Resend Email ====================
-      .addMatcher(authApi.endpoints.resendVerifyEmail.matchPending, (state) => {
-        state.isLoading = true;
-        state.error = null;
+      // ==================== PASSWORD OPERATIONS ====================
+      .addMatcher(authApi.endpoints.forgotPassword.matchPending, setPendingState)
+      .addMatcher(authApi.endpoints.forgotPassword.matchFulfilled, (state) => {
+        state.isLoading = false;
       })
+      .addMatcher(authApi.endpoints.forgotPassword.matchRejected, (state, action) => {
+        setRejectedState(state, action, 'Password reset failed');
+      })
+
+      .addMatcher(authApi.endpoints.resetPassword.matchPending, setPendingState)
+      .addMatcher(authApi.endpoints.resetPassword.matchFulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addMatcher(authApi.endpoints.resetPassword.matchRejected, (state, action) => {
+        setRejectedState(state, action, 'Password reset failed');
+      })
+
+      // ==================== RESEND EMAIL ====================
+      .addMatcher(authApi.endpoints.resendVerifyEmail.matchPending, setPendingState)
       .addMatcher(authApi.endpoints.resendVerifyEmail.matchFulfilled, (state) => {
         state.isLoading = false;
-        state.error = null;
       })
       .addMatcher(authApi.endpoints.resendVerifyEmail.matchRejected, (state, action) => {
-        state.isLoading = false;
-        state.error = extractErrorMessage(action.payload) || 'Email verification failed';
+        setRejectedState(state, action, 'Email verification failed');
       })
 
       // ==================== 2FA OPERATIONS ====================
