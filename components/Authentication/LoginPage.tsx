@@ -10,6 +10,7 @@ import Spinner from "../Layouts/Loaders/Spinner";
 import GoogleAuthButton from "./GoogleAuthButton";
 import AuthErrorAlert from "../Layouts/ErrorLayout/AuthError";
 import TwoFactorVerifyModal from "./TwoFactorVerifyModal";
+import { Logo } from "./RegisterPage";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address").min(1, "Email is required"),
@@ -17,6 +18,7 @@ const loginSchema = z.object({
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
+
 
 const LoginPage = () => {
   const { login, error, isLoading, clearError } = useAuth();
@@ -68,7 +70,7 @@ const LoginPage = () => {
         />
       ) : (
         <div className="w-full md:w-[40%] p-6 md:bg-zinc-100/50 dark:md:bg-zinc-900/50 md:rounded-2xl">
-
+          <Logo />
           {/* HEADER */}
           <div className="text-center mb-6">
             <h1 className="text-[3vh] md:text-[2vw] font-semibold text-zinc-700 dark:text-zinc-300 select-none">

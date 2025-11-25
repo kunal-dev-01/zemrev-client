@@ -15,6 +15,7 @@ const forgotPasswordSchema = z.object({
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
+
 const ForgotPasswordPage = () => {
   const [emailSent, setEmailSent] = useState(false);
   const { isLoading, error, clearError } = useAuth();

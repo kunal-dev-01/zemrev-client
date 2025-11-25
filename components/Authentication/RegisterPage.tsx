@@ -22,7 +22,8 @@ const registerSchema = z.object({
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-const Logo: FC = () => (
+// ==================== LOGO ====================
+export const Logo: FC = () => (
   <Link href="/" className="block md:w-[2.8vw] w-[6vh] mx-auto mb-2">
     <Image
       src="/favicon.svg"

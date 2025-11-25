@@ -29,8 +29,6 @@ const Callback = () => {
           return;
         }
 
-        localStorage.removeItem("temp_fingerprint");
-
         const { data } = await getCreditStatus().unwrap();
 
         if (!data?.user || data.userType !== "registered") {
