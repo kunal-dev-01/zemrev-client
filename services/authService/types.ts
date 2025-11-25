@@ -123,8 +123,6 @@ export interface SignupResponse {
   data: {
     user: RegisteredUser;
     accessToken: string;
-    requiresPayment?: boolean;
-    checkoutUrl?: string;
     creditInfo?: {
       total: number;
       used: number;
