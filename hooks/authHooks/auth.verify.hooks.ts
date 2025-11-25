@@ -15,6 +15,7 @@ import {
   clearError,
   setFingerprint,
   setGuestCredentials,
+  setCredits,
   updateEmailVerificationStatus,
 } from "@/services/authService/auth.slice";
 import { getFingerprint } from "@/utils/fingerprint.util";
@@ -44,19 +45,25 @@ export const useAuthVerify = () => {
   const { refetch: refetchCredits } = useGetCreditStatusQuery(undefined, {
     skip: true,
   });
-  const [triggerGetCredits] = useLazyGetCreditStatusQuery();
+  const [triggerGetCredits, { isLoading: isFetchingCredits }] = useLazyGetCreditStatusQuery();
 
-  // ==================== INITIALIZE GUEST (AUTO ON TOOL USAGE) ====================
-  const initializeGuestForTool = useCallback(async (): Promise<boolean> => {
+  // ==================== INITIALIZE GUEST ====================
+  const initializeGuest = useCallback(async (): Promise<boolean> => {
     try {
+      // Already registered → no need for guest
       if (userType === "registered") return true;
+      
+      // Already guest → no need to initialize again
       if (userType === "guest" && guestUser) return true;
 
+      // Get or generate fingerprint
       const fp = storedFingerprint || (await getFingerprint());
       dispatch(setFingerprint(fp));
 
+      // ✅ THIS CALL CREATES GUEST IN BACKEND (if not exists)
       const result = await triggerGetCredits().unwrap();
 
+      // Update Redux state with guest data
       if (result.data.guest) {
         dispatch(
           setGuestCredentials({
@@ -66,12 +73,30 @@ export const useAuthVerify = () => {
         );
       }
 
+      // Update credits
+      if (result.data.credits) {
+        dispatch(setCredits(result.data.credits));
+      }
+
       return true;
     } catch (error) {
       console.error("Failed to initialize guest:", error);
+      dispatch(setError(extractApiErrorMessage(error)));
       return false;
     }
   }, [userType, guestUser, storedFingerprint, dispatch, triggerGetCredits]);
+
+  // ==================== CHECK CREDITS ====================
+  const checkCredits = useCallback(
+    (required: number = 1): boolean => {
+      if (!credits) return false;
+      const remaining = typeof credits.remaining === "number" 
+        ? credits.remaining 
+        : Number(credits.remaining) || 0;
+      return remaining >= required;
+    },
+    [credits]
+  );
 
   // ==================== VERIFY EMAIL ====================
   const verifyEmail = useCallback(
@@ -140,7 +165,7 @@ export const useAuthVerify = () => {
   );
 
   // ==================== REFRESH CREDITS ====================
-  const refreshCredits = useCallback(async () => {
+  const refreshCredits = useCallback(async (): Promise<void> => {
     try {
       await refetchCredits();
     } catch (err) {
@@ -148,19 +173,7 @@ export const useAuthVerify = () => {
     }
   }, [refetchCredits]);
 
-  // ==================== GET CREDIT STATUS (MANUAL) ====================
-  const getCreditStatus = useCallback(async () => {
-    try {
-      const result = await triggerGetCredits().unwrap();
-      return result.data;
-    } catch (err) {
-      console.log("Failed to get credit status:", err);
-      return null;
-    }
-  }, [triggerGetCredits]);
-
   // ==================== HELPER FUNCTIONS ====================
-
   const getDisplayName = useCallback((): string => {
     if (userType === "registered" && registeredUser) {
       return (
@@ -177,12 +190,9 @@ export const useAuthVerify = () => {
 
   const hasEnoughCredits = useCallback(
     (required: number = 1): boolean => {
-      if (!credits) return false;
-      return (
-        typeof credits.remaining === "number" && credits.remaining >= required
-      );
+      return checkCredits(required);
     },
-    [credits]
+    [checkCredits]
   );
 
   const isEmailVerified = useCallback((): boolean => {
@@ -204,7 +214,8 @@ export const useAuthVerify = () => {
     isForgotPasswordLoading ||
     isResetPasswordLoading ||
     isVerifyingEmail ||
-    isResendingVerifyEmail;
+    isResendingVerifyEmail ||
+    isFetchingCredits;
 
   return {
     // State
@@ -212,6 +223,7 @@ export const useAuthVerify = () => {
     isRegistered,
     isAnonymous,
     isLoading: combinedIsLoading,
+    credits,
 
     // Email & Password Operations
     verifyEmail,
@@ -219,10 +231,10 @@ export const useAuthVerify = () => {
     forgotPassword,
     resetPassword,
 
-    // Guest & Credits
+    // ✅ NEW: Guest & Credit Operations
+    initializeGuest,
+    checkCredits,
     refreshCredits,
-    getCreditStatus,
-    initializeGuestForTool,
 
     // Helper Functions
     getDisplayName,
