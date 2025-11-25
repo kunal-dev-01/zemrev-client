@@ -41,7 +41,7 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== VERIFY EMAIL ====================
     verifyEmail: builder.mutation<VerifyEmailResponse, string>({
       query: (token) => ({
-        url: `/auth/verify/verify-email/${token}`,
+        url: `/verify/verify-email/${token}`,
         method: 'GET',
       }),
       invalidatesTags: ['Auth'],
@@ -50,7 +50,7 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== RESEND VERIFY EMAIL ====================
     resendVerifyEmail: builder.mutation<ForgotResponse, ForgotRequest>({
       query: (credentials) => ({
-        url: '/auth/verify/resend-verification-email',
+        url: '/verify/resend-verification-email',
         method: 'POST',
         body: credentials,
       }),
@@ -107,7 +107,7 @@ export const authApi = baseApi.injectEndpoints({
      // ==================== SETUP 2FA ====================
     setup2FA: builder.mutation<Setup2FAResponse, void>({
       query: () => ({
-        url: '/auth/verify/2fa/setup',
+        url: '/verify/2fa/setup',
         method: 'POST',
       }),
     }),
@@ -115,7 +115,7 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== ENABLE 2FA ====================
     enable2FA: builder.mutation<Enable2FAResponse, Enable2FARequest>({
       query: (data) => ({
-        url: '/auth/verify/2fa/enable',
+        url: '/verify/2fa/enable',
         method: 'POST',
         body: data,
       }),
@@ -125,7 +125,7 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== DISABLE 2FA ====================
     disable2FA: builder.mutation<Disable2FAResponse, Disable2FARequest>({
       query: (data) => ({
-        url: '/auth/verify/2fa/disable',
+        url: '/verify/2fa/disable',
         method: 'POST',
         body: data,
       }),
@@ -137,7 +137,7 @@ export const authApi = baseApi.injectEndpoints({
       RegenerateBackupCodesRequest
     >({
       query: (data) => ({
-        url: '/auth/verify/2fa/regenerate-backup-codes',
+        url: '/verify/2fa/regenerate-backup-codes',
         method: 'POST',
         body: data,
       }),
@@ -146,7 +146,7 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== FORGOT PASSWORD ====================
     forgotPassword: builder.mutation<ForgotResponse, ForgotRequest>({
       query: (credentials) => ({
-        url: '/auth/verify/forgot-password',
+        url: '/verify/forgot-password',
         method: 'POST',
         body: credentials,
       }),
@@ -155,7 +155,7 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== RESET PASSWORD ====================
     resetPassword: builder.mutation<ResetPasswordResponse, ResetPasswordRequest>({
       query: (credentials) => ({
-        url: '/auth/verify/reset-password',
+        url: '/verify/reset-password',
         method: 'POST',
         body: credentials,
       }),
