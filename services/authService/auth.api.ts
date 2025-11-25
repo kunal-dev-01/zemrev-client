@@ -1,6 +1,6 @@
 // src/services/authService/auth.api.ts
 
-import { baseApi } from '@/lib/baseApi/base.api';
+import { baseApi } from "@/lib/baseApi/base.api";
 import type {
   LoginRequest,
   LoginResponse,
@@ -22,7 +22,7 @@ import type {
   RegenerateBackupCodesRequest,
   RegenerateBackupCodesResponse,
   CreditStatusResponse,
-} from './types';
+} from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -31,27 +31,27 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== SIGNUP ====================
     signup: builder.mutation<SignupResponse, SignupRequest>({
       query: (credentials) => ({
-        url: '/auth/signup',
-        method: 'POST',
+        url: "/auth/signup",
+        method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ['Auth', 'Credits'],
+      invalidatesTags: ["Auth", "Credits"],
     }),
 
     // ==================== VERIFY EMAIL ====================
     verifyEmail: builder.mutation<VerifyEmailResponse, string>({
       query: (token) => ({
         url: `/verify/verify-email/${token}`,
-        method: 'GET',
+        method: "GET",
       }),
-      invalidatesTags: ['Auth'],
+      invalidatesTags: ["Auth"],
     }),
 
     // ==================== RESEND VERIFY EMAIL ====================
     resendVerifyEmail: builder.mutation<ForgotResponse, ForgotRequest>({
       query: (credentials) => ({
-        url: '/verify/resend-verification-email',
-        method: 'POST',
+        url: "/verify/resend-verification-email",
+        method: "POST",
         body: credentials,
       }),
     }),
@@ -59,28 +59,33 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== LOGIN ====================
     login: builder.mutation<LoginResponse, LoginRequest>({
       query: (credentials) => ({
-        url: '/auth/login',
-        method: 'POST',
+        url: "/auth/login",
+        method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ['Auth', 'Credits'],
+      invalidatesTags: ["Auth", "Credits"],
     }),
 
     // ==================== VERIFY 2FA ====================
     verify2FA: builder.mutation<Verify2FAResponse, Verify2FARequest>({
       query: (data) => ({
-        url: '/auth/verify-2fa',
-        method: 'POST',
+        url: "/auth/verify-2fa",
+        method: "POST",
         body: data,
       }),
-      invalidatesTags: ['Auth', 'Credits'],
+      invalidatesTags: ["Auth", "Credits"],
     }),
 
     // ==================== GOOGLE LOGIN ====================
     googleLogin: builder.mutation<void, void>({
-      queryFn: () => {
-        if (typeof window !== 'undefined') {
-          window.location.href = `${API_BASE_URL}/auth/google`;
+      queryFn: async () => {
+        if (typeof window !== "undefined") {
+          const fp = localStorage.getItem("temp_fingerprint") || "";
+
+          const url = new URL(`${API_BASE_URL}/auth/google`);
+          if (fp) url.searchParams.set("fp", fp);
+
+          window.location.href = url.toString();
         }
         return { data: undefined };
       },
@@ -89,56 +94,57 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== LOGOUT ====================
     logout: builder.mutation<LogoutResponse, void>({
       query: () => ({
-        url: '/auth/logout',
-        method: 'POST',
+        url: "/auth/logout",
+        method: "POST",
       }),
-      invalidatesTags: ['User', 'Auth', 'Credits'],
+      invalidatesTags: ["User", "Auth", "Credits"],
     }),
 
     // ==================== LOGOUT ALL DEVICES ====================
     logoutAll: builder.mutation<LogoutResponse, void>({
       query: () => ({
-        url: '/auth/logout-all',
-        method: 'POST',
+        url: "/auth/logout-all",
+        method: "POST",
       }),
-      invalidatesTags: ['User', 'Auth', 'Credits'],
+      invalidatesTags: ["User", "Auth", "Credits"],
     }),
 
-     // ==================== SETUP 2FA ====================
+    // ==================== SETUP 2FA ====================
     setup2FA: builder.mutation<Setup2FAResponse, void>({
       query: () => ({
-        url: '/verify/2fa/setup',
-        method: 'POST',
+        url: "/verify/2fa/setup",
+        method: "POST",
       }),
     }),
 
     // ==================== ENABLE 2FA ====================
     enable2FA: builder.mutation<Enable2FAResponse, Enable2FARequest>({
       query: (data) => ({
-        url: '/verify/2fa/enable',
-        method: 'POST',
+        url: "/verify/2fa/enable",
+        method: "POST",
         body: data,
       }),
-      invalidatesTags: ['User'],
+      invalidatesTags: ["User"],
     }),
 
     // ==================== DISABLE 2FA ====================
     disable2FA: builder.mutation<Disable2FAResponse, Disable2FARequest>({
       query: (data) => ({
-        url: '/verify/2fa/disable',
-        method: 'POST',
+        url: "/verify/2fa/disable",
+        method: "POST",
         body: data,
       }),
-      invalidatesTags: ['User'],
+      invalidatesTags: ["User"],
     }),
 
     // ==================== REGENERATE BACKUP CODES ====================
-    regenerateBackupCodes: builder.mutation<RegenerateBackupCodesResponse,
+    regenerateBackupCodes: builder.mutation<
+      RegenerateBackupCodesResponse,
       RegenerateBackupCodesRequest
     >({
       query: (data) => ({
-        url: '/verify/2fa/regenerate-backup-codes',
-        method: 'POST',
+        url: "/verify/2fa/regenerate-backup-codes",
+        method: "POST",
         body: data,
       }),
     }),
@@ -146,17 +152,20 @@ export const authApi = baseApi.injectEndpoints({
     // ==================== FORGOT PASSWORD ====================
     forgotPassword: builder.mutation<ForgotResponse, ForgotRequest>({
       query: (credentials) => ({
-        url: '/verify/forgot-password',
-        method: 'POST',
+        url: "/verify/forgot-password",
+        method: "POST",
         body: credentials,
       }),
     }),
 
     // ==================== RESET PASSWORD ====================
-    resetPassword: builder.mutation<ResetPasswordResponse, ResetPasswordRequest>({
+    resetPassword: builder.mutation<
+      ResetPasswordResponse,
+      ResetPasswordRequest
+    >({
       query: (credentials) => ({
-        url: '/verify/reset-password',
-        method: 'POST',
+        url: "/verify/reset-password",
+        method: "POST",
         body: credentials,
       }),
     }),
@@ -165,9 +174,9 @@ export const authApi = baseApi.injectEndpoints({
     getCreditStatus: builder.query<CreditStatusResponse, void>({
       query: () => ({
         url: `/credit/status`,
-        method: 'GET',
+        method: "GET",
       }),
-      providesTags: ['Credits'],
+      providesTags: ["Credits"],
     }),
   }),
   overrideExisting: false,
@@ -189,5 +198,5 @@ export const {
   useSetup2FAMutation,
   useEnable2FAMutation,
   useDisable2FAMutation,
-  useRegenerateBackupCodesMutation
+  useRegenerateBackupCodesMutation,
 } = authApi;

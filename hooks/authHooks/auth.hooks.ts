@@ -1,8 +1,8 @@
 // src/hooks/authHooks/auth.hooks.ts
 
-import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAppSelector, useAppDispatch } from '../reduxHooks/redux.hooks';
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useAppSelector, useAppDispatch } from "../reduxHooks/redux.hooks";
 import {
   useSignupMutation,
   useLoginMutation,
@@ -10,15 +10,15 @@ import {
   useLogoutAllMutation,
   useGoogleLoginMutation,
   useVerify2FAMutation,
-} from '@/services/authService/auth.api';
+} from "@/services/authService/auth.api";
 import {
   logout as logoutAction,
   setError,
   clearError,
   setFingerprint,
-} from '@/services/authService/auth.slice';
-import { getFingerprint } from '@/utils/fingerprint.util';
-import { extractApiErrorMessage } from '@/utils/errorExtract.utils';
+} from "@/services/authService/auth.slice";
+import { getFingerprint } from "@/utils/fingerprint.util";
+import { extractApiErrorMessage } from "@/utils/errorExtract.utils";
 
 export const useAuth = () => {
   const router = useRouter();
@@ -38,9 +38,12 @@ export const useAuth = () => {
   const [signupMutation, { isLoading: isSigningUp }] = useSignupMutation();
   const [loginMutation, { isLoading: isLoggingIn }] = useLoginMutation();
   const [logoutMutation, { isLoading: isLoggingOut }] = useLogoutMutation();
-  const [logoutAllMutation, { isLoading: isLoggingOutAll }] = useLogoutAllMutation();
-  const [googleLoginMutation, { isLoading: isGoogleLoading }] = useGoogleLoginMutation();
-  const [verify2FAMutation, { isLoading: isVerifying2FA }] = useVerify2FAMutation();
+  const [logoutAllMutation, { isLoading: isLoggingOutAll }] =
+    useLogoutAllMutation();
+  const [googleLoginMutation, { isLoading: isGoogleLoading }] =
+    useGoogleLoginMutation();
+  const [verify2FAMutation, { isLoading: isVerifying2FA }] =
+    useVerify2FAMutation();
 
   // ==================== SIGNUP ====================
   const signup = useCallback(
@@ -48,7 +51,11 @@ export const useAuth = () => {
       fullName: string;
       email: string;
       password: string;
-    }): Promise<{ success: boolean; requiresPayment?: boolean; checkoutUrl?: string }> => {
+    }): Promise<{
+      success: boolean;
+      requiresPayment?: boolean;
+      checkoutUrl?: string;
+    }> => {
       try {
         dispatch(clearError());
 
@@ -71,7 +78,11 @@ export const useAuth = () => {
     async (data: {
       email: string;
       password: string;
-    }): Promise<{ success: boolean; requires2FA?: boolean; tempToken?: string }> => {
+    }): Promise<{
+      success: boolean;
+      requires2FA?: boolean;
+      tempToken?: string;
+    }> => {
       try {
         dispatch(clearError());
         const result = await loginMutation(data).unwrap();
@@ -84,7 +95,7 @@ export const useAuth = () => {
           };
         }
 
-        router.push('/user?page=dashboard');
+        router.push("/user?page=dashboard");
         return { success: true };
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
@@ -105,7 +116,7 @@ export const useAuth = () => {
       try {
         dispatch(clearError());
         await verify2FAMutation(data).unwrap();
-        router.push('/user?page=dashboard');
+        router.push("/user?page=dashboard");
         return true;
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
@@ -118,14 +129,14 @@ export const useAuth = () => {
   // ==================== LOGOUT ====================
   const logout = useCallback(async (): Promise<void> => {
     try {
-      if (userType === 'registered') {
+      if (userType === "registered") {
         await logoutMutation().unwrap();
       }
     } catch (err) {
-      console.error('Logout error:', err);
+      console.error("Logout error:", err);
     } finally {
       dispatch(logoutAction());
-      router.push('/auth/login');
+      router.push("/auth/login");
       router.refresh();
     }
   }, [logoutMutation, dispatch, router, userType]);
@@ -135,11 +146,11 @@ export const useAuth = () => {
     try {
       await logoutAllMutation().unwrap();
       dispatch(logoutAction());
-      router.push('/auth/login');
+      router.push("/auth/login");
       router.refresh();
       return true;
     } catch (err) {
-      console.error('Logout all error:', err);
+      console.error("Logout all error:", err);
       dispatch(setError(extractApiErrorMessage(err)));
       return false;
     }
@@ -153,6 +164,10 @@ export const useAuth = () => {
       const fp = await getFingerprint();
       dispatch(setFingerprint(fp));
 
+      if (typeof window !== "undefined") {
+        localStorage.setItem("temp_fingerprint", fp);
+      }
+
       await googleLoginMutation().unwrap();
     } catch (err: unknown) {
       dispatch(setError(extractApiErrorMessage(err)));
@@ -165,7 +180,13 @@ export const useAuth = () => {
   }, [dispatch]);
 
   const combinedIsLoading =
-    isLoading || isSigningUp || isLoggingIn || isLoggingOut || isLoggingOutAll || isGoogleLoading || isVerifying2FA;
+    isLoading ||
+    isSigningUp ||
+    isLoggingIn ||
+    isLoggingOut ||
+    isLoggingOutAll ||
+    isGoogleLoading ||
+    isVerifying2FA;
 
   return {
     // State

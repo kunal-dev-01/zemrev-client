@@ -1,10 +1,11 @@
+// app/auth/callback/page.tsx - COMPLETE REWRITE
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch } from "@/hooks/reduxHooks/redux.hooks";
-import { setAccessToken } from "@/services/authService/auth.slice";
-import { useUser } from "@/hooks/userHooks/user.hooks";
+import { setRegisteredCredentials } from "@/services/authService/auth.slice";
 import Loader from "@/components/Layouts/Loaders/Loader";
 import { ErrorSvg } from "@/components/Svg/CommonSvg";
 
@@ -12,7 +13,6 @@ const Callback = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-  const { getProfile } = useUser();
 
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(true);
@@ -20,22 +20,30 @@ const Callback = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const token = searchParams.get("token") as string;
+        const token = searchParams.get("token");
+        const userParam = searchParams.get("user");
 
-        if (!token) {
-          setError("Authentication failed. No token received.");
+        if (!token || !userParam) {
+          setError("Authentication failed. Missing credentials.");
           setIsProcessing(false);
           return;
         }
 
-        const result = await getProfile();
+        // ✅ Parse user data from URL
+        const user = JSON.parse(decodeURIComponent(userParam));
 
-        if (result) {
-          dispatch(setAccessToken(token));
-        }
+        // ✅ Directly set credentials (NO API call needed)
+        dispatch(
+          setRegisteredCredentials({
+            user,
+            accessToken: token,
+          })
+        );
 
+        // ✅ Redirect to dashboard
         router.push("/user?page=dashboard");
-      } catch {
+      } catch (err) {
+        console.error("Callback error:", err);
         setError("Something went wrong during authentication.");
         setIsProcessing(false);
         setTimeout(() => {
@@ -45,7 +53,7 @@ const Callback = () => {
     };
 
     run();
-  }, [searchParams, router, dispatch, getProfile]);
+  }, [searchParams, router, dispatch]);
 
   // ================================ ERROR STATE ===================================
   if (error) {
