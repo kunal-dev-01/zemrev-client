@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch } from "@/hooks/reduxHooks/redux.hooks";
 import { setRegisteredCredentials } from "@/services/authService/auth.slice";
@@ -9,21 +9,16 @@ import Loader from "@/components/Layouts/Loaders/Loader";
 import { ErrorSvg } from "@/components/Svg/CommonSvg";
 
 const Callback = () => {
-  // ================== NEW FIX HERE ==================
-  const effectRun = useRef(false);
-
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
+
   const [getCreditStatus] = useLazyGetCreditStatusQuery();
 
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
-    if (effectRun.current) return;     // Prevents second run in Strict Mode
-    effectRun.current = true;          // Marks as executed
-
     const run = async () => {
       try {
         const token = searchParams.get("token");
@@ -53,13 +48,16 @@ const Callback = () => {
       } catch {
         setError("Something went wrong during authentication.");
         setIsProcessing(false);
+        setTimeout(() => {
+          router.push("/auth/login");
+        } , 3000);
       }
     };
 
     run();
   }, [searchParams, router, dispatch, getCreditStatus]);
 
-  // ================================ ERROR ===================================
+  // ================================ ERROR STATE ===================================
   if (error) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center">
@@ -82,7 +80,7 @@ const Callback = () => {
     );
   }
 
-  // ================================ LOADING ===================================
+  // ================================ LOADING STATE ===================================
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">

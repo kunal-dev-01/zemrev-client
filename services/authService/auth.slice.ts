@@ -162,8 +162,8 @@ const authSlice = createSlice({
       // ==================== SIGNUP ====================
       .addMatcher(authApi.endpoints.signup.matchPending, setPendingState)
       .addMatcher(authApi.endpoints.signup.matchFulfilled, (state, action) => {
-        const { user, accessToken, requiresPayment } = action.payload.data;
-        setRegisteredUserState(state, user, accessToken, !requiresPayment);
+        const { user, accessToken } = action.payload.data;
+        setRegisteredUserState(state, user, accessToken);
       })
       .addMatcher(authApi.endpoints.signup.matchRejected, (state, action) => {
         setRejectedState(state, action, 'Signup failed');

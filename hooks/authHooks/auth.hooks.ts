@@ -55,15 +55,8 @@ export const useAuth = () => {
         const fp = await getFingerprint();
         dispatch(setFingerprint(fp));
 
-        const result = await signupMutation(data).unwrap();
+        await signupMutation(data).unwrap();
 
-        if (result.data.requiresPayment && result.data.checkoutUrl) {
-          return {
-            success: true,
-            requiresPayment: true,
-            checkoutUrl: result.data.checkoutUrl,
-          };
-        }
         return { success: true };
       } catch (err: unknown) {
         dispatch(setError(extractApiErrorMessage(err)));
