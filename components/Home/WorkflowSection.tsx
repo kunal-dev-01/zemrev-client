@@ -22,10 +22,10 @@ const steps = [
 
 const WorkflowSection: React.FC = () => {
 
-  const { getCreditStatus } = useAuthVerify();
+  const { initializeGuest } = useAuthVerify();
 
   const handle = async() => {
-    await getCreditStatus();
+    await initializeGuest();
   }
 
   return (
