@@ -3,7 +3,10 @@
 import { RegisteredUser, Address } from "../authService/types";
 
 export interface GetProfileResponse {
-    user: RegisteredUser;
+    status: string;
+    data: {
+        user: RegisteredUser;
+    }
 }
 
 export interface UpdatePasswordRequest {

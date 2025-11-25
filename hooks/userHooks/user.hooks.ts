@@ -41,8 +41,8 @@ export const useUser = () => {
       dispatch(clearUserError());
       const result = await refetchProfile().unwrap();
       
-      if (result.user) {
-        dispatch(updateRegisteredUser(result.user));
+      if (result.data.user) {
+        dispatch(updateRegisteredUser(result.data.user));
       }
       
       return true;
@@ -143,6 +143,6 @@ export const useUser = () => {
     isUpdatingName,
     userError,
     user: currentUser,
-    profileData: profileData?.user,
+    profileData: profileData?.data.user,
   };
 };

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch } from "@/hooks/reduxHooks/redux.hooks";
-import { setRegisteredCredentials } from "@/services/authService/auth.slice";
-import { useLazyGetCreditStatusQuery } from "@/services/authService/auth.api";
+import { setAccessToken } from "@/services/authService/auth.slice";
+import { useUser } from "@/hooks/userHooks/user.hooks";
 import Loader from "@/components/Layouts/Loaders/Loader";
 import { ErrorSvg } from "@/components/Svg/CommonSvg";
 
@@ -12,8 +12,7 @@ const Callback = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
-
-  const [getCreditStatus] = useLazyGetCreditStatusQuery();
+  const { getProfile } = useUser();
 
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(true);
@@ -21,7 +20,7 @@ const Callback = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const token = searchParams.get("token");
+        const token = searchParams.get("token") as string;
 
         if (!token) {
           setError("Authentication failed. No token received.");
@@ -29,18 +28,11 @@ const Callback = () => {
           return;
         }
 
-        const { data } = await getCreditStatus().unwrap();
+        const result = await getProfile();
 
-        if (!data?.user || data.userType !== "registered") {
-          throw new Error("Invalid user data");
+        if (result) {
+          dispatch(setAccessToken(token));
         }
-
-        dispatch(
-          setRegisteredCredentials({
-            user: data.user,
-            accessToken: token,
-          })
-        );
 
         router.push("/user?page=dashboard");
       } catch {
@@ -48,12 +40,12 @@ const Callback = () => {
         setIsProcessing(false);
         setTimeout(() => {
           router.push("/auth/login");
-        } , 3000);
+        }, 3000);
       }
     };
 
     run();
-  }, [searchParams, router, dispatch, getCreditStatus]);
+  }, [searchParams, router, dispatch, getProfile]);
 
   // ================================ ERROR STATE ===================================
   if (error) {
