@@ -1,5 +1,6 @@
 import React from 'react';
 import { UploadCloud, Sliders, Download } from '@/components/Svg/HomeSvg';
+import { useAuthVerify } from '@/hooks/authHooks/auth.verify.hooks';
 
 const steps = [
   {
@@ -20,6 +21,13 @@ const steps = [
 ];
 
 const WorkflowSection: React.FC = () => {
+
+  const { getCreditStatus } = useAuthVerify();
+
+  const handle = async() => {
+    await getCreditStatus();
+  }
+
   return (
     <section className="w-full">
       <div className="w-full py-12 md:py-16 px-6 md:px-12 border-2 border-zinc-100/50 dark:border-zinc-900/50 rounded-2xl bg-zinc-100/10 dark:bg-zinc-900/10 text-center">
@@ -39,7 +47,7 @@ const WorkflowSection: React.FC = () => {
           <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-zinc-200 dark:bg-zinc-800 z-0"></div>
 
           {steps.map((step, idx) => (
-            <div key={idx} className="relative flex flex-col items-center z-10">
+            <div onClick={handle} key={idx} className="relative flex flex-col items-center z-10">
               <div className="w-24 h-24 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center mb-6">
                 <div className="text-light dark:text-dark w-16 h-16"> <step.icon /></div>
               </div>

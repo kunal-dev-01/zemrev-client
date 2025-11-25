@@ -29,7 +29,8 @@ const NavRightSide = () => {
   return (
     <div className="h-full flex items-center gap-2">
       {/* User Credits */}
-      <div
+      {userType === "registered" || userType === "guest" && (
+        <div
         aria-label="user-credits"
         className="flex items-center gap-3 px-3 h-full rounded-xl border border-zinc-200/50 dark:border-zinc-900 hover:border-zinc-200 dark:hover:border-zinc-800 bg-white/50 cursor-pointer select-none dark:bg-zinc-900/30"
       >
@@ -40,9 +41,10 @@ const NavRightSide = () => {
 
         {/* Credit Number */}
         <span className="text-base font-bold text-zinc-700 dark:text-zinc-300">
-          {credits?.remaining}
+          {credits?.remaining || 0}
         </span>
       </div>
+      )}
 
       {/* User / Login and Sidebar */}
       <div
